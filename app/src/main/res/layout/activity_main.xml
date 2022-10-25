@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.chessgame.GameFramework.GameMainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,66 +12,11 @@
         android:orientation="horizontal">
 
         <com.example.chessgame.chess.views.ChessBoardSurfaceView
+            android:id="@+id/chessBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/nameBlack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="left|center_vertical"
-                    android:text="Name"
-                    android:textSize="20sp" />
-
-                <SurfaceView
-                    android:id="@+id/blackCaptures"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <SurfaceView
-                    android:id="@+id/chessBoard"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/nameWhite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="left|center_vertical"
-                    android:text="Name"
-                    android:textSize="20sp" />
-
-                <SurfaceView
-                    android:id="@+id/whiteCaptures"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
-
-        </com.example.chessgame.chess.views.ChessBoardSurfaceView>
+            android:background="#000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,18 +24,65 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3.5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/nameBlack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="left|center_vertical"
+                    android:text="Computer"
+                    android:textSize="20sp" />
+
+                <com.example.chessgame.chess.views.BlackCaptureSurfaceView
+                    android:id="@+id/blackCaptures"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#D3D3D3"
+                    />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/movesLog"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:text="Starting Position" />
 
             <Button
                 android:id="@+id/surrenderButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:text="Resign" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3.5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/nameWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="left|center_vertical"
+                    android:text="Human"
+                    android:textSize="20sp" />
+
+                <com.example.chessgame.chess.views.WhiteCaptureSurfaceView
+                    android:id="@+id/whiteCaptures"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#D3D3D3"
+                    />
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
