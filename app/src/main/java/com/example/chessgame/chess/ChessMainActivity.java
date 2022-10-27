@@ -12,6 +12,7 @@ import com.example.chessgame.R;
 
 public class ChessMainActivity extends GameMainActivity {
 
+    //added a comment
     @Override
     public GameConfig createDefaultConfig() {
         return null;
