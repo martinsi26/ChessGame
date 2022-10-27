@@ -3,6 +3,9 @@ package com.example.chessgame.chess.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 
 import com.example.chessgame.GameFramework.utilities.FlashSurfaceView;
@@ -17,6 +20,13 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
     private float size = 115;
     private float bottom = top + size;
     private float right = left + size;
+
+    //paint variables
+    protected Paint imagePaint;
+    private Paint colorSquare;
+    private Paint highlightPaint;
+    private Paint dotPaint;
+    private Paint textPaint;
 
     protected ChessState state;
 
@@ -66,5 +76,71 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         blackKingImage = Bitmap.createScaledBitmap(blackKingImage,120,120,false);
         blackQueenImage = Bitmap.createScaledBitmap(blackQueenImage,120,120,false);
         blackBishopImage = Bitmap.createScaledBitmap(blackBishopImage,120,120,false);
+
+        colorSquare = new Paint();
+        colorSquare.setColor(Color.WHITE);
+        textPaint = new Paint();
+        textPaint.setColor(Color.WHITE);
+        highlightPaint = new Paint();
+        highlightPaint.setColor(Color.YELLOW);
+        dotPaint = new Paint();
+        dotPaint.setColor(Color.LTGRAY);
+        imagePaint = new Paint();
+        imagePaint.setColor(Color.WHITE);
+
+    }
+
+    protected void onDraw(Canvas canvas){
+        super.onDraw(canvas);
+
+        //this is board initialization
+        for(int j = 0; j < 8; j++) {
+            for(int i = 0; i < 8; i++) {
+
+                //alternate colors
+                if ((i % 2 == 0 && j % 2 != 0) || (j % 2 == 0 && i % 2 != 0)) {
+                    colorSquare.setColor(Color.rgb(1, 50, 32));
+                } else {
+                    colorSquare.setColor(Color.WHITE);
+                }
+
+                //draw rectangle
+                canvas.drawRect(left + (right - left) * i, top + (bottom - top) * j,
+                        right + (right - left) * i, bottom + (bottom - top) * j, colorSquare);
+            }
+        }
+
+        //draw all the pieces
+        for(int i = 0; i < pieces.length; i++) {
+            for(int j = 0; j < pieces[i].length; j++) {
+                if(pieces[i][j] == 1) {
+                    canvas.drawBitmap(whitePawnImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == 2) {
+                    canvas.drawBitmap(whiteBishopImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == 3) {
+                    canvas.drawBitmap(whiteKnightImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == 4) {
+                    canvas.drawBitmap(whiteRookImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == 5) {
+                    canvas.drawBitmap(whiteQueenImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == 6) {
+                    canvas.drawBitmap(whiteKingImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                }
+                if(pieces[i][j] == -1) {
+                    canvas.drawBitmap(blackPawnImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == -2) {
+                    canvas.drawBitmap(blackBishopImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == -3) {
+                    canvas.drawBitmap(blackKnightImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == -4) {
+                    canvas.drawBitmap(blackRookImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == -5) {
+                    canvas.drawBitmap(blackQueenImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                } else if(pieces[i][j] == -6) {
+                    canvas.drawBitmap(blackKingImage, 40 + (i * 115), 40 + (j * 115), imagePaint);
+                }
+            }
+        }
+
     }
 }
