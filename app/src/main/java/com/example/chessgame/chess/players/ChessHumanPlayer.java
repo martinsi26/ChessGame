@@ -92,6 +92,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     protected void initAfterReady() {
         myActivity.setTitle("Chess: "+allPlayerNames[0]+" vs. "+allPlayerNames[1]);
     }
+    //
 
     /**
      * callback method when the screen it touched. We're
