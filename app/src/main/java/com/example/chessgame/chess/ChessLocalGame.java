@@ -28,6 +28,9 @@ public class ChessLocalGame extends LocalGame {
         super.state = new ChessState();
     }
 
+<<<<<<< HEAD
+    //this is a test
+=======
     /**
      * Constructor for the TTTLocalGame with loaded tttState
      * @param chessState
@@ -44,6 +47,7 @@ public class ChessLocalGame extends LocalGame {
      *
      * 	 @param players
      */
+>>>>>>> master
     @Override
     public void start(GamePlayer[] players)
     {
