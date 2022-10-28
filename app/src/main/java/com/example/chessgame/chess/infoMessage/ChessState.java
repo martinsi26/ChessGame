@@ -1,9 +1,5 @@
 package com.example.chessgame.chess.infoMessage;
 
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
 
 import com.example.chessgame.GameFramework.infoMessage.GameState;
 
@@ -22,10 +18,14 @@ import java.util.ArrayList;
 public class ChessState extends GameState implements Serializable {
 
     private Piece[][] pieces; // An array that holds all of the pieces and their position
+    private int[][] board; // An array that determines what kind of drawing should be made
     private int turnCount;
 
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
+
+    private ArrayList<Integer> xMovement;
+    private ArrayList<Integer> yMovement;
 
     public Piece emptyPiece;
 
@@ -35,6 +35,7 @@ public class ChessState extends GameState implements Serializable {
 
     public ChessState() {
         pieces = new Piece[8][8];
+        board = new int[8][8];
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
 
@@ -70,6 +71,11 @@ public class ChessState extends GameState implements Serializable {
         }
         emptyPiece = new Piece(Piece.PieceType.EMPTY, Piece.ColorType.EMPTY, 0, 0);
 
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                board[row][col] = 0;
+            }
+        }
         playerToMove = 0;
         turnCount = 0;
     }
@@ -77,12 +83,18 @@ public class ChessState extends GameState implements Serializable {
     // Copy Constructor
     public ChessState(ChessState other) {
         pieces = new Piece[8][8];
+        board = new int[8][8];
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
 
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
                 pieces[i][j] = other.pieces[i][j];
+            }
+        }
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = other.board[i][j];
             }
         }
         emptyPiece = other.emptyPiece;
@@ -101,6 +113,28 @@ public class ChessState extends GameState implements Serializable {
         pieces[row][col] = piece;
     }
 
+    public int getHighlight(int row, int col) {
+        return board[row][col];
+    }
+
+    public void setHighlight(int row, int col) {
+        board[row][col] = 1;
+    }
+
+    public int getCircles(int row, int col) {
+        return board[row][col];
+    }
+
+    public void setCircles(int row, int col) {
+        board[row][col] = 2;
+    }
+
+    public ArrayList<Integer> getXMovement() {
+        return xMovement;
+    }
+
+    public ArrayList<Integer> getYMovement() { return yMovement; }
+
     public int getWhoseMove() {
         return playerToMove;
     }
@@ -118,6 +152,11 @@ public class ChessState extends GameState implements Serializable {
             return true;
         }
         return false;
+    }
+
+    // calls the checkMovePiece to find all of the positions the current piece can move to
+    public void findMovement(int id, Piece currentPiece, Piece newPosition) {
+        checkMovePiece(id, currentPiece, newPosition);
     }
 
     //checks if the selected piece is able to go to the new position they want to move to
@@ -206,6 +245,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getX() + i <= 7 && currentPosition.getY() - i >= 0) {
                 if (pieces[currentPosition.getX() + i][currentPosition.getY() - i].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX() + i);
+                    yMovement.add(currentPosition.getY() - i);
                     if (newPosition.getX() == currentPosition.getX() + i
                             && newPosition.getY() == currentPosition.getY() - i) {
                         return true;
@@ -216,6 +257,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getX() - i >= 0 && currentPosition.getY() - i >= 0) {
                 if (pieces[currentPosition.getX() - i][currentPosition.getY() - i].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX() - i);
+                    yMovement.add(currentPosition.getY() - i);
                     if (newPosition.getX() == currentPosition.getX() - i
                             && newPosition.getY() == currentPosition.getY() - i) {
                         return true;
@@ -226,6 +269,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getX() - i >= 0 && currentPosition.getY() + i <= 7) {
                 if (pieces[currentPosition.getX() - i][currentPosition.getY() + i].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX() - i);
+                    yMovement.add(currentPosition.getY() + i);
                     if (newPosition.getX() == currentPosition.getX() - i
                             && newPosition.getY() == currentPosition.getY() + i) {
                         return true;
@@ -236,6 +281,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getX() + i <= 7 && currentPosition.getY() + i <= 7) {
                 if (pieces[currentPosition.getX() + i][currentPosition.getY() + i].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX() + i);
+                    yMovement.add(currentPosition.getY() + i);
                     if (newPosition.getX() == currentPosition.getX() + i
                             && newPosition.getY() == currentPosition.getY() + i) {
                         return true;
@@ -253,6 +300,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getX() - i >= 0) {
                 if (pieces[currentPosition.getX() - i][currentPosition.getY()].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX() - i);
+                    yMovement.add(currentPosition.getY());
                     if (newPosition.getX() == currentPosition.getX() - i) {
                         return true;
                     }
@@ -262,6 +311,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getX() + i <= 7) {
                 if (pieces[currentPosition.getX() + i][currentPosition.getY()].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX() + i);
+                    yMovement.add(currentPosition.getY());
                     if (newPosition.getX() == currentPosition.getX() + i) {
                         return true;
                     }
@@ -271,6 +322,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getY() - i >= 0) {
                 if (pieces[currentPosition.getX()][currentPosition.getY() - i].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX());
+                    yMovement.add(currentPosition.getY() - i);
                     if (newPosition.getY() == currentPosition.getY() - i) {
                         return true;
                     }
@@ -280,6 +333,8 @@ public class ChessState extends GameState implements Serializable {
             if (currentPosition.getY() + i <= 7) {
                 if (pieces[currentPosition.getX()][currentPosition.getY() + i].getPieceType()
                         == Piece.PieceType.EMPTY) {
+                    xMovement.add(currentPosition.getX());
+                    yMovement.add(currentPosition.getY() + i);
                     if (newPosition.getY() == currentPosition.getY() + i) {
                         return true;
                     }
@@ -291,69 +346,77 @@ public class ChessState extends GameState implements Serializable {
 
     //checks if the knight can move to the designated position
     public boolean moveKnight(Piece currentPosition, Piece newPosition) {
-
-        //right 2
         if (currentPosition.getX() + 2 <= 7) {
             if (newPosition.getX() == currentPosition.getX() + 2) {
                 if (newPosition.getY() == currentPosition.getY() + 1) {
                     if (pieces[currentPosition.getX() + 2][currentPosition.getY() + 1].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() + 2);
+                        yMovement.add(currentPosition.getY() + 1);
                         return true;
                     }
                 } else if (newPosition.getY() == currentPosition.getY() - 1) {
                     if (pieces[currentPosition.getX() + 2][currentPosition.getY() - 1].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() + 2);
+                        yMovement.add(currentPosition.getY() - 1);
                         return true;
                     }
                 }
             }
         }
-
-        //left 2
         if (currentPosition.getX() - 2 >= 0) {
             if (newPosition.getX() == currentPosition.getX() - 2) {
                 if (newPosition.getY() == currentPosition.getY() + 1) {
                     if (pieces[currentPosition.getX() - 2][currentPosition.getY() + 1].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() - 2);
+                        yMovement.add(currentPosition.getY() + 1);
                         return true;
                     }
                 } else if (newPosition.getY() == currentPosition.getY() - 1) {
                     if (pieces[currentPosition.getX() - 2][currentPosition.getY() - 1].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() - 2);
+                        yMovement.add(currentPosition.getY() - 1);
                         return true;
                     }
                 }
             }
         }
-
-        //down 2
         if (currentPosition.getY() + 2 <= 7) {
             if (newPosition.getY() == currentPosition.getY() + 2) {
                 if (newPosition.getX() == currentPosition.getX() + 1) {
                     if (pieces[currentPosition.getX() + 1][currentPosition.getY() + 2].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() + 1);
+                        yMovement.add(currentPosition.getY() + 2);
                         return true;
                     }
                 } else if (newPosition.getX() == currentPosition.getX() - 1) {
                     if (pieces[currentPosition.getX() - 1][currentPosition.getY() + 2].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() - 1);
+                        yMovement.add(currentPosition.getY() + 2);
                         return true;
                     }
                 }
             }
         }
-
-        //up 2
         if (currentPosition.getY() - 2 >= 0) {
             if (newPosition.getY() == currentPosition.getY() - 2) {
                 if (newPosition.getX() == currentPosition.getX() + 1) {
                     if (pieces[currentPosition.getX() + 1][currentPosition.getY() - 2].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() + 1);
+                        yMovement.add(currentPosition.getY() - 2);
                         return true;
                     }
                 } else if (newPosition.getX() == currentPosition.getX() - 1) {
                     if (pieces[currentPosition.getX() - 1][currentPosition.getY() - 2].getPieceType()
                             == Piece.PieceType.EMPTY) {
+                        xMovement.add(currentPosition.getX() - 1);
+                        yMovement.add(currentPosition.getY() - 2);
                         return true;
                     }
                 }
@@ -381,6 +444,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getX() + 1 <= 7 && currentPosition.getY() - 1 >= 0) {
             if (pieces[currentPosition.getX() + 1][currentPosition.getY() - 1].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX() + 1);
+                yMovement.add(currentPosition.getY() - 1);
                 if (newPosition.getX() == currentPosition.getX() + 1
                         && newPosition.getY() == currentPosition.getY() - 1) {
                     return true;
@@ -391,6 +456,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getX() - 1 >= 0 && currentPosition.getY() - 1 >= 0) {
             if (pieces[currentPosition.getX() - 1][currentPosition.getY() - 1].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX() - 1);
+                yMovement.add(currentPosition.getY() - 1);
                 if (newPosition.getX() == currentPosition.getX() - 1
                         && newPosition.getY() == currentPosition.getY() - 1) {
                     return true;
@@ -401,6 +468,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getX() - 1 >= 0 && currentPosition.getY() + 1 <= 7) {
             if (pieces[currentPosition.getX() - 1][currentPosition.getY() + 1].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX() - 1);
+                yMovement.add(currentPosition.getY() + 1);
                 if (newPosition.getX() == currentPosition.getX() - 1
                         && newPosition.getY() == currentPosition.getY() + 1) {
                     return true;
@@ -411,6 +480,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getX() + 1 <= 7 && currentPosition.getY() + 1 <= 7) {
             if (pieces[currentPosition.getX() + 1][currentPosition.getY() + 1].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX() + 1);
+                yMovement.add(currentPosition.getY() + 1);
                 if (newPosition.getX() == currentPosition.getX() + 1
                         && newPosition.getY() == currentPosition.getY() + 1) {
                     return true;
@@ -421,6 +492,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getX() - 1 >= 0) {
             if (pieces[currentPosition.getX() - 1][currentPosition.getY()].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX() - 1);
+                yMovement.add(currentPosition.getY());
                 if (newPosition.getX() == currentPosition.getX() - 1
                         && newPosition.getY() == currentPosition.getY()) {
                     return true;
@@ -431,6 +504,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getX() + 1 <= 7) {
             if (pieces[currentPosition.getX() + 1][currentPosition.getY()].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX() + 1);
+                yMovement.add(currentPosition.getY());
                 if (newPosition.getX() == currentPosition.getX() + 1
                         && newPosition.getY() == currentPosition.getY()) {
                     return true;
@@ -441,6 +516,8 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getY() - 1 >= 0) {
             if (pieces[currentPosition.getX()][currentPosition.getY() - 1].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX());
+                yMovement.add(currentPosition.getY() - 1);
                 if (newPosition.getX() == currentPosition.getX()
                         && newPosition.getY() == currentPosition.getY() - 1) {
                     return true;
@@ -451,40 +528,10 @@ public class ChessState extends GameState implements Serializable {
         if (currentPosition.getY() + 1 <= 7) {
             if (pieces[currentPosition.getX()][currentPosition.getY() + 1].getPieceType()
                     == Piece.PieceType.EMPTY) {
+                xMovement.add(currentPosition.getX());
+                yMovement.add(currentPosition.getY() + 1);
                 if (newPosition.getX() == currentPosition.getX()
                         && newPosition.getY() == currentPosition.getY() + 1) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    //checks if the selected piece is able to capture the piece on the position
-    // they want to move to
-    public boolean checkCapture(int id, Piece currentPiece, Piece otherPiece) {
-        if (id == 0 && currentPiece.getPieceColor() == Piece.ColorType.WHITE &&
-                otherPiece.getPieceColor() == Piece.ColorType.BLACK) {
-            return true;
-        } else if (id == 1 && currentPiece.getPieceColor() == Piece.ColorType.BLACK &&
-                otherPiece.getPieceColor() == Piece.ColorType.WHITE) {
-            return true;
-        }
-        return false;
-    }
-
-    //checks if the player moving is a pawn and if that pawn is able to be
-    //promoted because of its current position
-    public boolean checkPromotion(Piece p) {
-        if (p.getPieceType() == Piece.PieceType.PAWN && p.getPieceColor() == Piece.ColorType.WHITE) {
-            for(int i = 0; i < pieces[0].length; i++) {
-                if (p == pieces[0][i]) {
-                    return true;
-                }
-            }
-        } else if(p.getPieceType() == Piece.PieceType.PAWN && p.getPieceColor() == Piece.ColorType.BLACK) {
-            for (int i = 0; i < pieces[0].length; i++) {
-                if (p == pieces[7][i]) {
                     return true;
                 }
             }
