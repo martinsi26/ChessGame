@@ -40,6 +40,10 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         this.layoutId = layoutId;
     }
 
+    public void setState(ChessState state) {
+        this.state = state;
+    }
+
     @Override
     public void receiveInfo(GameInfo info) {
         if (surfaceView == null) {
@@ -136,6 +140,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                             for(int k = 0; k < state.getXMovement().size(); k++) {
                                 state.setCircles(state.getXMovement().get(k), state.getYMovement().get(k));
                             }
+                            surfaceView.invalidate();
                         }
                     }
                 }
