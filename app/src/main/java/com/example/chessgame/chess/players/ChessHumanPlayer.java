@@ -10,6 +10,7 @@ import com.example.chessgame.GameFramework.infoMessage.IllegalMoveInfo;
 import com.example.chessgame.GameFramework.infoMessage.NotYourTurnInfo;
 import com.example.chessgame.GameFramework.players.GameHumanPlayer;
 import com.example.chessgame.R;
+import com.example.chessgame.chess.chessActionMessage.ChessDrawAction;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.views.ChessBoardSurfaceView;
@@ -117,31 +118,19 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                 if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
                     if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
 
-                        // check if the current piece can move to the new position
-                        if (state.checkMovePiece(layoutId, state.getPiece(x, y), state.getPiece(i, j))) {
+                        // create the highlight action
+                        ChessDrawAction drawAction = new ChessDrawAction(this,x,y);
+                        game.sendAction(drawAction);
+                        surfaceView.invalidate();
 
-                            // create the move action
-                            ChessMoveAction action = new ChessMoveAction(this, i, j, x, y);
-                            game.sendAction(action);
-                            surfaceView.invalidate();
-                        }
+                        // create the move action
+                        ChessMoveAction action = new ChessMoveAction(this, i, j, x, y);
+                        game.sendAction(action);
+                        surfaceView.invalidate();
 
                         // position of the selected piece
                         x = i;
                         y = j;
-
-                        // check if the piece can be selected
-                        if (state.checkSelectPiece(layoutId, state.getPiece(x, y))) {
-                            // highlight the piece
-                            state.setHighlight(x, y);
-                            // find all of the locations this piece can move to
-                            state.findMovement(layoutId, state.getPiece(x,y), state.getPiece(0,0));
-                            // draw circles for every location that the piece can move to
-                            for(int k = 0; k < state.getXMovement().size(); k++) {
-                                state.setCircles(state.getXMovement().get(k), state.getYMovement().get(k));
-                            }
-                            surfaceView.invalidate();
-                        }
                     }
                 }
             }
