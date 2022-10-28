@@ -17,7 +17,7 @@ import com.example.chessgame.chess.views.ChessBoardSurfaceView;
 public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchListener {
 
     //Tag for logging
-    private static final String TAG = "TTTHumanPlayer1";
+    private static final String TAG = "ChessHumanPlayer";
 
     // the surface view
     private ChessBoardSurfaceView surfaceView;

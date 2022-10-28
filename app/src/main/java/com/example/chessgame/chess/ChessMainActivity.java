@@ -26,7 +26,7 @@ public class ChessMainActivity extends GameMainActivity {
     public static final int PORT_NUMBER = 5213;
 
     /**
-     * a tic-tac-toe game is for two players. The default is human vs. computer
+     * a chess game is for two players. The default is human vs. computer
      */
     @Override
     public GameConfig createDefaultConfig() {
@@ -34,7 +34,7 @@ public class ChessMainActivity extends GameMainActivity {
         ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
 
         // yellow-on-blue GUI
-        playerTypes.add(new GamePlayerType("Local Human Player (blue-yellow)") {
+        playerTypes.add(new GamePlayerType("Local Human Player") {
             public GamePlayer createPlayer(String name) {
                 return new ChessHumanPlayer(name, R.layout.activity_main);
             }

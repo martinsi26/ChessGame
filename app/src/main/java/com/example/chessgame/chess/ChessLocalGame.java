@@ -24,7 +24,7 @@ public class ChessLocalGame extends LocalGame {
         // perform superclass initialization
         super();
 
-        // create a new, unfilled-in TTTState object
+        // create a new, standard ChessState object
         super.state = new ChessState();
     }
 
