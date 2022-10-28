@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_gui_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.chessgame.chess.ChessMainActivity">
@@ -42,8 +43,7 @@
                     android:id="@+id/blackCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#D3D3D3"
-                    />
+                    android:background="#D3D3D3" />
 
             </LinearLayout>
 
@@ -79,8 +79,7 @@
                     android:id="@+id/whiteCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#D3D3D3"
-                    />
+                    android:background="#D3D3D3" />
             </LinearLayout>
 
         </LinearLayout>
