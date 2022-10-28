@@ -39,7 +39,7 @@
                     android:text="Computer"
                     android:textSize="20sp" />
 
-                <com.example.chessgame.chess.views.BlackCaptureSurfaceView
+                <SurfaceView
                     android:id="@+id/blackCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -75,7 +75,7 @@
                     android:text="Human"
                     android:textSize="20sp" />
 
-                <com.example.chessgame.chess.views.WhiteCaptureSurfaceView
+                <SurfaceView
                     android:id="@+id/whiteCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
