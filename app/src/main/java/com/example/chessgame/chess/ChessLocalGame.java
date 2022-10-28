@@ -10,6 +10,7 @@ public class ChessLocalGame extends LocalGame {
 
     }
 
+    //this is a test
     @Override
     protected boolean canMove(int playerIdx) {
         return false;
