@@ -88,7 +88,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
     }
 
     public int blackSquare() {
-        return Color.rgb(1, 50, 32);
+        return Color.rgb(1, 100, 32);
     }
 
     public int whiteSquare() {
