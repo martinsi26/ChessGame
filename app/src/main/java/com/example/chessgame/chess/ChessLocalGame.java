@@ -3,10 +3,8 @@ package com.example.chessgame.chess;
 import com.example.chessgame.GameFramework.LocalGame;
 import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
-import com.example.chessgame.chess.chessActionMessage.ChessDrawAction;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
-import com.example.chessgame.chess.infoMessage.Piece;
 
 public class ChessLocalGame extends LocalGame {
 
@@ -102,11 +100,11 @@ public class ChessLocalGame extends LocalGame {
 
         // get the row and column position of the player's move
         ChessMoveAction tm = (ChessMoveAction) action;
-        ChessDrawAction drawAction = (ChessDrawAction) action;
+        //ChessDrawAction drawAction = (ChessDrawAction) action;
         ChessState state = (ChessState) super.state;
 
-        int row = drawAction.getRow();
-        int col = drawAction.getCol();
+        //int row = drawAction.getRow();
+        //int col = drawAction.getCol();
 
         int newRow = tm.getNewRow();
         int newCol = tm.getNewCol();
@@ -117,13 +115,25 @@ public class ChessLocalGame extends LocalGame {
         // get the 0/1 id of the player whose move it is
         int whoseMove = state.getWhoseMove();
 
-        // check if the piece can move
-        if (state.checkMovePiece(whoseMove, state.getPiece(currentRow,currentCol), state.getPiece(newRow,newCol))) {
-            // move the players piece to the new location
-            state.setPiece(newRow, newCol, state.getPiece(currentRow, currentCol));
+        // check if the piece should move
+        if(tm.getAction().equals("move")) {
+            // check if the piece can move
+            if (state.checkMovePiece(whoseMove, state.getPiece(currentRow, currentCol), state.getPiece(newRow, newCol))) {
+                // move the players piece to the new location
+                state.setPiece(newRow, newCol, state.getPiece(currentRow, currentCol));
+            }
         }
 
-        // check if the piece can be selected
+        // check if the piece should be highlighted
+        if(tm.getAction().equals("move")) {
+            // check if the piece can be highlighted
+            if (state.checkSelectPiece(whoseMove, state.getPiece(currentRow, currentCol))) {
+                // highlight the piece
+                state.setHighlight(currentRow, currentCol);
+            }
+        }
+
+        /*// check if the piece can be selected
         if (state.checkSelectPiece(whoseMove, state.getPiece(row, col))) {
             // highlight the piece
             state.setHighlight(row, col);
@@ -133,7 +143,7 @@ public class ChessLocalGame extends LocalGame {
             for(int k = 0; k < state.getXMovement().size(); k++) {
                 state.setCircles(state.getXMovement().get(k), state.getYMovement().get(k));
             }
-        }
+        }*/
 
         // make the it's original location become blank
         state.setPiece(currentRow, currentCol, state.emptyPiece);

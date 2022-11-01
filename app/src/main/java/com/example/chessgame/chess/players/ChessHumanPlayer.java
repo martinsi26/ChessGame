@@ -10,7 +10,6 @@ import com.example.chessgame.GameFramework.infoMessage.IllegalMoveInfo;
 import com.example.chessgame.GameFramework.infoMessage.NotYourTurnInfo;
 import com.example.chessgame.GameFramework.players.GameHumanPlayer;
 import com.example.chessgame.R;
-import com.example.chessgame.chess.chessActionMessage.ChessDrawAction;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.views.ChessBoardSurfaceView;
@@ -28,8 +27,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     private ChessState state;
 
-    private int x;
-    private int y;
+    private int x = 8;
+    private int y = 8;
 
     /**
      * constructor
@@ -118,19 +117,20 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                 if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
                     if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
 
-                        // create the highlight action
-                        ChessDrawAction drawAction = new ChessDrawAction(this,x,y);
-                        game.sendAction(drawAction);
-                        surfaceView.invalidate();
-
                         // create the move action
-                        ChessMoveAction action = new ChessMoveAction(this, i, j, x, y);
-                        game.sendAction(action);
-                        surfaceView.invalidate();
+                        if (x != i && y != j && x != 8 && y != 8) {
+                            ChessMoveAction action = new ChessMoveAction(this, i, j, x, y, "move");
+                            game.sendAction(action);
+                            surfaceView.invalidate();
+                        }
 
-                        // position of the selected piece
+                        // position of the selected piece set as x and y
                         x = i;
                         y = j;
+
+                        ChessMoveAction action = new ChessMoveAction(this, i, j, x, y, "highlight");
+                        game.sendAction(action);
+                        surfaceView.invalidate();
                     }
                 }
             }
