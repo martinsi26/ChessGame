@@ -27,8 +27,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     private ChessState state;
 
-    private int x;
-    private int y;
+    private int x = 8;
+    private int y = 8;
 
     /**
      * constructor
@@ -117,31 +117,20 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                 if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
                     if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
 
-                        // check if the current piece can move to the new position
-                        if (state.checkMovePiece(layoutId, state.getPiece(x, y), state.getPiece(i, j))) {
-
-                            // create the move action
-                            ChessMoveAction action = new ChessMoveAction(this, i, j, x, y);
+                        // create the move action
+                        if (x != i && y != j && x != 8 && y != 8) {
+                            ChessMoveAction action = new ChessMoveAction(this, i, j, x, y, "move");
                             game.sendAction(action);
                             surfaceView.invalidate();
                         }
 
-                        // position of the selected piece
+                        // position of the selected piece set as x and y
                         x = i;
                         y = j;
 
-                        // check if the piece can be selected
-                        if (state.checkSelectPiece(layoutId, state.getPiece(x, y))) {
-                            // highlight the piece
-                            state.setHighlight(x, y);
-                            // find all of the locations this piece can move to
-                            state.findMovement(layoutId, state.getPiece(x,y), state.getPiece(0,0));
-                            // draw circles for every location that the piece can move to
-                            for(int k = 0; k < state.getXMovement().size(); k++) {
-                                state.setCircles(state.getXMovement().get(k), state.getYMovement().get(k));
-                            }
-                            surfaceView.invalidate();
-                        }
+                        ChessMoveAction action = new ChessMoveAction(this, i, j, x, y, "highlight");
+                        game.sendAction(action);
+                        surfaceView.invalidate();
                     }
                 }
             }

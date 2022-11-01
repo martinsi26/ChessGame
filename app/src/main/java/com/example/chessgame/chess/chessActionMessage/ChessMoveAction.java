@@ -12,6 +12,8 @@ public class ChessMoveAction extends GameAction {
     private int currentRow;
     private int currentCol;
 
+    private String action;
+
     /**
      * Constructor for ChessMoveAction
      *
@@ -21,9 +23,12 @@ public class ChessMoveAction extends GameAction {
      * @param currentRow the row of the new position
      * @param currentCol the col of the new position
      */
-    public ChessMoveAction(GamePlayer player, int newRow, int newCol, int currentRow, int currentCol) {
+    public ChessMoveAction(GamePlayer player, int currentRow, int currentCol, int newRow, int newCol, String action) {
         // invoke superclass constructor to set the player
         super(player);
+
+        // set the action
+        this.action = action;
 
         // set the row and column as passed to us
         this.newRow = newRow;
@@ -31,6 +36,10 @@ public class ChessMoveAction extends GameAction {
 
         this.currentRow = currentRow;
         this.currentCol = currentCol;
+    }
+
+    public String getAction() {
+        return action;
     }
 
     /**
