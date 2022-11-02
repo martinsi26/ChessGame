@@ -83,10 +83,6 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         this.state = state;
     }
 
-    public ChessState getState() {
-        return state;
-    }
-
     public int blackSquare() {
         return Color.rgb(1, 100, 32);
     }

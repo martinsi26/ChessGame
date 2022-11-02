@@ -125,8 +125,10 @@ public class ChessState extends GameState implements Serializable {
         return board[row][col];
     }
 
-    public void setCircles(int row, int col) {
-        board[row][col] = 2;
+    public void setCircles(ArrayList<Integer> row, ArrayList<Integer> col) {
+        for(int i = 0; i < row.size(); i++) {
+            board[row.get(i)][col.get(i)] = 2;
+        }
     }
 
     public ArrayList<Integer> getXMovement() {
