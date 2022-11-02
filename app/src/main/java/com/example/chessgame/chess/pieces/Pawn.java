@@ -16,6 +16,8 @@ public class Pawn {
     public Pawn(Piece piece) {
         x = piece.getX();
         y = piece.getY();
+        xMovement = new ArrayList<>();
+        yMovement = new ArrayList<>();
     }
 
     public void pawnMovement(ChessState state, Piece.ColorType color) {
