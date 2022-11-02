@@ -121,10 +121,6 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                         ChessMoveAction action = new ChessMoveAction(this, i, j);
                         game.sendAction(action);
                         surfaceView.invalidate();
-
-                        // position of the selected piece set as x and y
-                        x = i;
-                        y = j;
                     }
                 }
             }

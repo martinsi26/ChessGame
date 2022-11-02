@@ -117,6 +117,15 @@ public class ChessLocalGame extends LocalGame {
             // if the piece is white they are doing a selection
             if (state.getPiece(row, col).getPieceColor() == Piece.ColorType.WHITE) {
 
+                // remove the highlights if there are any previous ones
+                for(int i = 0; i < 8; i++) {
+                    for(int j = 0; j < 8; j++) {
+                        if(state.getHighlight(i,j) == 1) {
+                            state.removeHighlight();
+                        }
+                    }
+                }
+
                 // highlight the piece they clicked
                 state.setHighlight(row, col);
 
@@ -132,6 +141,8 @@ public class ChessLocalGame extends LocalGame {
 
             // if the piece is empty or black they are doing a movement
             else {
+                // unless the position they are moving to is not a circle
+                // then they are not doing anything
                 if(!setMovement(state,row,col)) {
                     return false;
                 }
@@ -145,6 +156,15 @@ public class ChessLocalGame extends LocalGame {
             // if the piece is black they are doing a selection
             if (state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK) {
 
+                // remove the highlights if there are any previous ones
+                for(int i = 0; i < 8; i++) {
+                    for(int j = 0; j < 8; j++) {
+                        if(state.getHighlight(i,j) == 1) {
+                            state.removeHighlight();
+                        }
+                    }
+                }
+                
                 // highlight the piece they clicked
                 state.setHighlight(row, col);
 
@@ -212,6 +232,10 @@ public class ChessLocalGame extends LocalGame {
             // reset temp values so only selections may occur
             tempRow = -1;
             tempCol = -1;
+
+            // remove the highlighted square and all the circles after moving
+            state.removeHighlight();
+            state.removeCircles();
 
             return true;
         } else {

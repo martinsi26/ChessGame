@@ -16,6 +16,8 @@ public class Knight {
     public Knight(Piece piece) {
         x = piece.getX();
         y = piece.getY();
+        xMovement = new ArrayList<>();
+        yMovement = new ArrayList<>();
     }
 
     public void knightMovement(ChessState state, Piece.ColorType color) {
