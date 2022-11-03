@@ -231,6 +231,7 @@ public class ChessLocalGame extends LocalGame {
         }
         if(state.getCircles(row,col) == 2) {
 
+
             // set the new position to be the piece they originally selected
             state.setPiece(row, col, state.getPiece(tempRow, tempCol));
 

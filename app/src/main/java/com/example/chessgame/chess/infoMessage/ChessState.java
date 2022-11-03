@@ -81,21 +81,32 @@ public class ChessState extends GameState implements Serializable {
     public ChessState(ChessState other) {
         pieces = new Piece[8][8];
         board = new int[8][8];
+
+        //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
+        for(int i = 0; i < whiteCapturedPieces.size(); i++){
+            whiteCapturedPieces.add(other.whiteCapturedPieces.get(i));
+        }
+        for(int i = 0; i < blackCapturedPieces.size(); i++){
+            blackCapturedPieces.add(other.blackCapturedPieces.get(i));
+        }
 
+        //copies pieces into copy
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
                 pieces[i][j] = other.pieces[i][j];
             }
         }
+
+        //copies what needs to be drawn on the board
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 board[i][j] = other.board[i][j];
             }
         }
-        emptyPiece = other.emptyPiece;
 
+        emptyPiece = other.emptyPiece;
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
     }
