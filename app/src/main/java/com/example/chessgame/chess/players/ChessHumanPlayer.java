@@ -118,17 +118,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                     if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
 
                         // create the move action
-                        if (x != i && y != j && x != 8 && y != 8) {
-                            ChessMoveAction action = new ChessMoveAction(this, i, j, x, y, "move");
-                            game.sendAction(action);
-                            surfaceView.invalidate();
-                        }
-
-                        // position of the selected piece set as x and y
-                        x = i;
-                        y = j;
-
-                        ChessMoveAction action = new ChessMoveAction(this, i, j, x, y, "highlight");
+                        ChessMoveAction action = new ChessMoveAction(this, i, j);
                         game.sendAction(action);
                         surfaceView.invalidate();
                     }

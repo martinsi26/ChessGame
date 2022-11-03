@@ -83,10 +83,6 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         this.state = state;
     }
 
-    public ChessState getState() {
-        return state;
-    }
-
     public int blackSquare() {
         return Color.rgb(1, 100, 32);
     }
@@ -133,9 +129,9 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
 
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                drawPiece(canvas, state.getPiece(row, col), row, col);
                 drawSelection(canvas, state.getHighlight(row, col), row, col);
                 drawSelection(canvas, state.getCircles(row, col), row, col);
+                drawPiece(canvas, state.getPiece(row, col), row, col);
             }
         }
 

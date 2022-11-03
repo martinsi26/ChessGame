@@ -6,40 +6,23 @@ import com.example.chessgame.GameFramework.players.GamePlayer;
 public class ChessMoveAction extends GameAction {
 
     // instance variables: the selected row and column
-    private int newRow;
-    private int newCol;
-
-    private int currentRow;
-    private int currentCol;
-
-    private String action;
+    private int row;
+    private int col;
 
     /**
      * Constructor for ChessMoveAction
      *
      //@param source the player making the move
-     * @param newCol the row of the square selected
-     * @param newRow the column of the square selected
-     * @param currentRow the row of the new position
-     * @param currentCol the col of the new position
+     * @param col the row of the square selected
+     * @param row the column of the square selected
      */
-    public ChessMoveAction(GamePlayer player, int currentRow, int currentCol, int newRow, int newCol, String action) {
+    public ChessMoveAction(GamePlayer player, int row, int col) {
         // invoke superclass constructor to set the player
         super(player);
 
-        // set the action
-        this.action = action;
-
         // set the row and column as passed to us
-        this.newRow = newRow;
-        this.newCol = newCol;
-
-        this.currentRow = currentRow;
-        this.currentCol = currentCol;
-    }
-
-    public String getAction() {
-        return action;
+        this.row = row;
+        this.col = col;
     }
 
     /**
@@ -47,26 +30,12 @@ public class ChessMoveAction extends GameAction {
      *
      * @return the row selected
      */
-    public int getNewRow() { return newRow; }
+    public int getRow() { return row; }
 
     /**
      * get the object's column
      *
      * @return the column selected
      */
-    public int getNewCol() { return newCol; }
-
-    /**
-     * get the object's column
-     *
-     * @return the column selected
-     */
-    public int getCurrentRow() { return currentRow; }
-
-    /**
-     * get the object's row
-     *
-     * @return the row selected
-     */
-    public int getCurrentCol() { return currentCol; }
+    public int getCol() { return col; }
 }

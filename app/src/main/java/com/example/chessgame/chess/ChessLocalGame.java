@@ -5,6 +5,13 @@ import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
+import com.example.chessgame.chess.infoMessage.Piece;
+import com.example.chessgame.chess.pieces.Bishop;
+import com.example.chessgame.chess.pieces.King;
+import com.example.chessgame.chess.pieces.Knight;
+import com.example.chessgame.chess.pieces.Pawn;
+import com.example.chessgame.chess.pieces.Queen;
+import com.example.chessgame.chess.pieces.Rook;
 
 public class ChessLocalGame extends LocalGame {
 
@@ -14,6 +21,9 @@ public class ChessLocalGame extends LocalGame {
     // the number of moves that have been played so far, used to
     // determine whether the game is over
     protected int moveCount;
+
+    private int tempRow;
+    private int tempCol;
 
     /**
      * Constructor for the TTTLocalGame.
@@ -100,53 +110,89 @@ public class ChessLocalGame extends LocalGame {
 
         // get the row and column position of the player's move
         ChessMoveAction tm = (ChessMoveAction) action;
-        //ChessDrawAction drawAction = (ChessDrawAction) action;
         ChessState state = (ChessState) super.state;
 
-        //int row = drawAction.getRow();
-        //int col = drawAction.getCol();
-
-        int newRow = tm.getNewRow();
-        int newCol = tm.getNewCol();
-
-        int currentRow = tm.getCurrentRow();
-        int currentCol = tm.getCurrentCol();
+        int row = tm.getRow();
+        int col = tm.getCol();
 
         // get the 0/1 id of the player whose move it is
         int whoseMove = state.getWhoseMove();
 
-        // check if the piece should move
-        if(tm.getAction().equals("move")) {
-            // check if the piece can move
-            if (state.checkMovePiece(whoseMove, state.getPiece(currentRow, currentCol), state.getPiece(newRow, newCol))) {
-                // move the players piece to the new location
-                state.setPiece(newRow, newCol, state.getPiece(currentRow, currentCol));
+        // white specific
+        if(whoseMove == 0) {
+
+            // check if they selected a piece or selected a new position to move
+            // if the piece is white they are doing a selection
+            if (state.getPiece(row, col).getPieceColor() == Piece.ColorType.WHITE) {
+
+                // remove the highlights if there are any previous ones
+                for(int i = 0; i < 8; i++) {
+                    for(int j = 0; j < 8; j++) {
+                        if(state.getHighlight(i,j) == 1) {
+                            state.removeHighlight();
+                        }
+                    }
+                }
+
+                // highlight the piece they clicked
+                state.setHighlight(row, col);
+
+                // save temps for the row and col for movement later
+                tempRow = row;
+                tempCol = col;
+
+                findMovement(state, row, col, Piece.ColorType.WHITE);
+
+                // return true to skip changing turns
+                return true;
+            }
+
+            // if the piece is empty or black they are doing a movement
+            else {
+                // unless the position they are moving to is not a circle
+                // then they are not doing anything
+                if(!setMovement(state,row,col)) {
+                    return false;
+                }
             }
         }
 
-        // check if the piece should be highlighted
-        if(tm.getAction().equals("move")) {
-            // check if the piece can be highlighted
-            if (state.checkSelectPiece(whoseMove, state.getPiece(currentRow, currentCol))) {
-                // highlight the piece
-                state.setHighlight(currentRow, currentCol);
+        // black specific
+        if(whoseMove == 1) {
+
+            // check if they selected a piece or selected a new position to move
+            // if the piece is black they are doing a selection
+            if (state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK) {
+
+                // remove the highlights if there are any previous ones
+                for(int i = 0; i < 8; i++) {
+                    for(int j = 0; j < 8; j++) {
+                        if(state.getHighlight(i,j) == 1) {
+                            state.removeHighlight();
+                        }
+                    }
+                }
+
+                // highlight the piece they clicked
+                state.setHighlight(row, col);
+
+                // save temps for the row and col for movement later
+                tempRow = row;
+                tempCol = col;
+
+                findMovement(state, row, col, Piece.ColorType.BLACK);
+
+                // return true to skip changing turns
+                return true;
+            }
+
+            // if the piece is empty or white they are doing a movement
+            else {
+                if(!setMovement(state,row,col)) {
+                    return false;
+                }
             }
         }
-
-        /*// check if the piece can be selected
-        if (state.checkSelectPiece(whoseMove, state.getPiece(row, col))) {
-            // highlight the piece
-            state.setHighlight(row, col);
-            // find all of the locations this piece can move to
-            state.findMovement(whoseMove, state.getPiece(row,col), state.getPiece(0,0));
-            // draw circles for every location that the piece can move to
-            for(int k = 0; k < state.getXMovement().size(); k++) {
-                state.setCircles(state.getXMovement().get(k), state.getYMovement().get(k));
-            }
-        }*/
-
-        // make the it's original location become blank
-        state.setPiece(currentRow, currentCol, state.emptyPiece);
 
         // make it the other player's turn
         state.setWhoseMove(1 - whoseMove);
@@ -156,5 +202,54 @@ public class ChessLocalGame extends LocalGame {
 
         // return true, indicating the it was a legal move
         return true;
+    }
+
+    public void findMovement(ChessState state, int row, int col, Piece.ColorType color) {
+        if (state.getPiece(row, col).getPieceType() == Piece.PieceType.PAWN) {
+            Pawn pawn = new Pawn(state.getPiece(row,col), state, color);
+            state.setCircles(pawn.getX(), pawn.getY());
+        } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.KNIGHT) {
+            Knight knight = new Knight(state.getPiece(row,col), state, color);
+            state.setCircles(knight.getX(), knight.getY());
+        } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.BISHOP) {
+            Bishop bishop = new Bishop(state.getPiece(row,col), state, color);
+            state.setCircles(bishop.getX(), bishop.getY());
+        } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK) {
+            Rook rook = new Rook(state.getPiece(row,col), state, color);
+            state.setCircles(rook.getX(), rook.getY());
+        } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.QUEEN) {
+            Queen queen = new Queen(state.getPiece(row,col), state, color);
+            state.setCircles(queen.getX(), queen.getY());
+        } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
+            King king = new King(state.getPiece(row,col), state, color);
+            state.setCircles(king.getX(), king.getY());
+        }
+    }
+
+    public boolean setMovement(ChessState state, int row, int col) {
+        // if they have no selected a piece movement shouldn't occur
+        if (tempRow == -1 || tempCol == -1) {
+            return false;
+        }
+        if(state.getCircles(row,col) == 2) {
+
+            // set the new position to be the piece they originally selected
+            state.setPiece(row, col, state.getPiece(tempRow, tempCol));
+
+            // change the piece at the selection to be an empty piece
+            state.setPiece(tempRow, tempCol, state.emptyPiece);
+
+            // reset temp values so only selections may occur
+            tempRow = -1;
+            tempCol = -1;
+
+            // remove the highlighted square and all the circles after moving
+            state.removeHighlight();
+            state.removeCircles();
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }
