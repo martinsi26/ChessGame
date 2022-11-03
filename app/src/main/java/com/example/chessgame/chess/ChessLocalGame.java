@@ -7,6 +7,7 @@ import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
 import com.example.chessgame.chess.pieces.Bishop;
+import com.example.chessgame.chess.pieces.King;
 import com.example.chessgame.chess.pieces.Knight;
 import com.example.chessgame.chess.pieces.Pawn;
 import com.example.chessgame.chess.pieces.Queen;
@@ -216,7 +217,8 @@ public class ChessLocalGame extends LocalGame {
             Queen queen = new Queen(state.getPiece(row,col), state, color);
             state.setCircles(queen.getX(), queen.getY());
         } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
-
+            King king = new King(state.getPiece(row,col), state, color);
+            state.setCircles(king.getX(), king.getY());
         }
     }
 

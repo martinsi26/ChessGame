@@ -107,7 +107,7 @@ public class Queen {
 
         for (int i = 1; i < 8; i++) {
             if (x - i >= 0) {
-                if (state.getPiece(x - i, y).getPieceColor() != color && !stopLeft) {
+                if (state.getPiece(x - i, y).getPieceColor() == colorInverse && !stopLeft) {
                     xMovement.add(x - i);
                     yMovement.add(y);
                     stopLeft = true;
@@ -121,7 +121,7 @@ public class Queen {
                 }
             }
             if (y - i >= 0) {
-                if (state.getPiece(x, y - i).getPieceColor() != color && !stopUp) {
+                if (state.getPiece(x, y - i).getPieceColor() == colorInverse && !stopUp) {
                     xMovement.add(x);
                     yMovement.add(y - i);
                     stopUp = true;
@@ -135,7 +135,7 @@ public class Queen {
                 }
             }
             if (y + i < 8) {
-                if (state.getPiece(x, y + i).getPieceColor() != color && !stopDown) {
+                if (state.getPiece(x, y + i).getPieceColor() == colorInverse && !stopDown) {
                     xMovement.add(x);
                     yMovement.add(y + i);
                     stopDown = true;
@@ -149,7 +149,7 @@ public class Queen {
                 }
             }
             if (x + i < 8) {
-                if (state.getPiece(x + i, y).getPieceColor() != color && !stopRight) {
+                if (state.getPiece(x + i, y).getPieceColor() == colorInverse && !stopRight) {
                     xMovement.add(x + i);
                     yMovement.add(y);
                     stopRight = true;
