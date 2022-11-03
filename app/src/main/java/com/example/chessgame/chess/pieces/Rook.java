@@ -12,11 +12,19 @@ public class Rook {
     private int x;
     private int y;
 
-    public Rook(Piece piece) {
+    private Piece.ColorType colorInverse;
+
+    public Rook(Piece piece, ChessState state, Piece.ColorType color) {
         x = piece.getX();
         y = piece.getY();
         xMovement = new ArrayList<>();
         yMovement = new ArrayList<>();
+        if(color == Piece.ColorType.WHITE) {
+            colorInverse = Piece.ColorType.BLACK;
+        } else if (color == Piece.ColorType.BLACK) {
+            colorInverse = Piece.ColorType.WHITE;
+        }
+        rookMovement(state, color);
     }
 
     public void rookMovement(ChessState state, Piece.ColorType color) {
@@ -27,7 +35,7 @@ public class Rook {
 
         for (int i = 1; i < 8; i++) {
             if (x - i >= 0) {
-                if (state.getPiece(x - i, y).getPieceColor() != color && !stopLeft) {
+                if (state.getPiece(x - i, y).getPieceColor() == colorInverse && !stopLeft) {
                     xMovement.add(x - i);
                     yMovement.add(y);
                     stopLeft = true;
@@ -41,7 +49,7 @@ public class Rook {
                 }
             }
             if (y - i >= 0) {
-                if (state.getPiece(x, y - i).getPieceColor() != color && !stopUp) {
+                if (state.getPiece(x, y - i).getPieceColor() == colorInverse && !stopUp) {
                     xMovement.add(x);
                     yMovement.add(y - i);
                     stopUp = true;
@@ -55,7 +63,7 @@ public class Rook {
                 }
             }
             if (y + i < 8) {
-                if (state.getPiece(x, y + i).getPieceColor() != color && !stopDown) {
+                if (state.getPiece(x, y + i).getPieceColor() == colorInverse && !stopDown) {
                     xMovement.add(x);
                     yMovement.add(y + i);
                     stopDown = true;
@@ -69,7 +77,7 @@ public class Rook {
                 }
             }
             if (x + i < 8) {
-                if (state.getPiece(x + i, y).getPieceColor() != color && !stopRight) {
+                if (state.getPiece(x + i, y).getPieceColor() == colorInverse && !stopRight) {
                     xMovement.add(x + i);
                     yMovement.add(y);
                     stopRight = true;
