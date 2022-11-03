@@ -54,6 +54,7 @@ public class ChessLocalGame extends LocalGame {
      *
      * 	 @param players
      */
+
     @Override
     public void start(GamePlayer[] players)
     {
