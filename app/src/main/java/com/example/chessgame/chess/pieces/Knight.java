@@ -13,11 +13,12 @@ public class Knight {
     private int x;
     private int y;
 
-    public Knight(Piece piece) {
+    public Knight(Piece piece, ChessState state, Piece.ColorType color) {
         x = piece.getX();
         y = piece.getY();
         xMovement = new ArrayList<>();
         yMovement = new ArrayList<>();
+        knightMovement(state, color);
     }
 
     public void knightMovement(ChessState state, Piece.ColorType color) {

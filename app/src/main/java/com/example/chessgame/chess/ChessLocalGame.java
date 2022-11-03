@@ -6,8 +6,11 @@ import com.example.chessgame.GameFramework.players.GamePlayer;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
+import com.example.chessgame.chess.pieces.Bishop;
 import com.example.chessgame.chess.pieces.Knight;
 import com.example.chessgame.chess.pieces.Pawn;
+import com.example.chessgame.chess.pieces.Queen;
+import com.example.chessgame.chess.pieces.Rook;
 
 public class ChessLocalGame extends LocalGame {
 
@@ -168,7 +171,7 @@ public class ChessLocalGame extends LocalGame {
                         }
                     }
                 }
-                
+
                 // highlight the piece they clicked
                 state.setHighlight(row, col);
 
@@ -202,19 +205,20 @@ public class ChessLocalGame extends LocalGame {
 
     public void findMovement(ChessState state, int row, int col, Piece.ColorType color) {
         if (state.getPiece(row, col).getPieceType() == Piece.PieceType.PAWN) {
-            Pawn pawn = new Pawn(state.getPiece(row,col));
-            pawn.pawnMovement(state, color);
+            Pawn pawn = new Pawn(state.getPiece(row,col), state, color);
             state.setCircles(pawn.getX(), pawn.getY());
         } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.KNIGHT) {
-            Knight knight = new Knight(state.getPiece(row,col));
-            knight.knightMovement(state, color);
+            Knight knight = new Knight(state.getPiece(row,col), state, color);
             state.setCircles(knight.getX(), knight.getY());
         } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.BISHOP) {
-
+            Bishop bishop = new Bishop(state.getPiece(row,col), state, color);
+            state.setCircles(bishop.getX(), bishop.getY());
         } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK) {
-
+            Rook rook = new Rook(state.getPiece(row,col), state, color);
+            state.setCircles(rook.getX(), rook.getY());
         } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.QUEEN) {
-
+            Queen queen = new Queen(state.getPiece(row,col), state, color);
+            state.setCircles(queen.getX(), queen.getY());
         } else if (state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
 
         }

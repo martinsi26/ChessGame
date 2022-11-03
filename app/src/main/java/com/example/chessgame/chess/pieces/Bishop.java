@@ -12,11 +12,19 @@ public class Bishop {
     private int x;
     private int y;
 
-    public Bishop(Piece piece) {
+    private Piece.ColorType colorInverse;
+
+    public Bishop(Piece piece, ChessState state, Piece.ColorType color) {
         x = piece.getX();
         y = piece.getY();
         xMovement = new ArrayList<>();
         yMovement = new ArrayList<>();
+        if(color == Piece.ColorType.WHITE) {
+            colorInverse = Piece.ColorType.BLACK;
+        } else if (color == Piece.ColorType.BLACK) {
+            colorInverse = Piece.ColorType.WHITE;
+        }
+        bishopMovement(state, color);
     }
 
     public void bishopMovement(ChessState state, Piece.ColorType color) {
@@ -27,7 +35,7 @@ public class Bishop {
 
         for (int i = 1; i < 8; i++) {
             if (y - i >= 0 && x - i >= 0) {
-                if (state.getPiece(x - i, y - i).getPieceColor() != color && !stopUpLeft) {
+                if (state.getPiece(x - i, y - i).getPieceColor() == colorInverse && !stopUpLeft) {
                     xMovement.add(x - i);
                     yMovement.add(y - i);
                     stopUpLeft = true;
@@ -41,7 +49,7 @@ public class Bishop {
                 }
             }
             if (y - i >= 0 && x + i < 8) {
-                if (state.getPiece(x + i, y - i).getPieceColor() != color && !stopUpRight) {
+                if (state.getPiece(x + i, y - i).getPieceColor() == colorInverse && !stopUpRight) {
                     xMovement.add(x + i);
                     yMovement.add(y - i);
                     stopUpRight = true;
@@ -55,7 +63,7 @@ public class Bishop {
                 }
             }
             if (y + i < 8 && x - i >= 0) {
-                if (state.getPiece(x - i, y + i).getPieceColor() != color && !stopDownLeft) {
+                if (state.getPiece(x - i, y + i).getPieceColor() == colorInverse && !stopDownLeft) {
                     xMovement.add(x - i);
                     yMovement.add(y + i);
                     stopDownLeft = true;
@@ -69,7 +77,7 @@ public class Bishop {
                 }
             }
             if (y + i < 8 && x + i < 8) {
-                if (state.getPiece(x + i, y + i).getPieceColor() != color && !stopDownRight) {
+                if (state.getPiece(x + i, y + i).getPieceColor() == colorInverse && !stopDownRight) {
                     xMovement.add(x + i);
                     yMovement.add(y + i);
                     stopDownRight = true;
