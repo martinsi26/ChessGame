@@ -148,6 +148,7 @@ public class ChessLocalGame extends LocalGame {
                 // unless the position they are moving to is not a circle
                 // then they are not doing anything
                 if(!setMovement(state,row,col)) {
+                    state.removeHighlight();
                     return false;
                 }
             }
