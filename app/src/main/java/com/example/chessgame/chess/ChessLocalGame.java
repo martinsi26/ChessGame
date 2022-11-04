@@ -37,9 +37,7 @@ public class ChessLocalGame extends LocalGame {
         super.state = new ChessState();
     }
 
-<<<<<<< HEAD
-    //this is a test
-=======
+
     /**
      * Constructor for the TTTLocalGame with loaded tttState
      * @param chessState
@@ -56,7 +54,7 @@ public class ChessLocalGame extends LocalGame {
      *
      * 	 @param players
      */
->>>>>>> master
+
     @Override
     public void start(GamePlayer[] players)
     {
@@ -152,6 +150,7 @@ public class ChessLocalGame extends LocalGame {
                 // unless the position they are moving to is not a circle
                 // then they are not doing anything
                 if(!setMovement(state,row,col)) {
+                    state.removeHighlight();
                     return false;
                 }
             }
