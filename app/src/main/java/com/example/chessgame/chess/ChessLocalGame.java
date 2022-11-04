@@ -234,6 +234,7 @@ public class ChessLocalGame extends LocalGame {
 
             // set the new position to be the piece they originally selected
             state.setPiece(row, col, state.getPiece(tempRow, tempCol));
+            //TODO put display moves log here
 
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
