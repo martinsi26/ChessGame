@@ -35,7 +35,7 @@ import com.example.chessgame.GameFramework.utilities.IPCoder;
 import com.example.chessgame.GameFramework.utilities.Logger;
 import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.GameFramework.utilities.Saving;
-import com.example.chessgame.R;//
+import com.example.chessgame.R;
 
 /**
  * class GameMainActivity
