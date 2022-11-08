@@ -85,6 +85,7 @@ public class ChessState extends GameState implements Serializable {
         //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
+
         for(int i = 0; i < whiteCapturedPieces.size(); i++){
             whiteCapturedPieces.add(other.whiteCapturedPieces.get(i));
         }
@@ -165,5 +166,9 @@ public class ChessState extends GameState implements Serializable {
 
     public ArrayList<Piece> getWhiteCapturedPieces(){return this.whiteCapturedPieces;}
     public ArrayList<Piece> getBlackCapturedPieces(){return this.blackCapturedPieces;}
+
+    public void addWhiteCapturedPiece(Piece p){
+        whiteCapturedPieces.add(p);
+    }
 }
 

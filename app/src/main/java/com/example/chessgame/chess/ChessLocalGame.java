@@ -1,5 +1,7 @@
 package com.example.chessgame.chess;
 
+import android.util.Log;
+
 import com.example.chessgame.GameFramework.LocalGame;
 import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
@@ -22,8 +24,8 @@ public class ChessLocalGame extends LocalGame {
     // determine whether the game is over
     protected int moveCount;
 
-    private int tempRow;
-    private int tempCol;
+    private int initialRow;
+    private int initialCol;
 
     /**
      * Constructor for the TTTLocalGame.
@@ -136,8 +138,8 @@ public class ChessLocalGame extends LocalGame {
                 state.setHighlight(row, col);
 
                 // save temps for the row and col for movement later
-                tempRow = row;
-                tempCol = col;
+                initialRow = row;
+                initialCol = col;
 
                 findMovement(state, row, col, Piece.ColorType.WHITE);
 
@@ -175,8 +177,8 @@ public class ChessLocalGame extends LocalGame {
                 state.setHighlight(row, col);
 
                 // save temps for the row and col for movement later
-                tempRow = row;
-                tempCol = col;
+                initialRow = row;
+                initialCol = col;
 
                 findMovement(state, row, col, Piece.ColorType.BLACK);
 
@@ -224,23 +226,28 @@ public class ChessLocalGame extends LocalGame {
         }
     }
 
-    public boolean setMovement(ChessState state, int row, int col) {
-        // if they have no selected a piece movement shouldn't occur
-        if (tempRow == -1 || tempCol == -1) {
+    public boolean setMovement(ChessState state, int toRow, int toCol) {
+        // if they have not selected a piece, movement shouldn't occur
+        if (initialRow == -1 || initialCol == -1) {
             return false;
         }
-        if(state.getCircles(row,col) == 2) {
 
+        if(state.getCircles(toRow,toCol) == 2) {
+
+            //adds captured piece to captured pieces array
+            if(state.getPiece(toRow, toCol).getPieceType() != Piece.PieceType.EMPTY){
+                state.addWhiteCapturedPiece(state.getPiece(toRow, toCol));
+            }
 
             // set the new position to be the piece they originally selected
-            state.setPiece(row, col, state.getPiece(tempRow, tempCol));
+            state.setPiece(toRow, toCol, state.getPiece(initialRow, initialCol));
 
             // change the piece at the selection to be an empty piece
-            state.setPiece(tempRow, tempCol, state.emptyPiece);
+            state.setPiece(initialRow, initialCol, state.emptyPiece);
 
             // reset temp values so only selections may occur
-            tempRow = -1;
-            tempCol = -1;
+            initialRow = -1;
+            initialCol = -1;
 
             // remove the highlighted square and all the circles after moving
             state.removeHighlight();
