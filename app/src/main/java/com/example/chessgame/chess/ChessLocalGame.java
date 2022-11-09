@@ -257,9 +257,8 @@ public class ChessLocalGame extends LocalGame {
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
 
-            // highlight the current location of the piece and the location it came from
-            state.setHighlight(row, col);
-            state.setHighlight(tempRow, tempCol);
+            // remove all highlights
+            state.removeHighlight();
 
             // reset temp values so only selections may occur
             tempRow = -1;
