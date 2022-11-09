@@ -3,6 +3,7 @@ package com.example.chessgame.chess.players;
 import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
 import com.example.chessgame.GameFramework.infoMessage.GameInfo;
@@ -12,6 +13,7 @@ import com.example.chessgame.GameFramework.players.GameHumanPlayer;
 import com.example.chessgame.R;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
+import com.example.chessgame.chess.infoMessage.Piece;
 import com.example.chessgame.chess.views.ChessBoardSurfaceView;
 
 public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchListener {
@@ -21,12 +23,14 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     // the surface view
     private ChessBoardSurfaceView surfaceView;
+    public TextView movesLog;
 
     // the ID for the layout to use
     private int layoutId;
 
     private ChessState state;
-
+    private int numTurns;
+    private boolean justStarted;
     private int x = 8;
     private int y = 8;
 
@@ -38,6 +42,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     public ChessHumanPlayer(String name, int layoutId) {
         super(name);
         this.layoutId = layoutId;
+        numTurns = 1;
+        justStarted = true;
     }
 
     public void setState(ChessState state) {
@@ -72,7 +78,10 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         // set the surfaceView instance variable
         surfaceView = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
         surfaceView.setOnTouchListener(this);
+        movesLog = myActivity.findViewById(R.id.movesLog);
     }
+
+    public TextView getMovesLog(){return this.movesLog;}
 
     /**
      * returns the GUI's top view
@@ -128,5 +137,66 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
         // register that we have handled the event
         return true;
+    }
+
+    public void displayMovesLog(int row, int col, ChessState state,boolean isCapture){
+        if(state == null)return;
+        Piece.PieceType currPiece = state.getPiece(row,col).getPieceType();
+        String toReturn = "";
+        if(justStarted){
+            movesLog.append("\n");
+            justStarted = false;
+        }
+        boolean whitesTurn = state.getWhoseMove() == 0;
+        if(whitesTurn) {
+            toReturn += numTurns + ")";
+        }
+        if(currPiece == Piece.PieceType.KING){
+            toReturn+="K";
+        }else if(currPiece == Piece.PieceType.QUEEN){
+            toReturn+="Q";
+        }else if(currPiece == Piece.PieceType.BISHOP){
+            toReturn += "B";
+        }else if(currPiece == Piece.PieceType.KNIGHT){
+            toReturn += "N";
+        }else if(currPiece == Piece.PieceType.ROOK){
+            toReturn += "R";
+        }
+        if(state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY){
+            toReturn += "x";
+        }
+        switch(row){
+            case(0):
+                toReturn += 'a';
+                break;
+            case(1):
+                toReturn += 'b';
+                break;
+            case(2):
+                toReturn += 'c';
+                break;
+            case(3):
+                toReturn += 'd';
+                break;
+            case(4):
+                toReturn += 'e';
+                break;
+            case(5):
+                toReturn += 'f';
+                break;
+            case(6):
+                toReturn += 'g';
+                break;
+            case(7):
+                toReturn += 'h';
+                break;
+        }
+        toReturn += col + 1 + " ";
+        if(!whitesTurn){
+            numTurns++;
+            toReturn+="\n";
+        }
+        movesLog.append(toReturn);
+
     }
 }

@@ -12,6 +12,9 @@ import com.example.chessgame.chess.pieces.Knight;
 import com.example.chessgame.chess.pieces.Pawn;
 import com.example.chessgame.chess.pieces.Queen;
 import com.example.chessgame.chess.pieces.Rook;
+import com.example.chessgame.chess.players.ChessHumanPlayer;
+
+import java.util.jar.Attributes;
 
 public class ChessLocalGame extends LocalGame {
 
@@ -231,11 +234,12 @@ public class ChessLocalGame extends LocalGame {
             return false;
         }
         if(state.getCircles(row,col) == 2) {
-
             // set the new position to be the piece they originally selected
+            boolean isCapture = state.getPiece(tempRow,tempCol).getPieceType() != Piece.PieceType.EMPTY;
             state.setPiece(row, col, state.getPiece(tempRow, tempCol));
             //TODO put display moves log here
-
+            ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
+            chp.displayMovesLog(row,col,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
 

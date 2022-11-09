@@ -154,5 +154,6 @@ public class ChessState extends GameState implements Serializable {
 
     public ArrayList<Piece> getWhiteCapturedPieces(){return this.whiteCapturedPieces;}
     public ArrayList<Piece> getBlackCapturedPieces(){return this.blackCapturedPieces;}
+
 }
 
