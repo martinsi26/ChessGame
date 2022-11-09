@@ -56,6 +56,9 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         availablePieces = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int k = 0; k < 8; k++) {
+                if (chessState.getDrawing(i, k) == 1) {
+                    return;
+                }
                 Piece p = chessState.getPiece(i, k);
                 if (playerNum == 0 && p.getPieceColor() == Piece.ColorType.WHITE) {
                     availablePieces.add(p);
