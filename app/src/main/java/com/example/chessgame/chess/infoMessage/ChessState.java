@@ -20,6 +20,8 @@ public class ChessState extends GameState implements Serializable {
     private Piece[][] pieces; // An array that holds all of the pieces and their position
     private int[][] board; // An array that determines what kind of drawing should be made
     private int turnCount;
+    private Piece kingBlack;
+    private Piece kingWhite;
 
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
@@ -66,6 +68,8 @@ public class ChessState extends GameState implements Serializable {
                 }
             }
         }
+        kingWhite = new Piece(Piece.PieceType.KING, Piece.ColorType.WHITE, 4, 7);
+        kingBlack = new Piece(Piece.PieceType.KING, Piece.ColorType.BLACK, 4, 0);
         emptyPiece = new Piece(Piece.PieceType.EMPTY, Piece.ColorType.EMPTY, 0, 0);
 
         for (int row = 0; row < board.length; row++) {
@@ -94,6 +98,8 @@ public class ChessState extends GameState implements Serializable {
                 board[i][j] = other.board[i][j];
             }
         }
+        kingWhite = other.kingWhite;
+        kingBlack = other.kingBlack;
         emptyPiece = other.emptyPiece;
 
         playerToMove = other.playerToMove;
@@ -110,24 +116,30 @@ public class ChessState extends GameState implements Serializable {
         pieces[row][col] = piece;
     }
 
-    public int getHighlight(int row, int col) {
-        return board[row][col];
+    public void setKingWhite(int row, int col) {
+        kingWhite.setX(row);
+        kingWhite.setY(col);
+    }
+
+    public void setKingBlack(int row, int col) {
+        kingBlack.setX(row);
+        kingBlack.setY(col);
+    }
+
+    public Piece getKingWhite() {
+        return kingWhite;
+    }
+
+    public Piece getKingBlack() {
+        return kingBlack;
+    }
+
+    public void setHighlightCheck(int row, int col) {
+        board[row][col] = 3;
     }
 
     public void setHighlight(int row, int col) {
         board[row][col] = 1;
-    }
-
-    public void removeHighlight() {
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[i].length; j++) {
-                board[i][j] = 0;
-            }
-        }
-    }
-
-    public int getCircles(int row, int col) {
-        return board[row][col];
     }
 
     public void setCircles(ArrayList<Integer> row, ArrayList<Integer> col) {
@@ -136,12 +148,44 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
-    public void removeCircles() {
+    public void removeHighlight() {
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[i].length; j++) {
-                board[i][j] = 0;
+                if (board[i][j] == 1) {
+                    board[i][j] = 0;
+                }
             }
         }
+    }
+
+    public void removeDot() {
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 2) {
+                    board[i][j] = 0;
+                }
+            }
+        }
+    }
+
+    public void removeDot(int row, int col) {
+        if (board[row][col] == 2) {
+            board[row][col] = 0;
+        }
+    }
+
+    public void removeHighlightCheck() {
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 3) {
+                    board[i][j] = 0;
+                }
+            }
+        }
+    }
+
+    public int getDrawing(int row, int col) {
+        return board[row][col];
     }
 
     public int getWhoseMove() {
