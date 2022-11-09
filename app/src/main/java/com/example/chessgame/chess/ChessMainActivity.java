@@ -44,7 +44,7 @@ public class ChessMainActivity extends GameMainActivity {
         // dumb computer player
         playerTypes.add(new GamePlayerType("Computer Player (dumb)") {
             public GamePlayer createPlayer(String name) {
-                return new ChessComputerPlayer(name, (ChessState) getGameState());
+                return new ChessComputerPlayer(name);
             }
         });
 

@@ -5,6 +5,7 @@ import com.example.chessgame.GameFramework.infoMessage.IllegalMoveInfo;
 import com.example.chessgame.GameFramework.infoMessage.NotYourTurnInfo;
 import com.example.chessgame.GameFramework.players.GameComputerPlayer;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
 import com.example.chessgame.chess.pieces.Bishop;
@@ -63,7 +64,7 @@ public class ChessComputerPlayer2 extends GameComputerPlayer {
             selection = availablePieces.get(h);
             int xVal = selection.getX();
             int yVal = selection.getY();
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
+            game.sendAction(new ChessSelectAction(this, xVal, yVal));
             sleep(1);
 
             //need to send a possible coord to move to
