@@ -99,6 +99,8 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         return Color.YELLOW;
     }
 
+    public int checkedSquare() { return Color.RED; }
+
     public int dot() {
         return Color.LTGRAY;
     }
@@ -129,8 +131,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
 
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                drawSelection(canvas, state.getHighlight(row, col), row, col);
-                drawSelection(canvas, state.getCircles(row, col), row, col);
+                drawGraphics(canvas, state.getDrawing(row, col), row, col);
                 drawPiece(canvas, state.getPiece(row, col), row, col);
             }
         }
@@ -154,7 +155,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
 
 
 
-    protected void drawSelection(Canvas canvas, int num, int col, int row) {
+    protected void drawGraphics(Canvas canvas, int num, int col, int row) {
         float leftLoc = left + size * col;
         float topLoc = top + size * row;
         float rightLoc = right + size * col;
@@ -165,7 +166,11 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         float radius = (right - left) / 5;
 
         Paint highlightPaint = new Paint();
-        highlightPaint.setColor(highlightedSquare());
+        if (num == 1) {
+            highlightPaint.setColor(highlightedSquare());
+        } else if (num == 3) {
+            highlightPaint.setColor(checkedSquare());
+        }
         Paint dotPaint = new Paint();
         dotPaint.setColor(dot());
 
@@ -173,6 +178,8 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
             canvas.drawRect(leftLoc, topLoc, rightLoc, bottomLoc, highlightPaint);
         } else if(num == 2) {
             canvas.drawCircle(centerX, centerY, radius, dotPaint);
+        } else if(num == 3) {
+            canvas.drawRect(leftLoc, topLoc, rightLoc, bottomLoc, highlightPaint);
         }
     }
 
