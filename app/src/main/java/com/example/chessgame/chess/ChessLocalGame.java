@@ -287,13 +287,14 @@ public class ChessLocalGame extends LocalGame {
         if (state.getDrawing(row, col) == 2) {
 
             //adds captured piece to captured pieces array t
-            if(state.getPiece(toRow, toCol).getPieceType() != Piece.PieceType.EMPTY){
-                state.addWhiteCapturedPiece(state.getPiece(toRow, toCol));
+            if(state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY){
+                state.addWhiteCapturedPiece(state.getPiece(row, col));
             }
 
             for(Piece p : state.getWhiteCapturedPieces()){
                 Log.d("Testing", p.getPieceType().toString());
             }
+
             // change the location of the king to be at the new square if it is going to be moved
             if (state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING) {
                 if (state.getPiece(tempRow, tempCol).getPieceColor() == Piece.ColorType.WHITE) {
