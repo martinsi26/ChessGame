@@ -235,11 +235,11 @@ public class ChessLocalGame extends LocalGame {
         }
         if(state.getCircles(row,col) == 2) {
             // set the new position to be the piece they originally selected
-            boolean isCapture = state.getPiece(tempRow,tempCol).getPieceType() != Piece.PieceType.EMPTY;
+            boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
             state.setPiece(row, col, state.getPiece(tempRow, tempCol));
             //TODO put display moves log here
             ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
-            chp.displayMovesLog(row,col,state,isCapture);
+            chp.displayMovesLog(row,col,tempRow,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
 

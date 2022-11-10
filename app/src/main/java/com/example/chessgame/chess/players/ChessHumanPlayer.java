@@ -139,9 +139,9 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         return true;
     }
 
-    public void displayMovesLog(int row, int col, ChessState state,boolean isCapture){
+    public void displayMovesLog(int currRow, int currCol,int tempRow, ChessState state,boolean isCapture){
         if(state == null)return;
-        Piece.PieceType currPiece = state.getPiece(row,col).getPieceType();
+        Piece.PieceType currPiece = state.getPiece(currRow,currCol).getPieceType();
         String toReturn = "";
         if(justStarted){
             movesLog.append("\n");
@@ -162,41 +162,41 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         }else if(currPiece == Piece.PieceType.ROOK){
             toReturn += "R";
         }
-        if(state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY){
+        if(isCapture && currPiece == Piece.PieceType.PAWN){
+            toReturn += determineRow(tempRow);
+            toReturn += "x";
+        }else if(isCapture){
             toReturn += "x";
         }
-        switch(row){
-            case(0):
-                toReturn += 'a';
-                break;
-            case(1):
-                toReturn += 'b';
-                break;
-            case(2):
-                toReturn += 'c';
-                break;
-            case(3):
-                toReturn += 'd';
-                break;
-            case(4):
-                toReturn += 'e';
-                break;
-            case(5):
-                toReturn += 'f';
-                break;
-            case(6):
-                toReturn += 'g';
-                break;
-            case(7):
-                toReturn += 'h';
-                break;
-        }
-        toReturn += col + 1 + " ";
+        toReturn += determineRow(currRow);
+        toReturn += currCol + 1 + " ";
         if(!whitesTurn){
             numTurns++;
             toReturn+="\n";
         }
         movesLog.append(toReturn);
 
+    }
+
+    private char determineRow(int row){
+        switch(row){
+            case(0):
+                return 'a';
+            case(1):
+                return 'b';
+            case(2):
+                return 'c';
+            case(3):
+                return'd';
+            case(4):
+                return 'e';
+            case(5):
+                return 'f';
+            case(6):
+                return 'g';
+            case(7):
+                return 'h';
+        }
+        return 'q';
     }
 }
