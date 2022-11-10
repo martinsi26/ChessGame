@@ -281,12 +281,7 @@ public class ChessLocalGame extends LocalGame {
         }
     }
 
-    public boolean setMovement(ChessState state, int row, int col) {
-        // if they have no selected a piece movement shouldn't occur
-        if (tempRow == -1 || tempCol == -1) {
-            return false;
-        }
-        if(state.getCircles(row,col) == 2) {
+
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
         // if they selected a dot then move
         if (state.getDrawing(row, col) == 2) {
