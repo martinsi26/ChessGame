@@ -239,6 +239,10 @@ public class ChessLocalGame extends LocalGame {
                 state.addWhiteCapturedPiece(state.getPiece(toRow, toCol));
             }
 
+            for(Piece p : state.getWhiteCapturedPieces()){
+                Log.d("Testing", p.getPieceType().toString());
+            }
+
             // set the new position to be the piece they originally selected
             state.setPiece(toRow, toCol, state.getPiece(initialRow, initialCol));
 
