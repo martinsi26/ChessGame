@@ -234,7 +234,7 @@ public class ChessLocalGame extends LocalGame {
 
         if(state.getCircles(toRow,toCol) == 2) {
 
-            //adds captured piece to captured pieces array
+            //adds captured piece to captured pieces array t
             if(state.getPiece(toRow, toCol).getPieceType() != Piece.PieceType.EMPTY){
                 state.addWhiteCapturedPiece(state.getPiece(toRow, toCol));
             }
