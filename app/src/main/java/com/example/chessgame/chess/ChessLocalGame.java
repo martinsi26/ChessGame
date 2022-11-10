@@ -295,6 +295,7 @@ public class ChessLocalGame extends LocalGame {
                 }
             }
 
+
             // set the new position to be the piece they originally selected
             boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
             state.setPiece(row, col, state.getPiece(tempRow, tempCol));

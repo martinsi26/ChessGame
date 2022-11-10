@@ -99,6 +99,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         resignButton.setOnTouchListener(this);
     }
 
+    public TextView getMovesLog(){return this.movesLog;}
+
     /**
      * returns the GUI's top view
      *
