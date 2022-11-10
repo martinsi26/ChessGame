@@ -59,6 +59,9 @@ public class ChessComputerPlayer extends GameComputerPlayer {
                 if (chessState.getDrawing(i, k) == 1) {
                     return;
                 }
+                if (chessState.getDrawing(i, k) == 3) {
+                    sleep(1);
+                }
                 Piece p = chessState.getPiece(i, k);
                 if (playerNum == 0 && p.getPieceColor() == Piece.ColorType.WHITE) {
                     availablePieces.add(p);
