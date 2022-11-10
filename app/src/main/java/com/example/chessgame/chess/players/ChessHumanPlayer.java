@@ -1,8 +1,10 @@
 package com.example.chessgame.chess.players;
 
 import android.graphics.Color;
+import android.os.CountDownTimer;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
@@ -10,6 +12,7 @@ import com.example.chessgame.GameFramework.infoMessage.GameInfo;
 import com.example.chessgame.GameFramework.infoMessage.IllegalMoveInfo;
 import com.example.chessgame.GameFramework.infoMessage.NotYourTurnInfo;
 import com.example.chessgame.GameFramework.players.GameHumanPlayer;
+import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.R;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
@@ -29,6 +32,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     private ChessBoardSurfaceView surfaceView;
     public TextView movesLog;
     private ChessBoardSurfaceView surfaceViewChessBoard;
+    private Button resignButton;
     //private BlackCaptureSurfaceView surfaceViewBlackCapture;
     //private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
 
@@ -88,9 +92,11 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         surfaceView.setOnTouchListener(this);
         movesLog = myActivity.findViewById(R.id.movesLog);
         surfaceViewChessBoard = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
+        resignButton = myActivity.findViewById(R.id.surrenderButton);
         //surfaceViewWhiteCapture = (WhiteCaptureSurfaceView) myActivity.findViewById(R.id.whiteCaptures);
         //surfaceViewBlackCapture = (BlackCaptureSurfaceView) myActivity.findViewById(R.id.blackCaptures);
         surfaceViewChessBoard.setOnTouchListener(this);
+        resignButton.setOnTouchListener(this);
     }
 
     /**
@@ -123,6 +129,21 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
+        if(view.getId() == resignButton.getId()){
+            MessageBox.popUpMessage("Game Over!\n You have resigned",myActivity);
+            CountDownTimer cdt = new CountDownTimer(3000,10) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    myActivity.finishAffinity();
+                }
+            };
+            cdt.start();
+        }
         // ignore if not an "down" event
         if (motionEvent.getAction() != MotionEvent.ACTION_DOWN) {
             return true;
