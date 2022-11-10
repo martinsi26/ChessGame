@@ -3,6 +3,7 @@ package com.example.chessgame.chess.players;
 import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
 import com.example.chessgame.GameFramework.infoMessage.GameInfo;
@@ -11,8 +12,12 @@ import com.example.chessgame.GameFramework.infoMessage.NotYourTurnInfo;
 import com.example.chessgame.GameFramework.players.GameHumanPlayer;
 import com.example.chessgame.R;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
+import com.example.chessgame.chess.infoMessage.Piece;
+import com.example.chessgame.chess.views.BlackCaptureSurfaceView;
 import com.example.chessgame.chess.views.ChessBoardSurfaceView;
+import com.example.chessgame.chess.views.WhiteCaptureSurfaceView;
 
 public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchListener {
 
@@ -21,12 +26,17 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     // the surface view
     private ChessBoardSurfaceView surfaceView;
+    public TextView movesLog;
+    private ChessBoardSurfaceView surfaceViewChessBoard;
+    //private BlackCaptureSurfaceView surfaceViewBlackCapture;
+    //private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
 
     // the ID for the layout to use
     private int layoutId;
 
     private ChessState state;
-
+    private int numTurns;
+    private boolean justStarted;
     private int x = 8;
     private int y = 8;
 
@@ -35,9 +45,12 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
      *
      * @param name the name of the player
      */
-    public ChessHumanPlayer(String name, int layoutId) {
+    public ChessHumanPlayer(String name, int layoutId, ChessState state) {
         super(name);
         this.layoutId = layoutId;
+        numTurns = 1;
+        justStarted = true;
+        this.state = state;
     }
 
     public void setState(ChessState state) {
@@ -46,18 +59,18 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     @Override
     public void receiveInfo(GameInfo info) {
-        if (surfaceView == null) {
+        if (surfaceViewChessBoard == null) {
             return;
         }
         if (info instanceof IllegalMoveInfo || info instanceof NotYourTurnInfo) {
             // if the move was out of turn or otherwise illegal, flash the screen
-            surfaceView.flash(Color.RED, 50);
+            surfaceViewChessBoard.flash(Color.RED, 50);
         } else if (!(info instanceof ChessState)) {
             // if we do not have a TTTState, ignore
             return;
         } else {
-            surfaceView.setState((ChessState)info);
-            surfaceView.invalidate();
+            surfaceViewChessBoard.setState((ChessState)info);
+            surfaceViewChessBoard.invalidate();
         }
     }
 
@@ -72,7 +85,14 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         // set the surfaceView instance variable
         surfaceView = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
         surfaceView.setOnTouchListener(this);
+        movesLog = myActivity.findViewById(R.id.movesLog);
+        surfaceViewChessBoard = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
+        //surfaceViewWhiteCapture = (WhiteCaptureSurfaceView) myActivity.findViewById(R.id.whiteCaptures);
+        //surfaceViewBlackCapture = (BlackCaptureSurfaceView) myActivity.findViewById(R.id.blackCaptures);
+        surfaceViewChessBoard.setOnTouchListener(this);
     }
+
+    public TextView getMovesLog(){return this.movesLog;}
 
     /**
      * returns the GUI's top view
@@ -117,10 +137,22 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                 if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
                     if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
 
-                        // create the move action
-                        ChessMoveAction action = new ChessMoveAction(this, i, j);
-                        game.sendAction(action);
-                        surfaceView.invalidate();
+                        // create the select action
+                        if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
+                            ChessSelectAction select = new ChessSelectAction(this, i, j);
+                            game.sendAction(select);
+                        } else if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
+                            ChessSelectAction select = new ChessSelectAction(this, i, j);
+                            game.sendAction(select);
+                        } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
+                            ChessMoveAction move = new ChessMoveAction(this, i, j);
+                            game.sendAction(move);
+                        } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
+                            ChessMoveAction move = new ChessMoveAction(this, i, j);
+                            game.sendAction(move);
+                        }
+
+                        surfaceViewChessBoard.invalidate();
                     }
                 }
             }
@@ -128,5 +160,66 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
         // register that we have handled the event
         return true;
+    }
+
+    public void displayMovesLog(int currRow, int currCol,int tempRow, ChessState state,boolean isCapture){
+        if(state == null)return;
+        Piece.PieceType currPiece = state.getPiece(currRow,currCol).getPieceType();
+        String toReturn = "";
+        if(justStarted){
+            movesLog.append("\n");
+            justStarted = false;
+        }
+        boolean whitesTurn = state.getWhoseMove() == 0;
+        if(whitesTurn) {
+            toReturn += numTurns + ")";
+        }
+        if(currPiece == Piece.PieceType.KING){
+            toReturn+="K";
+        }else if(currPiece == Piece.PieceType.QUEEN){
+            toReturn+="Q";
+        }else if(currPiece == Piece.PieceType.BISHOP){
+            toReturn += "B";
+        }else if(currPiece == Piece.PieceType.KNIGHT){
+            toReturn += "N";
+        }else if(currPiece == Piece.PieceType.ROOK){
+            toReturn += "R";
+        }
+        if(isCapture && currPiece == Piece.PieceType.PAWN){
+            toReturn += determineRow(tempRow);
+            toReturn += "x";
+        }else if(isCapture){
+            toReturn += "x";
+        }
+        toReturn += determineRow(currRow);
+        toReturn += currCol + 1 + " ";
+        if(!whitesTurn){
+            numTurns++;
+            toReturn+="\n";
+        }
+        movesLog.append(toReturn);
+
+    }
+
+    private char determineRow(int row){
+        switch(row){
+            case(0):
+                return 'a';
+            case(1):
+                return 'b';
+            case(2):
+                return 'c';
+            case(3):
+                return'd';
+            case(4):
+                return 'e';
+            case(5):
+                return 'f';
+            case(6):
+                return 'g';
+            case(7):
+                return 'h';
+        }
+        return 'q';
     }
 }

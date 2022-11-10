@@ -3,6 +3,7 @@ package com.example.chessgame.chess;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
 import com.example.chessgame.GameFramework.LocalGame;
@@ -36,16 +37,9 @@ public class ChessMainActivity extends GameMainActivity {
         // yellow-on-blue GUI
         playerTypes.add(new GamePlayerType("Local Human Player") {
             public GamePlayer createPlayer(String name) {
-                return new ChessHumanPlayer(name, R.layout.activity_main);
+                return new ChessHumanPlayer(name, R.layout.activity_main, (ChessState) getGameState());
             }
         });
-
-        // note that most games don't require a second human player class
-        /*playerTypes.add(new GamePlayerType("Local Human Player (game of 33)") {
-            public GamePlayer createPlayer(String name) {
-                return new ChessHumanPlayer(name);
-            }
-        });*/
 
         // dumb computer player
         playerTypes.add(new GamePlayerType("Computer Player (dumb)") {
