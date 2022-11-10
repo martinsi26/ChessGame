@@ -35,6 +35,11 @@ public class ChessLocalGame extends LocalGame {
     private ArrayList<Integer> xKing = new ArrayList<>();
     private ArrayList<Integer> yKing = new ArrayList<>();
 
+    private ArrayList<Piece> piecesCauseCheck = new ArrayList<>();
+
+    private ArrayList<Integer> xBlock = new ArrayList<>();
+    private ArrayList<Integer> yBlock = new ArrayList<>();
+
     /**
      * Constructor for the ChessLocalGame.
      */
@@ -135,17 +140,29 @@ public class ChessLocalGame extends LocalGame {
             // save temps for the row and col for movement later
             tempRow = row;
             tempCol = col;
+
+            ///////////////////////////////////////////////////
+            // generate all possible moves of piece selected
+            // remove all moves that cause check
+            // then find remaining movements to display to user
+            ///////////////////////////////////////////////////
+
             if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.WHITE) {
                 findMovement(state, row, col, Piece.ColorType.WHITE);
             } else if (state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK) {
                 findMovement(state, row, col, Piece.ColorType.BLACK);
             }
+
             // return true to skip changing turns
             return true;
         } else if(action instanceof ChessMoveAction) {
             ChessMoveAction move = (ChessMoveAction) action;
             int row = move.getRow();
             int col = move.getCol();
+            // if they have no selected a piece movement shouldn't occur
+            if (tempRow == -1 || tempCol == -1) {
+                return false;
+            }
             if(state.getPiece(tempRow, tempCol).getPieceColor() == Piece.ColorType.WHITE) {
                 if (!setMovement(state, row, col, Piece.ColorType.WHITE)) {
                     state.removeHighlight();
@@ -202,9 +219,35 @@ public class ChessLocalGame extends LocalGame {
             }
         } else if (getCheck()) {
             // will need to create a method that allows for only legal
-            // moves for being in check
-            findMovementsWhenCheck( state, row, col, color);
 
+            // create a method that locates the positions that can block check
+            findCheckBlock(color, state);
+            // moves for being in check
+            findMovementsWhenCheck(state, row, col, color);
+
+        }
+    }
+
+    public void findCheckBlock(Piece.ColorType color, ChessState state) {
+        for(int i = 0; i < piecesCauseCheck.size(); i++) {
+            xBlock.add(piecesCauseCheck.get(i).getX());
+            yBlock.add(piecesCauseCheck.get(i).getY());
+            if (piecesCauseCheck.get(i).getPieceType() == Piece.PieceType.KNIGHT) {
+                break;
+            } else if (piecesCauseCheck.get(i).getPieceType() == Piece.PieceType.BISHOP) {
+                Bishop bishop = new Bishop(piecesCauseCheck.get(i), state, color);
+                for(int j = 0; j < bishop.getX().size(); j++) {
+                    if(!bishop.getX().get(j).equals(xKing.get(j))) {
+                        xBlock.add(bishop.getX().get(j));
+                    }
+                }
+            } else if (piecesCauseCheck.get(i).getPieceType() == Piece.PieceType.ROOK) {
+                Rook rook = new Rook(piecesCauseCheck.get(i), state, color);
+            } else if (piecesCauseCheck.get(i).getPieceType() == Piece.PieceType.QUEEN) {
+                Queen queen = new Queen(piecesCauseCheck.get(i), state, color);
+            } else if (piecesCauseCheck.get(i).getPieceType() == Piece.PieceType.KING) {
+                King king = new King(piecesCauseCheck.get(i), state, color);
+            }
         }
     }
 
@@ -236,10 +279,7 @@ public class ChessLocalGame extends LocalGame {
     }
 
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
-        // if they have no selected a piece movement shouldn't occur
-        if (tempRow == -1 || tempCol == -1) {
-            return false;
-        }
+        // if they selected a dot then move
         if (state.getDrawing(row, col) == 2) {
 
             // change the location of the king to be at the new square if it is going to be moved
@@ -268,7 +308,7 @@ public class ChessLocalGame extends LocalGame {
             state.removeDot();
 
             // check if the king is in check now
-            if (checkForCheck(state, row, col, color)) {
+            if (checkForCheckMove(state, row, col, color)) {
                 setCheck(true);
             } else {
                 setCheck(false);
@@ -276,6 +316,7 @@ public class ChessLocalGame extends LocalGame {
 
             return true;
         } else {
+            // if they didn't select a dot they don't move
             return false;
         }
     }
@@ -288,21 +329,21 @@ public class ChessLocalGame extends LocalGame {
         return isCheck;
     }
 
-    public boolean checkForCheck(ChessState state, int row, int col, Piece.ColorType color) {
+    public boolean checkForCheckMove(ChessState state, int row, int col, Piece.ColorType color) {
         if (state.getPiece(row, col).getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(state.getPiece(row, col), state, color);
             if (color == Piece.ColorType.BLACK) {
                 for (int i = 0; i < pawn.getXAttack().size(); i++) {
                     if (pawn.getXAttack().get(i) == state.getKingWhite().getX() && pawn.getYAttack().get(i) == state.getKingWhite().getY()) {
                         state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 for (int i = 0; i < pawn.getXAttack().size(); i++) {
                     if (pawn.getXAttack().get(i) == state.getKingBlack().getX() && pawn.getYAttack().get(i) == state.getKingBlack().getY()) {
                         state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             }
@@ -313,14 +354,14 @@ public class ChessLocalGame extends LocalGame {
                 for (int i = 0; i < knight.getX().size(); i++) {
                     if (knight.getX().get(i) == state.getKingWhite().getX() && knight.getY().get(i) == state.getKingWhite().getY()) {
                         state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 for (int i = 0; i < knight.getX().size(); i++) {
                     if (knight.getX().get(i) == state.getKingBlack().getX() && knight.getY().get(i) == state.getKingBlack().getY()) {
                         state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             }
@@ -331,14 +372,14 @@ public class ChessLocalGame extends LocalGame {
                 for (int i = 0; i < bishop.getX().size(); i++) {
                     if (bishop.getX().get(i) == state.getKingWhite().getX() && bishop.getY().get(i) == state.getKingWhite().getY()) {
                         state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 for (int i = 0; i < bishop.getX().size(); i++) {
                     if (bishop.getX().get(i) == state.getKingBlack().getX() && bishop.getY().get(i) == state.getKingBlack().getY()) {
                         state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             }
@@ -349,14 +390,14 @@ public class ChessLocalGame extends LocalGame {
                 for (int i = 0; i < rook.getX().size(); i++) {
                     if (rook.getX().get(i) == state.getKingWhite().getX() && rook.getY().get(i) == state.getKingWhite().getY()) {
                         state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 for (int i = 0; i < rook.getX().size(); i++) {
                     if (rook.getX().get(i) == state.getKingBlack().getX() && rook.getY().get(i) == state.getKingBlack().getY()) {
                         state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             }
@@ -367,17 +408,20 @@ public class ChessLocalGame extends LocalGame {
                 for (int i = 0; i < queen.getX().size(); i++) {
                     if (queen.getX().get(i) == state.getKingWhite().getX() && queen.getY().get(i) == state.getKingWhite().getY()) {
                         state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 for (int i = 0; i < queen.getX().size(); i++) {
                     if (queen.getX().get(i) == state.getKingBlack().getX() && queen.getY().get(i) == state.getKingBlack().getY()) {
                         state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
-                        return true;
+                        piecesCauseCheck.add(state.getPiece(row, col));
                     }
                 }
             }
+        }
+        if (piecesCauseCheck.size() > 0) {
+            return true;
         }
         return false;
     }
