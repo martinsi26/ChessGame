@@ -15,6 +15,9 @@ import com.example.chessgame.chess.pieces.Knight;
 import com.example.chessgame.chess.pieces.Pawn;
 import com.example.chessgame.chess.pieces.Queen;
 import com.example.chessgame.chess.pieces.Rook;
+import com.example.chessgame.chess.players.ChessHumanPlayer;
+
+import java.util.jar.Attributes;
 
 import java.util.ArrayList;
 
@@ -278,6 +281,7 @@ public class ChessLocalGame extends LocalGame {
         }
     }
 
+
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
         // if they selected a dot then move
         if (state.getDrawing(row, col) == 2) {
@@ -291,9 +295,13 @@ public class ChessLocalGame extends LocalGame {
                 }
             }
 
-            // set the new position to be the piece they originally selected
-            state.setPiece(row, col, state.getPiece(tempRow, tempCol));
 
+            // set the new position to be the piece they originally selected
+            boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
+            state.setPiece(row, col, state.getPiece(tempRow, tempCol));
+            //TODO put display moves log here
+            ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
+            chp.displayMovesLog(row,col,tempRow,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
 
