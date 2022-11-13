@@ -28,6 +28,7 @@ public class ChessComputerPlayer2 extends GameComputerPlayer {
      *
      * @param name the player's name (e.g., "John")
      */
+    //testing
     public ChessComputerPlayer2(String name) {
         super(name);
     }
