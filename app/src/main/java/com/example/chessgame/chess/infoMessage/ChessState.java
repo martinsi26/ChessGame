@@ -85,23 +85,54 @@ public class ChessState extends GameState implements Serializable {
     public ChessState(ChessState other) {
         pieces = new Piece[8][8];
         board = new int[8][8];
+
+        //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
 
+        for(int i = 0; i < whiteCapturedPieces.size(); i++){
+            whiteCapturedPieces.add(other.whiteCapturedPieces.get(i));
+        }
+        for(int i = 0; i < blackCapturedPieces.size(); i++){
+            blackCapturedPieces.add(other.blackCapturedPieces.get(i));
+        }
+
+        //copies pieces into copy
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
-                pieces[i][j] = other.pieces[i][j];
+                Piece.PieceType tempPieceType = other.pieces[i][j].getPieceType();
+                Piece.ColorType tempColorType = other.pieces[i][j].getPieceColor();
+                int tempX = other.pieces[i][j].getX();
+                int tempY = other.pieces[i][j].getY();
+                pieces[i][j] = new Piece(tempPieceType, tempColorType, tempX, tempY);
             }
         }
+
+        //copies what needs to be drawn on the board
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 board[i][j] = other.board[i][j];
             }
         }
-        kingWhite = other.kingWhite;
-        kingBlack = other.kingBlack;
-        emptyPiece = other.emptyPiece;
 
+        Piece.PieceType kingWhiteTempPieceType = other.kingWhite.getPieceType();
+        Piece.ColorType kingWhiteTempColorType = other.kingWhite.getPieceColor();
+        int kingWhiteTempX = other.kingWhite.getX();
+        int kingWhiteTempY = other.kingWhite.getY();
+        kingWhite = new Piece(kingWhiteTempPieceType, kingWhiteTempColorType, kingWhiteTempX, kingWhiteTempY);
+
+        Piece.PieceType kingBlackTempPieceType = other.kingBlack.getPieceType();
+        Piece.ColorType kingBlackTempColorType = other.kingBlack.getPieceColor();
+        int kingBlackTempX = other.kingBlack.getX();
+        int kingBlackTempY = other.kingBlack.getY();
+        kingBlack = new Piece(kingBlackTempPieceType, kingBlackTempColorType, kingBlackTempX, kingBlackTempY);
+
+        Piece.PieceType emptyTempPieceType = other.emptyPiece.getPieceType();
+        Piece.ColorType emptyTempColorType = other.emptyPiece.getPieceColor();
+        int emptyTempX = other.emptyPiece.getX();
+        int emptyTempY = other.emptyPiece.getY();
+        emptyPiece = new Piece(emptyTempPieceType, emptyTempColorType, emptyTempX, emptyTempY);
+        
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
     }
@@ -198,6 +229,10 @@ public class ChessState extends GameState implements Serializable {
 
     public ArrayList<Piece> getWhiteCapturedPieces(){return this.whiteCapturedPieces;}
     public ArrayList<Piece> getBlackCapturedPieces(){return this.blackCapturedPieces;}
+
+    public void addWhiteCapturedPiece(Piece p){
+        whiteCapturedPieces.add(p);
+    }
 
 }
 

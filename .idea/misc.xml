@@ -6,6 +6,12 @@
         <entry key="..\:/Users/simon/AndroidStudioProjects/ChessGame/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/simon/AndroidStudioProjects/ChessGame/app/src/main/res/layout/game_config_main.xml" value="0.1" />
         <entry key="..\:/Users/simon/AndroidStudioProjects/ChessGame/app/src/main/res/menu/game_main.xml" value="0.1" />
+        <entry key="..\:/Users/stick/AndroidStudioProjects/ChessGameTeam/app/src/main/res/layout/activity_main.xml" value="0.11806256306760847" />
+        <entry key="..\:/Users/stick/AndroidStudioProjects/ChessGameTeam/app/src/main/res/layout/game_local_tab.xml" value="0.2708333333333333" />
+        <entry key="..\:/Users/stick/AndroidStudioProjects/ChessGameTeam/app/src/main/res/layout/game_no_gui.xml" value="0.2708333333333333" />
+        <entry key="..\:/Users/stick/AndroidStudioProjects/ChessGameTeam/app/src/main/res/layout/game_player_list_row.xml" value="0.2708333333333333" />
+        <entry key="..\:/Users/stick/AndroidStudioProjects/ChessGameTeam/app/src/main/res/layout/game_remote_tab.xml" value="0.2708333333333333" />
+        <entry key="..\:/Users/stick/AndroidStudioProjects/ChessGameTeam/app/src/main/res/layout/game_settings_tab.xml" value="0.2708333333333333" />
       </map>
     </option>
   </component>

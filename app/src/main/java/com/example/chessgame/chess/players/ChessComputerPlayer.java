@@ -147,6 +147,15 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         }
     }
 
+    /**
+     * Checks if current piece that is selected has locations to move to
+     *
+     * @param selection the current piece that is selected to move by the AI
+     * @param chessState the current state of the game
+     *
+     * @return indicates if the selected piece has locations to move to or not
+     * for the current state of the game
+     */
     public boolean checkMove(Piece selection, ChessState chessState) {
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
