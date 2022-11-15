@@ -657,9 +657,11 @@ public class ChessLocalGame extends LocalGame {
                 state.addWhiteCapturedPiece(state.getPiece(row, col));
             }
 
+            Log.d("Testing", "__________________");
             for(Piece p : state.getWhiteCapturedPieces()){
                 Log.d("Testing", p.getPieceType().toString());
             }
+            Log.d("Testing", "__________________");
 
             Piece tempPiece = state.getPiece(tempRow,tempCol);
             // change the location of the king to be at the new square if it is going to be moved

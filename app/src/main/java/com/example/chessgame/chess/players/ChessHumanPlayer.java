@@ -34,7 +34,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     private ChessBoardSurfaceView surfaceViewChessBoard;
     private Button resignButton;
     //private BlackCaptureSurfaceView surfaceViewBlackCapture;
-    //private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
+    private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
 
     // the ID for the layout to use
     private int layoutId;
