@@ -100,7 +100,11 @@ public class ChessState extends GameState implements Serializable {
         //copies pieces into copy
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
-                pieces[i][j] = other.pieces[i][j];
+                Piece.PieceType tempPieceType = other.pieces[i][j].getPieceType();
+                Piece.ColorType tempColorType = other.pieces[i][j].getPieceColor();
+                int tempX = other.pieces[i][j].getX();
+                int tempY = other.pieces[i][j].getY();
+                pieces[i][j] = new Piece(tempPieceType, tempColorType, tempX, tempY);
             }
         }
 
@@ -110,10 +114,25 @@ public class ChessState extends GameState implements Serializable {
                 board[i][j] = other.board[i][j];
             }
         }
-        kingWhite = other.kingWhite;
-        kingBlack = other.kingBlack;
 
-        emptyPiece = other.emptyPiece;
+        Piece.PieceType kingWhiteTempPieceType = other.kingWhite.getPieceType();
+        Piece.ColorType kingWhiteTempColorType = other.kingWhite.getPieceColor();
+        int kingWhiteTempX = other.kingWhite.getX();
+        int kingWhiteTempY = other.kingWhite.getY();
+        kingWhite = new Piece(kingWhiteTempPieceType, kingWhiteTempColorType, kingWhiteTempX, kingWhiteTempY);
+
+        Piece.PieceType kingBlackTempPieceType = other.kingBlack.getPieceType();
+        Piece.ColorType kingBlackTempColorType = other.kingBlack.getPieceColor();
+        int kingBlackTempX = other.kingBlack.getX();
+        int kingBlackTempY = other.kingBlack.getY();
+        kingBlack = new Piece(kingBlackTempPieceType, kingBlackTempColorType, kingBlackTempX, kingBlackTempY);
+
+        Piece.PieceType emptyTempPieceType = other.emptyPiece.getPieceType();
+        Piece.ColorType emptyTempColorType = other.emptyPiece.getPieceColor();
+        int emptyTempX = other.emptyPiece.getX();
+        int emptyTempY = other.emptyPiece.getY();
+        emptyPiece = new Piece(emptyTempPieceType, emptyTempColorType, emptyTempX, emptyTempY);
+        
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
     }
