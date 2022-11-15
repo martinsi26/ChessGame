@@ -3,9 +3,11 @@ package com.example.chessgame.chess;
 
 import android.util.Log;
 
+import com.example.chessgame.GameFramework.GameMainActivity;
 import com.example.chessgame.GameFramework.LocalGame;
 import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
+import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
@@ -18,6 +20,9 @@ import com.example.chessgame.chess.pieces.Queen;
 import com.example.chessgame.chess.pieces.Rook;
 import java.util.ArrayList;
 import com.example.chessgame.chess.players.ChessHumanPlayer;
+
+import java.util.ArrayList;
+
 import java.util.jar.Attributes;
 
 public class ChessLocalGame extends LocalGame {
@@ -670,14 +675,12 @@ public class ChessLocalGame extends LocalGame {
                     state.setKingBlack(row, col);
                 }
             }
-
-
-            // set the new position to be the piece they originally selected          
-            state.setPiece(row, col, tempPiece);
+            // set the new position to be the piece they originally selected
+//            state.setPiece(row, col, tempPiece);
             boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
-            state.setPiece(row, col, state.getPiece(tempRow, tempCol));
-            //TODO put display moves log here
             ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
+            state.setPiece(row,col,checkPromotion(state.getPiece(tempRow,tempCol),col));
+            //TODO put display moves log here
             chp.displayMovesLog(row,col,tempRow,state,isCapture);
 
             // change the piece at the selection to be an empty piece
@@ -707,6 +710,17 @@ public class ChessLocalGame extends LocalGame {
             // if they didn't select a dot they don't move
             return false;
         }
+    }
+
+    public Piece checkPromotion(Piece piece, int col){
+        if(piece.getPieceType() != Piece.PieceType.PAWN){return piece;}
+
+        if(piece.getPieceColor() == Piece.ColorType.WHITE && col == 0){
+            return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE, 0, piece.getY());
+        }else if(piece.getPieceColor() == Piece.ColorType.BLACK && col == 7) {
+            return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.BLACK, 7, piece.getY());
+        }
+        return piece;
     }
 
     /**
