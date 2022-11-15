@@ -1,5 +1,8 @@
 package com.example.chessgame.chess;
 
+
+import android.util.Log;
+
 import com.example.chessgame.GameFramework.LocalGame;
 import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
@@ -647,6 +650,16 @@ public class ChessLocalGame extends LocalGame {
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
         // if they selected a dot then move
         if (state.getDrawing(row, col) == 2) {
+
+
+            //adds captured piece to captured pieces array t
+            if(state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY){
+                state.addWhiteCapturedPiece(state.getPiece(row, col));
+            }
+
+            for(Piece p : state.getWhiteCapturedPieces()){
+                Log.d("Testing", p.getPieceType().toString());
+            }
 
             Piece tempPiece = state.getPiece(tempRow,tempCol);
             // change the location of the king to be at the new square if it is going to be moved
