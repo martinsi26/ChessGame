@@ -173,6 +173,9 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         }
         Paint dotPaint = new Paint();
         dotPaint.setColor(dot());
+        Paint backgroundPaint = new Paint();
+        Paint ringPaint = new Paint();
+        ringPaint.setColor(Color.RED);
 
         if(num == 1) {
             canvas.drawRect(leftLoc, topLoc, rightLoc, bottomLoc, highlightPaint);
@@ -180,6 +183,14 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
             canvas.drawCircle(centerX, centerY, radius, dotPaint);
         } else if(num == 3) {
             canvas.drawRect(leftLoc, topLoc, rightLoc, bottomLoc, highlightPaint);
+        } else if (num == 4) {
+            canvas.drawCircle(centerX, centerY, (right - left) / 2, dotPaint);
+            if ((row % 2 == 0 && col % 2 != 0) || (col % 2 == 0 && row % 2 != 0)) {
+                backgroundPaint.setColor(Color.rgb(1, 100, 32));
+            } else {
+                backgroundPaint.setColor(Color.WHITE);
+            }
+            canvas.drawCircle(centerX, centerY, (right - left) / 3, backgroundPaint);
         }
     }
 
