@@ -37,6 +37,7 @@ public class ChessLocalGame extends LocalGame {
     // all of the initial movements of the piece selected
     private ArrayList<Integer> initialMovementsX = new ArrayList<>();
     private ArrayList<Integer> initialMovementsY = new ArrayList<>();
+
     // all of the valid movements so the king isn't in check
     private ArrayList<Integer> newMovementsX = new ArrayList<>();
     private ArrayList<Integer> newMovementsY = new ArrayList<>();
@@ -121,11 +122,11 @@ public class ChessLocalGame extends LocalGame {
 
         // get the 0/1 id of the player whose move it is
         int whoseMove = state.getWhoseMove();
-
         if(action instanceof ChessSelectAction) {
             ChessSelectAction select = (ChessSelectAction) action;
             int row = select.getRow();
             int col = select.getCol();
+
             // remove the highlights if there are any previous ones
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
@@ -135,36 +136,29 @@ public class ChessLocalGame extends LocalGame {
                     }
                 }
             }
+
             // remove the red highlight from being in check
             state.removeHighlightCheck();
-            // highlight the piece they clicked
+
+            // highlight the piece they tapped
             state.setHighlight(row, col);
+
             // save temps for the row and col for movement later
             tempRow = row;
             tempCol = col;
 
+            // the selected piece
             Piece p = state.getPiece(row, col);
 
-            // 1) create copy of state
-            ChessState copyState = new ChessState(state);
-            // 2) find all movements (of piece selected) taking into account
-            // if the state is in check (pass the check into method), return
-            // an arraylist of all of the movements.
-            findMovement(copyState, p);
-            // 3) if king was in check, see if the king is still in check for
-            // each position in the arraylist that is returned, if the king
-            // is still in check then you know it is not a valid move,
-            // so it can be removed from arraylist.
-            // 4) if king was not in check, see if the king is now in check,
-            // for each position i the arraylist that is returned,
-            // if the king is then you know it was not a valid move, so they
-            // can be removed from the arraylist.
-            moveToNotBeInCheck(copyState, p.getPieceColor());
+            // find all movements of piece selected
+            findMovement(state, p);
 
-            // 5) display all positions in arraylist as dots on the board on
-            // original state and delete copy.
+            // make fake movements and determine if that movement allows the
+            // players own king be in check
+            moveToNotBeInCheck(state, p.getPieceColor());
+
+            // display all positions in arraylist as dots on the board
             state.setCircles(newMovementsX, newMovementsY);
-
 
             // return true to skip changing turns
             return true;
@@ -178,6 +172,8 @@ public class ChessLocalGame extends LocalGame {
                 return false;
             }
             Piece tempP = state.getPiece(tempRow, tempCol);
+
+            // determine what team is moving (white/black) and move the piece
             if(tempP.getPieceColor() == Piece.ColorType.WHITE) {
                 if (!setMovement(state, row, col, Piece.ColorType.WHITE)) {
                     state.removeHighlight();
@@ -191,6 +187,7 @@ public class ChessLocalGame extends LocalGame {
                     return false;
                 }
             }
+
             // make sure all highlights and dots are already removed
             state.removeCirlce();
 
@@ -204,12 +201,21 @@ public class ChessLocalGame extends LocalGame {
         return false;
     }
 
+    /**
+     * Finds all of the positions the Piece p can move to with normal movements
+     *
+     * @param state the current state of the game
+     * @param p the piece that is currently selected
+     */
     public void findMovement(ChessState state, Piece p) {
+        // make sure the arraylists are empty before they are filled
         initialMovementsX.clear();
         initialMovementsY.clear();
+
+        // search through each type of piece and generate all of the movements
+        // of that piece and add them to the initialMovement arraylists.
         if(p.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(p, state, p.getPieceColor());
-
             for(int i = 0; i < pawn.getX().size(); i++) {
                 initialMovementsX.add(pawn.getX().get(i));
                 initialMovementsY.add(pawn.getY().get(i));
@@ -247,7 +253,19 @@ public class ChessLocalGame extends LocalGame {
         }
     }
 
+    /**
+     * Determines if the current players king is in check with a certain
+     * piece movement
+     *
+     * @param state the copied state displaying a movement
+     * @param teamColor the color the player that is making a movement
+     * @param enemyColor the color of the other player
+     *
+     * @return Determines if a king is in check
+     */
     public boolean checkForCheck(ChessState state, Piece.ColorType teamColor, Piece.ColorType enemyColor) {
+        // search through every piece of the enemy and generate its general movement
+        // with its position on the board
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 Piece piece = state.getPiece(row, col);
@@ -274,6 +292,8 @@ public class ChessLocalGame extends LocalGame {
                 }
             }
         }
+
+        // determine what king will be in check with the movements generated
         Piece king = null;
         if (teamColor == Piece.ColorType.WHITE) {
             king = state.getKingWhite();
@@ -281,6 +301,7 @@ public class ChessLocalGame extends LocalGame {
             king = state.getKingBlack();
         }
         if(king != null) {
+            // if the king can be attacked by the enemy it means the king is in check
             if (state.getDrawing(king.getX(), king.getY()) == 4) {
                 return true;
             }
@@ -288,15 +309,36 @@ public class ChessLocalGame extends LocalGame {
         return false;
     }
 
+    /**
+     * Looks through all movements of the piece selected and determines
+     * if that movement causes the players king to be in check
+     *
+     * @param state the current state of the game
+     * @param color the color of the player that is making a move
+     */
     public void moveToNotBeInCheck(ChessState state, Piece.ColorType color) {
-        //newMovements.clear();
+        // make sure the arraylists are empty
         newMovementsX.clear();
         newMovementsY.clear();
+
+        // iterate through all of the initial movements of the selected piece
         for(int i = 0; i < initialMovementsX.size(); i++) {
+
+            // create a copied state so the current state is not effected yet
             ChessState copyState = new ChessState(state);
+
+            // make one of the initial movements on the copied state
             makeTempMovement(copyState, initialMovementsX.get(i), initialMovementsY.get(i));
+
+            // determine if the player is white or black so that can be passed
+            // in as a parameter
             if (color == Piece.ColorType.WHITE) {
+
+                // determine if the movement causes the players king to be in check
                 if (!checkForCheck(copyState, color, Piece.ColorType.BLACK)) {
+
+                    // if the player is not in check add that movement to the new
+                    // arraylist so it can be saved
                     newMovementsX.add(initialMovementsX.get(i));
                     newMovementsY.add(initialMovementsY.get(i));
                 }
@@ -309,8 +351,20 @@ public class ChessLocalGame extends LocalGame {
         }
     }
 
+    /**
+     * Creates a fake movement on the copied state
+     *
+     * @param state the copied state of the game
+     * @param row the row position of the selected piece
+     * @param col the column position of the selected piece
+     */
     public void makeTempMovement(ChessState state, int row, int col) {
+        // create the temp piece with the selected position (tempRow, tempCol)
         Piece tempPiece = state.getPiece(tempRow, tempCol);
+
+        // if they are moving a king determine who's king (white/black) and
+        // update the position of the king so when it checks for if the king
+        // is in check it knows the new position
         if(tempPiece.getPieceType() == Piece.PieceType.KING) {
             if (tempPiece.getPieceColor() == Piece.ColorType.WHITE) {
                 state.setKingWhite(row, col);
@@ -318,7 +372,10 @@ public class ChessLocalGame extends LocalGame {
                 state.setKingBlack(row, col);
             }
         }
+        // make the location the piece is moving to become the selected piece
         state.setPiece(row, col, tempPiece);
+
+        // make the selected piece become empty since the piece has moved
         state.setPiece(tempRow, tempCol, state.emptyPiece);
     }
 
@@ -337,17 +394,15 @@ public class ChessLocalGame extends LocalGame {
         // if they selected a dot/ring then move
         if (state.getDrawing(row, col) == 2 || state.getDrawing(row, col) == 4) {
 
-
             //adds captured piece to captured pieces array t
             if(state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY){
                 state.addWhiteCapturedPiece(state.getPiece(row, col));
             }
-
             for(Piece p : state.getWhiteCapturedPieces()){
                 Log.d("Testing", p.getPieceType().toString());
             }
-
             Piece tempPiece = state.getPiece(tempRow,tempCol);
+
             // change the location of the king to be at the new square if it is going to be moved
             if (tempPiece.getPieceType() == Piece.PieceType.KING) {
                 if (tempPiece.getPieceColor() == Piece.ColorType.WHITE) {
@@ -356,6 +411,7 @@ public class ChessLocalGame extends LocalGame {
                     state.setKingBlack(row, col);
                 }
             }
+
             // set the new position to be the piece they originally selected
             state.setPiece(row, col, tempPiece);
 
@@ -377,10 +433,9 @@ public class ChessLocalGame extends LocalGame {
             // reset temp values so only selections may occur
             tempRow = -1;
             tempCol = -1;
-
+            
             // remove all the circles after moving
             state.removeCirlce();
-
             if (color == Piece.ColorType.BLACK) {
                 if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
@@ -390,7 +445,6 @@ public class ChessLocalGame extends LocalGame {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
                 }
             }
-
             return true;
         } else {
             // if they didn't select a dot they don't move
