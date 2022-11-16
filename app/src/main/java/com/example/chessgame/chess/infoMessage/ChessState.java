@@ -175,7 +175,11 @@ public class ChessState extends GameState implements Serializable {
 
     public void setCircles(ArrayList<Integer> row, ArrayList<Integer> col) {
         for(int i = 0; i < row.size(); i++) {
-            board[row.get(i)][col.get(i)] = 2;
+            if(getPiece(row.get(i), col.get(i)).getPieceColor() != Piece.ColorType.EMPTY) {
+                board[row.get(i)][col.get(i)] = 4;
+            } else {
+                board[row.get(i)][col.get(i)] = 2;
+            }
         }
     }
 
@@ -189,19 +193,13 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
-    public void removeDot() {
+    public void removeCirlce() {
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == 2) {
+                if (board[i][j] == 2 || board[i][j] == 4) {
                     board[i][j] = 0;
                 }
             }
-        }
-    }
-
-    public void removeDot(int row, int col) {
-        if (board[row][col] == 2) {
-            board[row][col] = 0;
         }
     }
 
