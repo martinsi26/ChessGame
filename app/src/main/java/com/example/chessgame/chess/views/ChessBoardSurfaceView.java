@@ -60,18 +60,18 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         blackKingImage = BitmapFactory.decodeResource(getResources(), R.drawable.bk);
         blackQueenImage = BitmapFactory.decodeResource(getResources(), R.drawable.bq);
         blackBishopImage = BitmapFactory.decodeResource(getResources(), R.drawable.bb);
-        whitePawnImage = Bitmap.createScaledBitmap(whitePawnImage,120,120,false);
-        whiteRookImage = Bitmap.createScaledBitmap(whiteRookImage,120,120,false);
-        whiteKnightImage = Bitmap.createScaledBitmap(whiteKnightImage,120,120,false);
-        whiteKingImage = Bitmap.createScaledBitmap(whiteKingImage,120,120,false);
-        whiteQueenImage = Bitmap.createScaledBitmap(whiteQueenImage,120,120,false);
-        whiteBishopImage = Bitmap.createScaledBitmap(whiteBishopImage,120,120,false);
-        blackPawnImage = Bitmap.createScaledBitmap(blackPawnImage,120,120,false);
-        blackRookImage = Bitmap.createScaledBitmap(blackRookImage,120,120,false);
-        blackKnightImage = Bitmap.createScaledBitmap(blackKnightImage,120,120,false);
-        blackKingImage = Bitmap.createScaledBitmap(blackKingImage,120,120,false);
-        blackQueenImage = Bitmap.createScaledBitmap(blackQueenImage,120,120,false);
-        blackBishopImage = Bitmap.createScaledBitmap(blackBishopImage,120,120,false);
+        whitePawnImage = Bitmap.createScaledBitmap(whitePawnImage, 120, 120, false);
+        whiteRookImage = Bitmap.createScaledBitmap(whiteRookImage, 120, 120, false);
+        whiteKnightImage = Bitmap.createScaledBitmap(whiteKnightImage, 120, 120, false);
+        whiteKingImage = Bitmap.createScaledBitmap(whiteKingImage, 120, 120, false);
+        whiteQueenImage = Bitmap.createScaledBitmap(whiteQueenImage, 120, 120, false);
+        whiteBishopImage = Bitmap.createScaledBitmap(whiteBishopImage, 120, 120, false);
+        blackPawnImage = Bitmap.createScaledBitmap(blackPawnImage, 120, 120, false);
+        blackRookImage = Bitmap.createScaledBitmap(blackRookImage, 120, 120, false);
+        blackKnightImage = Bitmap.createScaledBitmap(blackKnightImage, 120, 120, false);
+        blackKingImage = Bitmap.createScaledBitmap(blackKingImage, 120, 120, false);
+        blackQueenImage = Bitmap.createScaledBitmap(blackQueenImage, 120, 120, false);
+        blackBishopImage = Bitmap.createScaledBitmap(blackBishopImage, 120, 120, false);
         init();
     }
 
@@ -99,7 +99,9 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         return Color.YELLOW;
     }
 
-    public int checkedSquare() { return Color.RED; }
+    public int checkedSquare() {
+        return Color.RED;
+    }
 
     public int dot() {
         return Color.LTGRAY;
@@ -109,11 +111,11 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         return Color.BLACK;
     }
 
-    protected void onDraw(Canvas canvas){
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         Paint paint = new Paint();
-        for(int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if ((i % 2 == 0 && j % 2 != 0) || (j % 2 == 0 && i % 2 != 0)) {
                     paint.setColor(blackSquare());
@@ -125,7 +127,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
             }
         }
 
-        if(state == null) {
+        if (state == null) {
             return;
         }
 
@@ -140,7 +142,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         paint.setColor(textPaint());
         paint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
         paint.setTextSize(30);
-        for(int i = 1; i <= 8; i++) {
+        for (int i = 1; i <= 8; i++) {
             canvas.drawText(String.valueOf(i), 15, 40 + (i * 115), paint);
         }
         canvas.drawText("a", 135, 985, paint);
@@ -154,15 +156,14 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
     }
 
 
-
     protected void drawGraphics(Canvas canvas, int num, int col, int row) {
         float leftLoc = left + size * col;
         float topLoc = top + size * row;
         float rightLoc = right + size * col;
         float bottomLoc = bottom + size * row;
 
-        float centerX = left + (size/2) + size * col;
-        float centerY = top + (size/2) + size * row;
+        float centerX = left + (size / 2) + size * col;
+        float centerY = top + (size / 2) + size * row;
         float radius = (right - left) / 5;
 
         Paint highlightPaint = new Paint();
@@ -177,11 +178,11 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         Paint ringPaint = new Paint();
         ringPaint.setColor(Color.RED);
 
-        if(num == 1) {
+        if (num == 1) {
             canvas.drawRect(leftLoc, topLoc, rightLoc, bottomLoc, highlightPaint);
-        } else if(num == 2) {
+        } else if (num == 2) {
             canvas.drawCircle(centerX, centerY, radius, dotPaint);
-        } else if(num == 3) {
+        } else if (num == 3) {
             canvas.drawRect(leftLoc, topLoc, rightLoc, bottomLoc, highlightPaint);
         } else if (num == 4) {
             canvas.drawCircle(centerX, centerY, (right - left) / 2, dotPaint);
@@ -199,7 +200,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         float yLoc = top + (row * size);
 
         Paint paint = new Paint();
-        if(piece.getPieceColor() == Piece.ColorType.WHITE) {
+        if (piece.getPieceColor() == Piece.ColorType.WHITE) {
             if (piece.getPieceType() == Piece.PieceType.PAWN) {
                 canvas.drawBitmap(whitePawnImage, xLoc, yLoc, paint);
             } else if (piece.getPieceType() == Piece.PieceType.BISHOP) {
@@ -213,7 +214,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
             } else if (piece.getPieceType() == Piece.PieceType.KING) {
                 canvas.drawBitmap(whiteKingImage, xLoc, yLoc, paint);
             }
-        } else if(piece.getPieceColor() == Piece.ColorType.BLACK) {
+        } else if (piece.getPieceColor() == Piece.ColorType.BLACK) {
             if (piece.getPieceType() == Piece.PieceType.PAWN) {
                 canvas.drawBitmap(blackPawnImage, xLoc, yLoc, paint);
             } else if (piece.getPieceType() == Piece.PieceType.BISHOP) {
