@@ -122,7 +122,7 @@ public class ChessLocalGame extends LocalGame {
 
         // get the 0/1 id of the player whose move it is
         int whoseMove = state.getWhoseMove();
-        if(action instanceof ChessSelectAction) {
+        if (action instanceof ChessSelectAction) {
             ChessSelectAction select = (ChessSelectAction) action;
             int row = select.getRow();
             int col = select.getCol();
@@ -132,7 +132,7 @@ public class ChessLocalGame extends LocalGame {
                 for (int j = 0; j < 8; j++) {
                     if (state.getDrawing(i, j) == 1) {
                         state.removeHighlight();
-                        state.removeCirlce();
+                        state.removeCircle();
                     }
                 }
             }
@@ -162,7 +162,7 @@ public class ChessLocalGame extends LocalGame {
 
             // return true to skip changing turns
             return true;
-        } else if(action instanceof ChessMoveAction) {
+        } else if (action instanceof ChessMoveAction) {
             ChessMoveAction move = (ChessMoveAction) action;
             int row = move.getRow();
             int col = move.getCol();
@@ -174,22 +174,22 @@ public class ChessLocalGame extends LocalGame {
             Piece tempP = state.getPiece(tempRow, tempCol);
 
             // determine what team is moving (white/black) and move the piece
-            if(tempP.getPieceColor() == Piece.ColorType.WHITE) {
+            if (tempP.getPieceColor() == Piece.ColorType.WHITE) {
                 if (!setMovement(state, row, col, Piece.ColorType.WHITE)) {
                     state.removeHighlight();
-                    state.removeCirlce();
+                    state.removeCircle();
                     return false;
                 }
             } else if (tempP.getPieceColor() == Piece.ColorType.BLACK) {
                 if (!setMovement(state, row, col, Piece.ColorType.BLACK)) {
                     state.removeHighlight();
-                    state.removeCirlce();
+                    state.removeCircle();
                     return false;
                 }
             }
 
             // make sure all highlights and dots are already removed
-            state.removeCirlce();
+            state.removeCircle();
 
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
@@ -205,7 +205,7 @@ public class ChessLocalGame extends LocalGame {
      * Finds all of the positions the Piece p can move to with normal movements
      *
      * @param state the current state of the game
-     * @param p the piece that is currently selected
+     * @param p     the piece that is currently selected
      */
     public void findMovement(ChessState state, Piece p) {
         // make sure the arraylists are empty before they are filled
@@ -214,39 +214,39 @@ public class ChessLocalGame extends LocalGame {
 
         // search through each type of piece and generate all of the movements
         // of that piece and add them to the initialMovement arraylists.
-        if(p.getPieceType() == Piece.PieceType.PAWN) {
+        if (p.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(p, state, p.getPieceColor());
-            for(int i = 0; i < pawn.getX().size(); i++) {
+            for (int i = 0; i < pawn.getX().size(); i++) {
                 initialMovementsX.add(pawn.getX().get(i));
                 initialMovementsY.add(pawn.getY().get(i));
             }
-        } else if(p.getPieceType() == Piece.PieceType.KNIGHT) {
+        } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
             Knight knight = new Knight(p, state, p.getPieceColor());
-            for(int i = 0; i < knight.getX().size(); i++) {
+            for (int i = 0; i < knight.getX().size(); i++) {
                 initialMovementsX.add(knight.getX().get(i));
                 initialMovementsY.add(knight.getY().get(i));
             }
-        } else if(p.getPieceType() == Piece.PieceType.BISHOP) {
+        } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
             Bishop bishop = new Bishop(p, state, p.getPieceColor());
-            for(int i = 0; i < bishop.getX().size(); i++) {
+            for (int i = 0; i < bishop.getX().size(); i++) {
                 initialMovementsX.add(bishop.getX().get(i));
                 initialMovementsY.add(bishop.getY().get(i));
             }
-        } else if(p.getPieceType() == Piece.PieceType.ROOK) {
+        } else if (p.getPieceType() == Piece.PieceType.ROOK) {
             Rook rook = new Rook(p, state, p.getPieceColor());
-            for(int i = 0; i < rook.getX().size(); i++) {
+            for (int i = 0; i < rook.getX().size(); i++) {
                 initialMovementsX.add(rook.getX().get(i));
                 initialMovementsY.add(rook.getY().get(i));
             }
-        } else if(p.getPieceType() == Piece.PieceType.QUEEN) {
+        } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
             Queen queen = new Queen(p, state, p.getPieceColor());
-            for(int i = 0; i < queen.getX().size(); i++) {
+            for (int i = 0; i < queen.getX().size(); i++) {
                 initialMovementsX.add(queen.getX().get(i));
                 initialMovementsY.add(queen.getY().get(i));
             }
-        } else if(p.getPieceType() == Piece.PieceType.KING) {
+        } else if (p.getPieceType() == Piece.PieceType.KING) {
             King king = new King(p, state, p.getPieceColor());
-            for(int i = 0; i < king.getX().size(); i++) {
+            for (int i = 0; i < king.getX().size(); i++) {
                 initialMovementsX.add(king.getX().get(i));
                 initialMovementsY.add(king.getY().get(i));
             }
@@ -257,10 +257,9 @@ public class ChessLocalGame extends LocalGame {
      * Determines if the current players king is in check with a certain
      * piece movement
      *
-     * @param state the copied state displaying a movement
-     * @param teamColor the color the player that is making a movement
+     * @param state      the copied state displaying a movement
+     * @param teamColor  the color the player that is making a movement
      * @param enemyColor the color of the other player
-     *
      * @return Determines if a king is in check
      */
     public boolean checkForCheck(ChessState state, Piece.ColorType teamColor, Piece.ColorType enemyColor) {
@@ -300,7 +299,7 @@ public class ChessLocalGame extends LocalGame {
         } else if (teamColor == Piece.ColorType.BLACK) {
             king = state.getKingBlack();
         }
-        if(king != null) {
+        if (king != null) {
             // if the king can be attacked by the enemy it means the king is in check
             if (state.getDrawing(king.getX(), king.getY()) == 4) {
                 return true;
@@ -322,7 +321,7 @@ public class ChessLocalGame extends LocalGame {
         newMovementsY.clear();
 
         // iterate through all of the initial movements of the selected piece
-        for(int i = 0; i < initialMovementsX.size(); i++) {
+        for (int i = 0; i < initialMovementsX.size(); i++) {
 
             // create a copied state so the current state is not effected yet
             ChessState copyState = new ChessState(state);
@@ -355,8 +354,8 @@ public class ChessLocalGame extends LocalGame {
      * Creates a fake movement on the copied state
      *
      * @param state the copied state of the game
-     * @param row the row position of the selected piece
-     * @param col the column position of the selected piece
+     * @param row   the row position of the selected piece
+     * @param col   the column position of the selected piece
      */
     public void makeTempMovement(ChessState state, int row, int col) {
         // create the temp piece with the selected position (tempRow, tempCol)
@@ -365,7 +364,7 @@ public class ChessLocalGame extends LocalGame {
         // if they are moving a king determine who's king (white/black) and
         // update the position of the king so when it checks for if the king
         // is in check it knows the new position
-        if(tempPiece.getPieceType() == Piece.PieceType.KING) {
+        if (tempPiece.getPieceType() == Piece.PieceType.KING) {
             if (tempPiece.getPieceColor() == Piece.ColorType.WHITE) {
                 state.setKingWhite(row, col);
             } else if (tempPiece.getPieceColor() == Piece.ColorType.BLACK) {
@@ -384,10 +383,9 @@ public class ChessLocalGame extends LocalGame {
      * that the player wants to move to
      *
      * @param state the current state of the game
-     * @param row the row of the position the player is moving to
-     * @param col the column of the position the player is moving to
+     * @param row   the row of the position the player is moving to
+     * @param col   the column of the position the player is moving to
      * @param color the color of the piece they selected previously
-     *
      * @return tells weather the move was valid and happened
      */
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
@@ -395,13 +393,13 @@ public class ChessLocalGame extends LocalGame {
         if (state.getDrawing(row, col) == 2 || state.getDrawing(row, col) == 4) {
 
             //adds captured piece to captured pieces array t
-            if(state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY){
+            if (state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY) {
                 state.addWhiteCapturedPiece(state.getPiece(row, col));
             }
-            for(Piece p : state.getWhiteCapturedPieces()){
+            for (Piece p : state.getWhiteCapturedPieces()) {
                 Log.d("Testing", p.getPieceType().toString());
             }
-            Piece tempPiece = state.getPiece(tempRow,tempCol);
+            Piece tempPiece = state.getPiece(tempRow, tempCol);
 
             // change the location of the king to be at the new square if it is going to be moved
             if (tempPiece.getPieceType() == Piece.PieceType.KING) {
@@ -433,9 +431,9 @@ public class ChessLocalGame extends LocalGame {
             // reset temp values so only selections may occur
             tempRow = -1;
             tempCol = -1;
-            
+
             // remove all the circles after moving
-            state.removeCirlce();
+            state.removeCircle();
             if (color == Piece.ColorType.BLACK) {
                 if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
