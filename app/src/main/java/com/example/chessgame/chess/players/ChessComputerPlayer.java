@@ -46,7 +46,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         if (info instanceof IllegalMoveInfo) return;
         ChessState chessState = new ChessState((ChessState) info);
 
-        if (chessState.getWhoseMove() == 1 &&  playerNum == 0) {
+        if (chessState.getWhoseMove() == 1 && playerNum == 0) {
             return;
         }
         if (chessState.getWhoseMove() == 0 && playerNum == 1) {
@@ -73,7 +73,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         // randomly shuffle the pieces in the array
         Collections.shuffle(availablePieces);
         selection = availablePieces.get(0);
-        for(int i = 1; i < availablePieces.size(); i++) {
+        for (int i = 1; i < availablePieces.size(); i++) {
             if (checkMove(selection, chessState)) {
                 selection = availablePieces.get(i);
             }
@@ -87,7 +87,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
             ints = new ArrayList<>();
-            for(int i = 0; i < pawn.getX().size(); i++) {
+            for (int i = 0; i < pawn.getX().size(); i++) {
                 ints.add(i);
             }
             Collections.shuffle(ints);
@@ -97,7 +97,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
             Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
             ints = new ArrayList<>();
-            for(int i = 0; i < bishop.getX().size(); i++) {
+            for (int i = 0; i < bishop.getX().size(); i++) {
                 ints.add(i);
             }
             Collections.shuffle(ints);
@@ -107,7 +107,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         } else if (selection.getPieceType() == Piece.PieceType.KNIGHT) {
             Knight knight = new Knight(selection, chessState, selection.getPieceColor());
             ints = new ArrayList<>();
-            for(int i = 0; i < knight.getX().size(); i++) {
+            for (int i = 0; i < knight.getX().size(); i++) {
                 ints.add(i);
             }
             Collections.shuffle(ints);
@@ -117,7 +117,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         } else if (selection.getPieceType() == Piece.PieceType.ROOK) {
             Rook rook = new Rook(selection, chessState, selection.getPieceColor());
             ints = new ArrayList<>();
-            for(int i = 0; i < rook.getX().size(); i++) {
+            for (int i = 0; i < rook.getX().size(); i++) {
                 ints.add(i);
             }
             Collections.shuffle(ints);
@@ -127,7 +127,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         } else if (selection.getPieceType() == Piece.PieceType.QUEEN) {
             Queen queen = new Queen(selection, chessState, selection.getPieceColor());
             ints = new ArrayList<>();
-            for(int i = 0; i < queen.getX().size(); i++) {
+            for (int i = 0; i < queen.getX().size(); i++) {
                 ints.add(i);
             }
             Collections.shuffle(ints);
@@ -137,7 +137,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         } else if (selection.getPieceType() == Piece.PieceType.KING) {
             King king = new King(selection, chessState, selection.getPieceColor());
             ints = new ArrayList<>();
-            for(int i = 0; i < king.getX().size(); i++) {
+            for (int i = 0; i < king.getX().size(); i++) {
                 ints.add(i);
             }
             Collections.shuffle(ints);
@@ -150,51 +150,50 @@ public class ChessComputerPlayer extends GameComputerPlayer {
     /**
      * Checks if current piece that is selected has locations to move to
      *
-     * @param selection the current piece that is selected to move by the AI
+     * @param selection  the current piece that is selected to move by the AI
      * @param chessState the current state of the game
-     *
      * @return indicates if the selected piece has locations to move to or not
      * for the current state of the game
      */
     public boolean checkMove(Piece selection, ChessState chessState) {
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
-            if(pawn.getX().size() == 0) {
+            if (pawn.getX().size() == 0) {
                 return true;
             } else {
                 return false;
             }
         } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
             Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
-            if(bishop.getX().size() == 0) {
+            if (bishop.getX().size() == 0) {
                 return true;
             } else {
                 return false;
             }
         } else if (selection.getPieceType() == Piece.PieceType.KNIGHT) {
             Knight knight = new Knight(selection, chessState, selection.getPieceColor());
-            if(knight.getX().size() == 0) {
+            if (knight.getX().size() == 0) {
                 return true;
             } else {
                 return false;
             }
         } else if (selection.getPieceType() == Piece.PieceType.ROOK) {
             Rook rook = new Rook(selection, chessState, selection.getPieceColor());
-            if(rook.getX().size() == 0) {
+            if (rook.getX().size() == 0) {
                 return true;
             } else {
                 return false;
             }
         } else if (selection.getPieceType() == Piece.PieceType.QUEEN) {
             Queen queen = new Queen(selection, chessState, selection.getPieceColor());
-            if(queen.getX().size() == 0) {
+            if (queen.getX().size() == 0) {
                 return true;
             } else {
                 return false;
             }
         } else if (selection.getPieceType() == Piece.PieceType.KING) {
             King king = new King(selection, chessState, selection.getPieceColor());
-            if(king.getX().size() == 0) {
+            if (king.getX().size() == 0) {
                 return true;
             } else {
                 return false;
