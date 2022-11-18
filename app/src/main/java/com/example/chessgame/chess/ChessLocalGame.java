@@ -160,9 +160,6 @@ public class ChessLocalGame extends LocalGame {
             // display all positions in arraylist as dots on the board
             state.setCircles(newMovementsX, newMovementsY);
 
-            state.setMovementX(newMovementsX);
-            state.setMovementY(newMovementsY);
-
             // return true to skip changing turns
             return true;
         } else if (action instanceof ChessMoveAction) {

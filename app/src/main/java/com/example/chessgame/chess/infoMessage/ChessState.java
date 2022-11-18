@@ -27,9 +27,6 @@ public class ChessState extends GameState implements Serializable {
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
 
-    private ArrayList<Integer> movementX;
-    private  ArrayList<Integer> movementY;
-
     public Piece emptyPiece;
 
     //0: white
@@ -165,22 +162,6 @@ public class ChessState extends GameState implements Serializable {
 
     public Piece getPiece(int row, int col) {
         return pieces[row][col];
-    }
-
-    public void setMovementX(ArrayList<Integer> movementX) {
-        this.movementX = movementX;
-    }
-
-    public void setMovementY(ArrayList<Integer> movementY) {
-        this.movementY = movementY;
-    }
-
-    public ArrayList<Integer> getMovementX() {
-        return movementX;
-    }
-
-    public ArrayList<Integer> getMovementY() {
-        return movementY;
     }
 
     public void setPiece(int row, int col, Piece piece) {
