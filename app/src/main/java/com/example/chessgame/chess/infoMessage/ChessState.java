@@ -4,6 +4,7 @@ package com.example.chessgame.chess.infoMessage;
 import com.example.chessgame.GameFramework.infoMessage.GameState;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -25,6 +26,9 @@ public class ChessState extends GameState implements Serializable {
 
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
+
+    private ArrayList<Integer> movementX;
+    private  ArrayList<Integer> movementY;
 
     public Piece emptyPiece;
 
@@ -90,17 +94,21 @@ public class ChessState extends GameState implements Serializable {
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
 
-        for(int i = 0; i < whiteCapturedPieces.size(); i++){
+        for (int i = 0; i < whiteCapturedPieces.size(); i++) {
             whiteCapturedPieces.add(other.whiteCapturedPieces.get(i));
         }
-        for(int i = 0; i < blackCapturedPieces.size(); i++){
+        for (int i = 0; i < blackCapturedPieces.size(); i++) {
             blackCapturedPieces.add(other.blackCapturedPieces.get(i));
         }
 
         //copies pieces into copy
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
-                pieces[i][j] = other.pieces[i][j];
+                Piece.PieceType tempPieceType = other.pieces[i][j].getPieceType();
+                Piece.ColorType tempColorType = other.pieces[i][j].getPieceColor();
+                int tempX = other.pieces[i][j].getX();
+                int tempY = other.pieces[i][j].getY();
+                pieces[i][j] = new Piece(tempPieceType, tempColorType, tempX, tempY);
             }
         }
 
@@ -110,16 +118,47 @@ public class ChessState extends GameState implements Serializable {
                 board[i][j] = other.board[i][j];
             }
         }
-        kingWhite = other.kingWhite;
-        kingBlack = other.kingBlack;
 
-        emptyPiece = other.emptyPiece;
+        Piece.PieceType kingWhiteTempPieceType = other.kingWhite.getPieceType();
+        Piece.ColorType kingWhiteTempColorType = other.kingWhite.getPieceColor();
+        int kingWhiteTempX = other.kingWhite.getX();
+        int kingWhiteTempY = other.kingWhite.getY();
+        kingWhite = new Piece(kingWhiteTempPieceType, kingWhiteTempColorType, kingWhiteTempX, kingWhiteTempY);
+
+        Piece.PieceType kingBlackTempPieceType = other.kingBlack.getPieceType();
+        Piece.ColorType kingBlackTempColorType = other.kingBlack.getPieceColor();
+        int kingBlackTempX = other.kingBlack.getX();
+        int kingBlackTempY = other.kingBlack.getY();
+        kingBlack = new Piece(kingBlackTempPieceType, kingBlackTempColorType, kingBlackTempX, kingBlackTempY);
+
+        Piece.PieceType emptyTempPieceType = other.emptyPiece.getPieceType();
+        Piece.ColorType emptyTempColorType = other.emptyPiece.getPieceColor();
+        int emptyTempX = other.emptyPiece.getX();
+        int emptyTempY = other.emptyPiece.getY();
+        emptyPiece = new Piece(emptyTempPieceType, emptyTempColorType, emptyTempX, emptyTempY);
+
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
     }
 
     public Piece getPiece(int row, int col) {
         return pieces[row][col];
+    }
+
+    public void setMovementX(ArrayList<Integer> movementX) {
+        this.movementX = movementX;
+    }
+
+    public void setMovementY(ArrayList<Integer> movementY) {
+        this.movementY = movementY;
+    }
+
+    public ArrayList<Integer> getMovementX() {
+        return movementX;
+    }
+
+    public ArrayList<Integer> getMovementY() {
+        return movementY;
     }
 
     public void setPiece(int row, int col, Piece piece) {
@@ -155,14 +194,18 @@ public class ChessState extends GameState implements Serializable {
     }
 
     public void setCircles(ArrayList<Integer> row, ArrayList<Integer> col) {
-        for(int i = 0; i < row.size(); i++) {
-            board[row.get(i)][col.get(i)] = 2;
+        for (int i = 0; i < row.size(); i++) {
+            if (getPiece(row.get(i), col.get(i)).getPieceColor() != Piece.ColorType.EMPTY) {
+                board[row.get(i)][col.get(i)] = 4;
+            } else {
+                board[row.get(i)][col.get(i)] = 2;
+            }
         }
     }
 
     public void removeHighlight() {
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[i].length; j++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] == 1) {
                     board[i][j] = 0;
                 }
@@ -170,25 +213,19 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
-    public void removeDot() {
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == 2) {
+    public void removeCircle() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 2 || board[i][j] == 4) {
                     board[i][j] = 0;
                 }
             }
         }
     }
 
-    public void removeDot(int row, int col) {
-        if (board[row][col] == 2) {
-            board[row][col] = 0;
-        }
-    }
-
     public void removeHighlightCheck() {
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[i].length; j++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] == 3) {
                     board[i][j] = 0;
                 }
@@ -208,12 +245,16 @@ public class ChessState extends GameState implements Serializable {
         playerToMove = id;
     }
 
-    public ArrayList<Piece> getWhiteCapturedPieces(){return this.whiteCapturedPieces;}
-    public ArrayList<Piece> getBlackCapturedPieces(){return this.blackCapturedPieces;}
-
-    public void addWhiteCapturedPiece(Piece p){
-        whiteCapturedPieces.add(p);
+    public ArrayList<Piece> getWhiteCapturedPieces() {
+        return this.whiteCapturedPieces;
     }
 
+    public ArrayList<Piece> getBlackCapturedPieces() {
+        return this.blackCapturedPieces;
+    }
+
+    public void addWhiteCapturedPiece(Piece p) {
+        whiteCapturedPieces.add(p);
+    }
 }
 
