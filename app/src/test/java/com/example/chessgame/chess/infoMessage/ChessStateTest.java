@@ -24,14 +24,17 @@ public class ChessStateTest {
         //checks arbitrary location
         test.setPiece(3, 4, p1);
         assertEquals(p1, test.getPiece(3,4));
+        assertNotEquals(p2, test.getPiece(3,4));
 
         //checks edge case: 0
         test.setPiece(0, 0, p2);
         assertEquals(p2, test.getPiece(0,0));
+        assertNotEquals(p3, test.getPiece(0,0));
 
         //checks edge case: 7
         test.setPiece(7, 7, p3);
         assertEquals(p3, test.getPiece(7,7));
+        assertNotEquals(p1, test.getPiece(7,7));
 
     }
 
@@ -69,10 +72,30 @@ public class ChessStateTest {
 
     @Test
     public void setHighlightCheck() {
+        ChessState test = new ChessState();
+        test.setHighlightCheck(5,2);
+        assertEquals(3, test.getDrawing(5,2));
+
+        //edge cases
+        test.setHighlightCheck(0,0);
+        assertEquals(3, test.getDrawing(0,0));
+
+        test.setHighlightCheck(7,7);
+        assertEquals(3, test.getDrawing(7,7));
     }
 
     @Test
     public void setHighlight() {
+        ChessState test = new ChessState();
+        test.setHighlight(6,3);
+        assertEquals(1, test.getDrawing(6,3));
+
+        //edge cases
+        test.setHighlight(0,0);
+        assertEquals(1, test.getDrawing(0,0));
+
+        test.setHighlight(7,7);
+        assertEquals(1, test.getDrawing(7,7));
     }
 
     @Test
