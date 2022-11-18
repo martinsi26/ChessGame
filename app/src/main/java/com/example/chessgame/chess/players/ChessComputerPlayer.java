@@ -156,47 +156,13 @@ public class ChessComputerPlayer extends GameComputerPlayer {
      * for the current state of the game
      */
     public boolean checkMove(Piece selection, ChessState chessState) {
-        if (selection.getPieceType() == Piece.PieceType.PAWN) {
-            Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
-            if (pawn.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
-            Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
-            if (bishop.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.KNIGHT) {
-            Knight knight = new Knight(selection, chessState, selection.getPieceColor());
-            if (knight.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.ROOK) {
-            Rook rook = new Rook(selection, chessState, selection.getPieceColor());
-            if (rook.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.QUEEN) {
-            Queen queen = new Queen(selection, chessState, selection.getPieceColor());
-            if (queen.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.KING) {
-            King king = new King(selection, chessState, selection.getPieceColor());
-            if (king.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
+        ArrayList<Integer> x = chessState.getMovementX();
+        ArrayList<Integer> y = chessState.getMovementY();
+        for(int i = 0; i < x.size(); i++) {
+            if(selection.getX() == x.get(i)) {
+                if(selection.getY() == y.get(i)) {
+                    return true;
+                }
             }
         }
         return false;
