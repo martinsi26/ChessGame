@@ -12,9 +12,6 @@ public class Rook {
     private ArrayList<Integer> xMovementAttack;
     private ArrayList<Integer> yMovementAttack;
 
-    private ArrayList<Integer> xAttackThrough;
-    private ArrayList<Integer> yAttackThrough;
-
     private int x;
     private int y;
 
@@ -27,8 +24,6 @@ public class Rook {
         yMovement = new ArrayList<>();
         xMovementAttack = new ArrayList<>();
         yMovementAttack = new ArrayList<>();
-        xAttackThrough = new ArrayList<>();
-        yAttackThrough = new ArrayList<>();
         if(color == Piece.ColorType.WHITE) {
             colorInverse = Piece.ColorType.BLACK;
         } else if (color == Piece.ColorType.BLACK) {
@@ -42,7 +37,6 @@ public class Rook {
         boolean stopRight = false;
         boolean stopUp = false;
         boolean stopDown = false;
-        boolean stop = false;
 
         for (int i = 1; i < 8; i++) {
             if (x - i >= 0) {
@@ -61,11 +55,6 @@ public class Rook {
                     xMovementAttack.add(x - i);
                     yMovementAttack.add(y);
                     stopLeft = true;
-                    stop = true;
-                }
-                if (state.getPiece(x - i, y).getPieceColor() != color && !stop) {
-                    xAttackThrough.add(x - i);
-                    yAttackThrough.add(y);
                 }
                 if (!stopLeft) {
                     xMovement.add(x - i);
@@ -90,11 +79,6 @@ public class Rook {
                     xMovementAttack.add(x);
                     yMovementAttack.add(y - i);
                     stopUp = true;
-                    stop = true;
-                }
-                if (state.getPiece(x, y - i).getPieceColor() != color && !stop) {
-                    xAttackThrough.add(x);
-                    yAttackThrough.add(y - i);
                 }
                 if (!stopUp) {
                     xMovement.add(x);
@@ -119,11 +103,6 @@ public class Rook {
                     xMovementAttack.add(x);
                     yMovementAttack.add(y + i);
                     stopDown = true;
-                    stop = true;
-                }
-                if (state.getPiece(x, y + i).getPieceColor() != color && !stop) {
-                    xAttackThrough.add(x);
-                    yAttackThrough.add(y + i);
                 }
                 if (!stopDown) {
                     xMovement.add(x);
@@ -148,11 +127,6 @@ public class Rook {
                     xMovementAttack.add(x + i);
                     yMovementAttack.add(y);
                     stopRight = true;
-                    stop = true;
-                }
-                if (state.getPiece(x + i, y).getPieceColor() != color && !stop) {
-                    xAttackThrough.add(x + i);
-                    yAttackThrough.add(y);
                 }
                 if (!stopRight) {
                     xMovement.add(x + i);
@@ -178,13 +152,5 @@ public class Rook {
 
     public ArrayList<Integer> getYAttack() {
         return yMovementAttack;
-    }
-
-    public ArrayList<Integer> getXAttackThrough() {
-        return xAttackThrough;
-    }
-
-    public ArrayList<Integer> getYAttackThrough() {
-        return yAttackThrough;
     }
 }

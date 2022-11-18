@@ -62,7 +62,8 @@
                 android:ems="10"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
-                android:text="Starting Position" />
+                android:text="Starting Position"
+                android:focusable="false"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
