@@ -29,7 +29,6 @@ public class ChessLocalGame extends LocalGame {
 
     //Tag for logging
     private static final String TAG = "ChessLocalGame";
-
     // piece that was selected by row and column
     private int tempRow;
     private int tempCol;
