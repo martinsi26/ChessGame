@@ -33,25 +33,14 @@ public class ChessLocalGame extends LocalGame {
     private int tempRow;
     private int tempCol;
 
-    // boolean indicating if a king is in check
-    private boolean isCheck = false;
+    // all of the initial movements of the piece selected
+    private ArrayList<Integer> initialMovementsX = new ArrayList<>();
+    private ArrayList<Integer> initialMovementsY = new ArrayList<>();
 
-    // x and y values of the locations that put the king in check
-    private ArrayList<Integer> xKing = new ArrayList<>();
-    private ArrayList<Integer> yKing = new ArrayList<>();
+    // all of the valid movements so the king isn't in check
+    private ArrayList<Integer> newMovementsX = new ArrayList<>();
+    private ArrayList<Integer> newMovementsY = new ArrayList<>();
 
-    // list of Piece that cause a king to be in check
-    private ArrayList<Piece> piecesCauseCheck = new ArrayList<>();
-
-    // list of all the positions that block a king from
-    // being in check or removes the piece that causes a king
-    // to be in check
-    private ArrayList<Piece> block = new ArrayList<>();
-
-    // all of the pieces that are in blocking positions
-    private ArrayList<Piece> pieceBlock = new ArrayList<>();
-    // all of the positions on the board that block the king from an attacker
-    private ArrayList<Piece> blockPosition = new ArrayList<>();
 
     /**
      * Constructor for the ChessLocalGame.
@@ -132,61 +121,74 @@ public class ChessLocalGame extends LocalGame {
 
         // get the 0/1 id of the player whose move it is
         int whoseMove = state.getWhoseMove();
-
-        if(action instanceof ChessSelectAction) {
+        if (action instanceof ChessSelectAction) {
             ChessSelectAction select = (ChessSelectAction) action;
             int row = select.getRow();
             int col = select.getCol();
+
             // remove the highlights if there are any previous ones
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     if (state.getDrawing(i, j) == 1) {
                         state.removeHighlight();
-                        state.removeDot();
+                        state.removeCircle();
                     }
                 }
             }
+
             // remove the red highlight from being in check
             state.removeHighlightCheck();
-            // highlight the piece they clicked
+
+            // highlight the piece they tapped
             state.setHighlight(row, col);
+
             // save temps for the row and col for movement later
             tempRow = row;
             tempCol = col;
 
+            // the selected piece
             Piece p = state.getPiece(row, col);
-            if(p.getPieceColor() == Piece.ColorType.WHITE) {
-                findMovement(state, row, col, Piece.ColorType.WHITE);
-            } else if (p.getPieceColor() == Piece.ColorType.BLACK) {
-                findMovement(state, row, col, Piece.ColorType.BLACK);
-            }
+
+            // find all movements of piece selected
+            findMovement(state, p);
+
+            // make fake movements and determine if that movement allows the
+            // players own king be in check
+            moveToNotBeInCheck(state, p.getPieceColor());
+
+            // display all positions in arraylist as dots on the board
+            state.setCircles(newMovementsX, newMovementsY);
 
             // return true to skip changing turns
             return true;
-        } else if(action instanceof ChessMoveAction) {
+        } else if (action instanceof ChessMoveAction) {
             ChessMoveAction move = (ChessMoveAction) action;
             int row = move.getRow();
             int col = move.getCol();
+
             // if they have no selected piece movement shouldn't occur
             if (tempRow == -1 || tempCol == -1) {
                 return false;
             }
             Piece tempP = state.getPiece(tempRow, tempCol);
-            if(tempP.getPieceColor() == Piece.ColorType.WHITE) {
+
+            // determine what team is moving (white/black) and move the piece
+            if (tempP.getPieceColor() == Piece.ColorType.WHITE) {
                 if (!setMovement(state, row, col, Piece.ColorType.WHITE)) {
                     state.removeHighlight();
-                    state.removeDot();
+                    state.removeCircle();
                     return false;
                 }
             } else if (tempP.getPieceColor() == Piece.ColorType.BLACK) {
                 if (!setMovement(state, row, col, Piece.ColorType.BLACK)) {
                     state.removeHighlight();
-                    state.removeDot();
+                    state.removeCircle();
                     return false;
                 }
             }
+
             // make sure all highlights and dots are already removed
-            state.removeDot();
+            state.removeCircle();
 
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
@@ -199,509 +201,180 @@ public class ChessLocalGame extends LocalGame {
     }
 
     /**
-     * Generates all the movements that can be made by a player depending
-     * on what type of piece they have selected
+     * Finds all of the positions the Piece p can move to with normal movements
      *
      * @param state the current state of the game
-     * @param row the row of the piece they have selected to move
-     * @param col the column of the piece they have selected to move
-     * @param color the color of the piece they have selected to move
+     * @param p     the piece that is currently selected
      */
-    public void findMovement(ChessState state, int row, int col, Piece.ColorType color) {
-        // current piece that is selected for movement
-        Piece p = state.getPiece(row, col);
-        // if the king is not in check then movement occurs normally
+    public void findMovement(ChessState state, Piece p) {
+        // make sure the arraylists are empty before they are filled
+        initialMovementsX.clear();
+        initialMovementsY.clear();
 
-        ////////////////////////////////////////////////////////////
-        // need to add method that determines if a piece is moved //
-        // that it doesn't cause the king to be in check          //
-        ////////////////////////////////////////////////////////////
-        if(color == Piece.ColorType.WHITE) {
-            movingChecksSelf(state, Piece.ColorType.BLACK, color);
-        } else if (color == Piece.ColorType.BLACK) {
-            movingChecksSelf(state, Piece.ColorType.WHITE, color);
-        }
-        // remove all dots on board made from movingChecksSelf
-        state.removeDot();
-        // have to reset the highlight because the enemy might have drawn a dot
-        // on the highlight in the movingChecksSelf method
-        state.setHighlight(row, col);
-
-        if (!getCheck()) {
-            if (p.getPieceType() == Piece.PieceType.PAWN) {
-                // generate all pawn movements
-                Pawn pawn = new Pawn(p, state, color);
-                // make circles on all movements
-                state.setCircles(pawn.getX(), pawn.getY());
-                for(int i = 0; i < pieceBlock.size(); i++) {
-                    // if the piece is currently at a position that blocks check and is the
-                    // only piece there
-                    if(p.equals(pieceBlock.get(i))) {
-                        state.removeDot();
-                    }
-                }
-            } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
-                Knight knight = new Knight(p, state, color);
-                state.setCircles(knight.getX(), knight.getY());
-                for(int i = 0; i < pieceBlock.size(); i++) {
-                    if(p.equals(pieceBlock.get(i))) {
-                        state.removeDot();
-                    }
-                }
-            } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
-                Bishop bishop = new Bishop(p, state, color);
-                state.setCircles(bishop.getX(), bishop.getY());
-                for(int i = 0; i < pieceBlock.size(); i++) {
-                    if(p.equals(pieceBlock.get(i))) {
-                        for(int j = 0; j < bishop.getX().size(); j++) {
-                            for(int k = 0; k < blockPosition.size(); k++) {
-                                if (bishop.getX().get(j) != blockPosition.get(k).getX()
-                                        || bishop.getY().get(j) != blockPosition.get(k).getY()) {
-                                    state.removeDot(bishop.getX().get(j), bishop.getY().get(j));
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (p.getPieceType() == Piece.PieceType.ROOK) {
-                Rook rook = new Rook(p, state, color);
-                state.setCircles(rook.getX(), rook.getY());
-                for(int i = 0; i < pieceBlock.size(); i++) {
-                    if(p.equals(pieceBlock.get(i))) {
-                        for(int j = 0; j < rook.getX().size(); j++) {
-                            for(int k = 0; k < blockPosition.size(); k++) {
-                                if (rook.getX().get(j) != blockPosition.get(k).getX()
-                                        || rook.getY().get(j) != blockPosition.get(k).getY()) {
-                                    state.removeDot(rook.getX().get(j), rook.getY().get(j));
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
-                Queen queen = new Queen(p, state, color);
-                state.setCircles(queen.getX(), queen.getY());
-                for(int i = 0; i < pieceBlock.size(); i++) {
-                    if(p.equals(pieceBlock.get(i))) {
-                        for(int j = 0; j < queen.getX().size(); j++) {
-                            for(int k = 0; k < blockPosition.size(); k++) {
-                                if (queen.getX().get(j) != blockPosition.get(k).getX()
-                                        || queen.getY().get(j) != blockPosition.get(k).getY()) {
-                                    state.removeDot(queen.getX().get(j), queen.getY().get(j));
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (p.getPieceType() == Piece.PieceType.KING) {
-                checkMoveToCheckKing(state, color);
-                King king = new King(p, state, color);
-                state.setCircles(king.getX(), king.getY());
-                // remove all of the locations that cause the king to be in check (xKing, yKing)
-                for (int i = 0; i < xKing.size(); i++) {
-                    state.removeDot(xKing.get(i), yKing.get(i));
-                }
+        // search through each type of piece and generate all of the movements
+        // of that piece and add them to the initialMovement arraylists.
+        if (p.getPieceType() == Piece.PieceType.PAWN) {
+            Pawn pawn = new Pawn(p, state, p.getPieceColor());
+            for (int i = 0; i < pawn.getX().size(); i++) {
+                initialMovementsX.add(pawn.getX().get(i));
+                initialMovementsY.add(pawn.getY().get(i));
             }
-            blockPosition.clear();
-        } else if (getCheck()) {
-            // locates the positions that can block check
-            findCheckBlock(color, state);
-            // moves for being in check
-            findMovementsWhenCheck(state, row, col, color);
-
+        } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
+            Knight knight = new Knight(p, state, p.getPieceColor());
+            for (int i = 0; i < knight.getX().size(); i++) {
+                initialMovementsX.add(knight.getX().get(i));
+                initialMovementsY.add(knight.getY().get(i));
+            }
+        } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
+            Bishop bishop = new Bishop(p, state, p.getPieceColor());
+            for (int i = 0; i < bishop.getX().size(); i++) {
+                initialMovementsX.add(bishop.getX().get(i));
+                initialMovementsY.add(bishop.getY().get(i));
+            }
+        } else if (p.getPieceType() == Piece.PieceType.ROOK) {
+            Rook rook = new Rook(p, state, p.getPieceColor());
+            for (int i = 0; i < rook.getX().size(); i++) {
+                initialMovementsX.add(rook.getX().get(i));
+                initialMovementsY.add(rook.getY().get(i));
+            }
+        } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
+            Queen queen = new Queen(p, state, p.getPieceColor());
+            for (int i = 0; i < queen.getX().size(); i++) {
+                initialMovementsX.add(queen.getX().get(i));
+                initialMovementsY.add(queen.getY().get(i));
+            }
+        } else if (p.getPieceType() == Piece.PieceType.KING) {
+            King king = new King(p, state, p.getPieceColor());
+            for (int i = 0; i < king.getX().size(); i++) {
+                initialMovementsX.add(king.getX().get(i));
+                initialMovementsY.add(king.getY().get(i));
+            }
         }
     }
 
-    // needs updates
-    public void movingChecksSelf(ChessState state, Piece.ColorType enemyColor, Piece.ColorType teamColor) {
-        boolean left = false;
-        boolean right = false;
-        boolean up = false;
-        boolean down = false;
-
-        pieceBlock.clear();
-        Piece king = null;
-        if(teamColor == Piece.ColorType.WHITE) {
-            king = state.getKingWhite();
-        } else if (teamColor == Piece.ColorType.BLACK) {
-            king = state.getKingBlack();
-        }
-        if(king == null) {
-            return;
-        }
+    /**
+     * Determines if the current players king is in check with a certain
+     * piece movement
+     *
+     * @param state      the copied state displaying a movement
+     * @param teamColor  the color the player that is making a movement
+     * @param enemyColor the color of the other player
+     * @return Determines if a king is in check
+     */
+    public boolean checkForCheck(ChessState state, Piece.ColorType teamColor, Piece.ColorType enemyColor) {
+        // search through every piece of the enemy and generate its general movement
+        // with its position on the board
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 Piece piece = state.getPiece(row, col);
                 if (piece.getPieceColor() == enemyColor) {
-                    if (piece.getPieceType() == Piece.PieceType.BISHOP) {
-                        left = false;
-                        right = false;
-                        up = false;
-                        down = false;
+                    if (piece.getPieceType() == Piece.PieceType.PAWN) {
+                        Pawn pawn = new Pawn(piece, state, enemyColor);
+                        state.setCircles(pawn.getXAttack(), pawn.getYAttack());
+                    } else if (piece.getPieceType() == Piece.PieceType.KNIGHT) {
+                        Knight knight = new Knight(piece, state, enemyColor);
+                        state.setCircles(knight.getXAttack(), knight.getYAttack());
+                    } else if (piece.getPieceType() == Piece.PieceType.BISHOP) {
                         Bishop bishop = new Bishop(piece, state, enemyColor);
-                        state.setCircles(bishop.getXAttackThrough(), bishop.getYAttackThrough());
-                        if (state.getDrawing(king.getX(), king.getY()) == 2) {
-                            if (piece.getX() > king.getX()) {
-                                left = true;
-                            } else if (piece.getX() < king.getX()) {
-                                right = true;
-                            }
-                            if (piece.getY() > king.getY()) {
-                                up = true;
-                            } else if (piece.getY() < king.getY()) {
-                                down = true;
-                            }
-
-                            for (int i = 0; i < bishop.getXAttackThrough().size(); i++) {
-                                Piece p = state.getPiece(bishop.getXAttackThrough().get(i), bishop.getYAttackThrough().get(i));
-                                blockPosition.add(piece);
-                                if (left && down) {
-                                    if (p.getX() < piece.getX()) {
-                                        if (p.getY() > piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                } else if (left && up) {
-                                    if (p.getX() < piece.getX()) {
-                                        if (p.getY() < piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                } else if (right && down) {
-                                    if (p.getX() > piece.getX()) {
-                                        if (p.getY() > piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                } else if (right && up) {
-                                    if (p.getX() > piece.getX()) {
-                                        if (p.getY() < piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        for (int i = 0; i < blockPosition.size(); i++) {
-                            if (blockPosition.get(i).getPieceColor() == teamColor) {
-                                pieceBlock.add(blockPosition.get(i));
-                            }
-                        }
-                        if (pieceBlock.size() > 1) {
-                            pieceBlock.clear();
-                        }
+                        state.setCircles(bishop.getXAttack(), bishop.getYAttack());
                     } else if (piece.getPieceType() == Piece.PieceType.ROOK) {
-                        left = false;
-                        right = false;
-                        up = false;
-                        down = false;
                         Rook rook = new Rook(piece, state, enemyColor);
-                        state.setCircles(rook.getXAttackThrough(), rook.getYAttackThrough());
-                        for (int i = 0; i < rook.getXAttackThrough().size(); i++) {
-                            Piece p = state.getPiece(rook.getXAttackThrough().get(i), rook.getYAttackThrough().get(i));
-                            if (state.getDrawing(king.getX(), king.getY()) == 2) {
-                                blockPosition.add(piece);
-                                if (piece.getX() > king.getX()) {
-                                    right = true;
-                                } else if (piece.getX() < king.getX()) {
-                                    left = true;
-                                }
-                                if (piece.getY() > king.getY()) {
-                                    down = true;
-                                } else if (piece.getY() < king.getY()) {
-                                    up = true;
-                                }
-                                if (left) {
-                                    if (p.getX() < piece.getX()) {
-                                        blockPosition.add(p);
-                                    }
-                                } else if (up) {
-                                    if (p.getY() < piece.getY()) {
-                                        blockPosition.add(p);
-                                    }
-                                } else if (right) {
-                                    if (p.getX() > piece.getX()) {
-                                        blockPosition.add(p);
-                                    }
-                                } else if (down) {
-                                    if (p.getY() > piece.getY()) {
-                                        blockPosition.add(p);
-                                    }
-                                }
-                            }
-                        }
-                        for (int i = 0; i < blockPosition.size(); i++) {
-                            if (blockPosition.get(i).getPieceColor() == teamColor) {
-                                pieceBlock.add(blockPosition.get(i));
-                            }
-                        }
-                        if (pieceBlock.size() > 1) {
-                            pieceBlock.clear();
-                        }
+                        state.setCircles(rook.getXAttack(), rook.getYAttack());
                     } else if (piece.getPieceType() == Piece.PieceType.QUEEN) {
-                        left = false;
-                        right = false;
-                        up = false;
-                        down = false;
                         Queen queen = new Queen(piece, state, enemyColor);
-                        state.setCircles(queen.getXAttackThrough(), queen.getYAttackThrough());
-                        for (int i = 0; i < queen.getXAttackThrough().size(); i++) {
-                            Piece p = state.getPiece(queen.getXAttackThrough().get(i), queen.getYAttackThrough().get(i));
-                            if (state.getDrawing(king.getX(), king.getY()) == 2) {
-                                blockPosition.add(piece);
-                                if (piece.getX() > king.getX()) {
-                                    right = true;
-                                } else if (piece.getX() < king.getX()) {
-                                    left = true;
-                                }
-                                if (piece.getY() > king.getY()) {
-                                    down = true;
-                                } else if (piece.getY() < king.getY()) {
-                                    up = true;
-                                }
-                                if (left && down) {
-                                    if (p.getX() < piece.getX()) {
-                                        if (p.getY() > piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                } else if (left && up) {
-                                    if (p.getX() < piece.getX()) {
-                                        if (p.getY() < piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                } else if (right && down) {
-                                    if (p.getX() > piece.getX()) {
-                                        if (p.getY() > piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                } else if (right && up) {
-                                    if (p.getX() > piece.getX()) {
-                                        if(p.getY() < piece.getY()) {
-                                            blockPosition.add(p);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        for (int i = 0; i < blockPosition.size(); i++) {
-                            if (blockPosition.get(i).getPieceColor() == teamColor) {
-                                pieceBlock.add(blockPosition.get(i));
-                            }
-                        }
-                        if (pieceBlock.size() > 1) {
-                            pieceBlock.clear();
-                        }
+                        state.setCircles(queen.getXAttack(), queen.getYAttack());
+                    } else if (piece.getPieceType() == Piece.PieceType.KING) {
+                        King king = new King(piece, state, enemyColor);
+                        state.setCircles(king.getXAttack(), king.getYAttack());
                     }
+                }
+            }
+        }
+
+        // determine what king will be in check with the movements generated
+        Piece king = null;
+        if (teamColor == Piece.ColorType.WHITE) {
+            king = state.getKingWhite();
+        } else if (teamColor == Piece.ColorType.BLACK) {
+            king = state.getKingBlack();
+        }
+        if (king != null) {
+            // if the king can be attacked by the enemy it means the king is in check
+            if (state.getDrawing(king.getX(), king.getY()) == 4) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Looks through all movements of the piece selected and determines
+     * if that movement causes the players king to be in check
+     *
+     * @param state the current state of the game
+     * @param color the color of the player that is making a move
+     */
+    public void moveToNotBeInCheck(ChessState state, Piece.ColorType color) {
+        // make sure the arraylists are empty
+        newMovementsX.clear();
+        newMovementsY.clear();
+
+        // iterate through all of the initial movements of the selected piece
+        for (int i = 0; i < initialMovementsX.size(); i++) {
+
+            // create a copied state so the current state is not effected yet
+            ChessState copyState = new ChessState(state);
+
+            // make one of the initial movements on the copied state
+            makeTempMovement(copyState, initialMovementsX.get(i), initialMovementsY.get(i));
+
+            // determine if the player is white or black so that can be passed
+            // in as a parameter
+            if (color == Piece.ColorType.WHITE) {
+
+                // determine if the movement causes the players king to be in check
+                if (!checkForCheck(copyState, color, Piece.ColorType.BLACK)) {
+
+                    // if the player is not in check add that movement to the new
+                    // arraylist so it can be saved
+                    newMovementsX.add(initialMovementsX.get(i));
+                    newMovementsY.add(initialMovementsY.get(i));
+                }
+            } else if (color == Piece.ColorType.BLACK) {
+                if (!checkForCheck(copyState, color, Piece.ColorType.WHITE)) {
+                    newMovementsX.add(initialMovementsX.get(i));
+                    newMovementsY.add(initialMovementsY.get(i));
                 }
             }
         }
     }
 
     /**
-     * Finds all of the positions that can be moved to in order to
-     * block whatever piece is putting your kind in check
+     * Creates a fake movement on the copied state
      *
-     * @param state the current state of the game
-     * @param color the color of the piece that is checking your king
+     * @param state the copied state of the game
+     * @param row   the row position of the selected piece
+     * @param col   the column position of the selected piece
      */
-    public void findCheckBlock(Piece.ColorType color, ChessState state) {
-        // make sure the arraylist is empty before filling it up
-        block.clear();
-        // if there are multiple pieces causing your king to be in check
-        // then you cannot block the check instead the king must move
-        if (piecesCauseCheck.size() == 1) {
-            // generate the location the piece that is putting you in check
-            // is at to make that a valid spot to move in order to remove
-            // the check
-            block.add(piecesCauseCheck.get(0));
-            // if the piece putting you in check is a knight there is not position
-            // you can move to block it
-            if (piecesCauseCheck.get(0).getPieceType() == Piece.PieceType.KNIGHT
-                    || piecesCauseCheck.get(0).getPieceType() == Piece.PieceType.PAWN) {
-                return;
-            }
-            // add all of the positions that can block the attack depending on what
-            // type of piece is attacking your king
-            if (piecesCauseCheck.get(0).getPieceType() == Piece.PieceType.BISHOP) {
-                Bishop bishop = new Bishop(piecesCauseCheck.get(0), state, color);
-                for(int i = 0; i < bishop.getX().size(); i++) {
-                    Piece bishopMove = state.getPiece(bishop.getX().get(i), bishop.getY().get(i));
-                    // Locate all of the positions between the attacking piece and the king
-                    // and allow those to be blocking locations
-                    if(color == Piece.ColorType.BLACK) {
-                        if ((state.getKingWhite().getX() > bishopMove.getX()
-                                && bishopMove.getX() > piecesCauseCheck.get(0).getX())
-                                || (state.getKingWhite().getX() < bishopMove.getX()
-                                && bishopMove.getX() < piecesCauseCheck.get(0).getX())) {
-                            if ((state.getKingWhite().getY() > bishopMove.getY()
-                                    && bishopMove.getY() > piecesCauseCheck.get(0).getY())
-                                    || (state.getKingWhite().getY() < bishopMove.getY()
-                                    && bishopMove.getY() < piecesCauseCheck.get(0).getY())) {
-                                block.add(bishopMove);
-                            }
-                        }
-                    } else if(color == Piece.ColorType.WHITE) {
-                        if ((state.getKingBlack().getX() > bishopMove.getX()
-                                && bishopMove.getX() > piecesCauseCheck.get(0).getX())
-                                || (state.getKingBlack().getX() < bishopMove.getX()
-                                && bishopMove.getX() < piecesCauseCheck.get(0).getX())) {
-                            if ((state.getKingBlack().getY() > bishopMove.getY()
-                                    && bishopMove.getY() > piecesCauseCheck.get(0).getY())
-                                    || (state.getKingBlack().getY() < bishopMove.getY()
-                                    && bishopMove.getY() < piecesCauseCheck.get(0).getY())) {
-                                block.add(bishopMove);
-                            }
-                        }
-                    }
-                }
-            } else if (piecesCauseCheck.get(0).getPieceType() == Piece.PieceType.ROOK) {
-                Rook rook = new Rook(piecesCauseCheck.get(0), state, color);
-                for(int i = 0; i < rook.getX().size(); i++) {
-                    Piece rookMove = state.getPiece(rook.getX().get(i), rook.getY().get(i));
-                    if(color == Piece.ColorType.BLACK) {
-                        if ((state.getKingWhite().getX() > rookMove.getX()
-                                && rookMove.getX() > piecesCauseCheck.get(0).getX())
-                                || (state.getKingWhite().getX() < rookMove.getX()
-                                && rookMove.getX() < piecesCauseCheck.get(0).getX())) {
-                            if ((state.getKingWhite().getY() > rookMove.getY()
-                                    && rookMove.getY() > piecesCauseCheck.get(0).getY())
-                                    || (state.getKingWhite().getY() < rookMove.getY()
-                                    && rookMove.getY() < piecesCauseCheck.get(0).getY())) {
-                                block.add(rookMove);
-                            }
-                        }
-                    } else if(color == Piece.ColorType.WHITE) {
-                        if ((state.getKingBlack().getX() > rookMove.getX()
-                                && rookMove.getX() > piecesCauseCheck.get(0).getX())
-                                || (state.getKingBlack().getX() < rookMove.getX()
-                                && rookMove.getX() < piecesCauseCheck.get(0).getX())) {
-                            if ((state.getKingBlack().getY() > rookMove.getY()
-                                    && rookMove.getY() > piecesCauseCheck.get(0).getY())
-                                    || (state.getKingBlack().getY() < rookMove.getY()
-                                    && rookMove.getY() < piecesCauseCheck.get(0).getY())) {
-                                block.add(rookMove);
-                            }
-                        }
-                    }
-                }
-            } else if (piecesCauseCheck.get(0).getPieceType() == Piece.PieceType.QUEEN) {
-                Queen queen = new Queen(piecesCauseCheck.get(0), state, color);
-                for(int i = 0; i < queen.getX().size(); i++) {
-                    Piece queenMove = state.getPiece(queen.getX().get(i), queen.getY().get(i));
-                    if(color == Piece.ColorType.BLACK) {
-                        if ((state.getKingWhite().getX() > queenMove.getX()
-                                && queenMove.getX() > piecesCauseCheck.get(0).getX())
-                                || (state.getKingWhite().getX() < queenMove.getX()
-                                && queenMove.getX() < piecesCauseCheck.get(0).getX())) {
-                            if ((state.getKingWhite().getY() > queenMove.getY()
-                                    && queenMove.getY() > piecesCauseCheck.get(0).getY())
-                                    || (state.getKingWhite().getY() < queenMove.getY()
-                                    && queenMove.getY() < piecesCauseCheck.get(0).getY())) {
-                                block.add(queenMove);
-                            }
-                        }
-                    } else if(color == Piece.ColorType.WHITE) {
-                        if ((state.getKingBlack().getX() > queenMove.getX()
-                                && queenMove.getX() > piecesCauseCheck.get(0).getX())
-                                || (state.getKingBlack().getX() < queenMove.getX()
-                                && queenMove.getX() < piecesCauseCheck.get(0).getX())) {
-                            if ((state.getKingBlack().getY() > queenMove.getY()
-                                    && queenMove.getY() > piecesCauseCheck.get(0).getY())
-                                    || (state.getKingBlack().getY() < queenMove.getY()
-                                    && queenMove.getY() < piecesCauseCheck.get(0).getY())) {
-                                block.add(queenMove);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    public void makeTempMovement(ChessState state, int row, int col) {
+        // create the temp piece with the selected position (tempRow, tempCol)
+        Piece tempPiece = state.getPiece(tempRow, tempCol);
 
-    /**
-     * Generates all of the movements that can be made to get
-     * your king out of check
-     *
-     * @param state the current state of the game
-     * @param row the row of the piece they have selected to move
-     * @param col the column of the piece they have selected to move
-     * @param color the color of the piece they have selected to move
-     */
-    public void findMovementsWhenCheck(ChessState state, int row, int col, Piece.ColorType color) {
-        state.removeDot();
-        // current piece that is selected
-        Piece p = state.getPiece(row, col);
-        // depending on what type of piece that is selected for movement
-        // different locations may appear
-        if (p.getPieceType() == Piece.PieceType.PAWN) {
-            Pawn pawn = new Pawn(p, state, color);
-            // allow this piece to go to any position that is valid for a pawn
-            // and that position must be in the xBlock and yBlock arraylist
-            // since it indicates that location will block your king so it
-            // is no longer in check
-            for(int i = 0; i < pawn.getX().size(); i++) {
-                Piece pawnMove = state.getPiece(pawn.getX().get(i), pawn.getY().get(i));
-                for(int j = 0; j < block.size(); j++) {
-                    if (pawnMove.equals(block.get(j))) {
-                        state.setCircles(pawn.getX(), pawn.getY());
-                    }
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
-            Knight knight = new Knight(p, state, color);
-            for(int i = 0; i < knight.getX().size(); i++) {
-                Piece knightMove = state.getPiece(knight.getX().get(i), knight.getY().get(i));
-                for(int j = 0; j < block.size(); j++) {
-                    if (knightMove.equals(block.get(j))) {
-                        state.setCircles(knight.getX(), knight.getY());
-                    }
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
-            Bishop bishop = new Bishop(p, state, color);
-            for(int i = 0; i < bishop.getX().size(); i++) {
-                Piece bishopMove = state.getPiece(bishop.getX().get(i), bishop.getY().get(i));
-                for(int j = 0; j < block.size(); j++) {
-                    if (bishopMove.equals(block.get(j))) {
-                        state.setCircles(bishop.getX(), bishop.getY());
-                    }
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.ROOK) {
-            Rook rook = new Rook(p, state, color);
-            for(int i = 0; i < rook.getX().size(); i++) {
-                Piece rookMove = state.getPiece(rook.getX().get(i), rook.getY().get(i));
-                for(int j = 0; j < block.size(); j++) {
-                    if (rookMove.equals(block.get(j))) {
-                        state.setCircles(rook.getX(), rook.getY());
-                    }
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
-            Queen queen = new Queen(p, state, color);
-            for(int i = 0; i < queen.getX().size(); i++) {
-                Piece queenMove = state.getPiece(queen.getX().get(i), queen.getY().get(i));
-                for(int j = 0; j < block.size(); j++) {
-                    if (queenMove.equals(block.get(j))) {
-                        state.setCircles(queen.getX(), queen.getY());
-                    }
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.KING) {
-            // if the piece is a king then generate all of the valid
-            // movements the king can make to get out of check
-            checkMoveToCheckKing(state, color);
-            King king = new King(p, state, color);
-            state.setCircles(king.getX(), king.getY());
-            state.setHighlight(row, col);
-            // remove all of the locations that cause the king to be in check (xKing, yKing)
-            for (int i = 0; i < xKing.size(); i++) {
-                state.removeDot(xKing.get(i), yKing.get(i));
+        // if they are moving a king determine who's king (white/black) and
+        // update the position of the king so when it checks for if the king
+        // is in check it knows the new position
+        if (tempPiece.getPieceType() == Piece.PieceType.KING) {
+            if (tempPiece.getPieceColor() == Piece.ColorType.WHITE) {
+                state.setKingWhite(row, col);
+            } else if (tempPiece.getPieceColor() == Piece.ColorType.BLACK) {
+                state.setKingBlack(row, col);
             }
         }
+        // make the location the piece is moving to become the selected piece
+        state.setPiece(row, col, tempPiece);
+
+        // make the selected piece become empty since the piece has moved
+        state.setPiece(tempRow, tempCol, state.emptyPiece);
     }
 
     /**
@@ -709,27 +382,24 @@ public class ChessLocalGame extends LocalGame {
      * that the player wants to move to
      *
      * @param state the current state of the game
-     * @param row the row of the position the player is moving to
-     * @param col the column of the position the player is moving to
+     * @param row   the row of the position the player is moving to
+     * @param col   the column of the position the player is moving to
      * @param color the color of the piece they selected previously
-     *
      * @return tells weather the move was valid and happened
      */
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
-        // if they selected a dot then move
-        if (state.getDrawing(row, col) == 2) {
-
+        // if they selected a dot/ring then move
+        if (state.getDrawing(row, col) == 2 || state.getDrawing(row, col) == 4) {
 
             //adds captured piece to captured pieces array t
-            if(state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY){
+            if (state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY) {
                 state.addWhiteCapturedPiece(state.getPiece(row, col));
             }
-
-            for(Piece p : state.getWhiteCapturedPieces()){
+            for (Piece p : state.getWhiteCapturedPieces()) {
                 Log.d("Testing", p.getPieceType().toString());
             }
+            Piece tempPiece = state.getPiece(tempRow, tempCol);
 
-            Piece tempPiece = state.getPiece(tempRow,tempCol);
             // change the location of the king to be at the new square if it is going to be moved
             if (tempPiece.getPieceType() == Piece.PieceType.KING) {
                 if (tempPiece.getPieceColor() == Piece.ColorType.WHITE) {
@@ -738,18 +408,21 @@ public class ChessLocalGame extends LocalGame {
                     state.setKingBlack(row, col);
                 }
             }
+
             // set the new position to be the piece they originally selected
-//            state.setPiece(row, col, tempPiece);
-            boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
-            ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
-            state.setPiece(row,col,checkPromotion(state.getPiece(tempRow,tempCol),col));
+            state.setPiece(row, col, tempPiece);
+
+            /////////////////////////////////////////////////////////////////////////
+            // No idea what's going, commenting out for now since it is hard coded //
+            /////////////////////////////////////////////////////////////////////////
+            //boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
+            //ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
+            //state.setPiece(row,col,checkPromotion(state.getPiece(tempRow,tempCol),col));
             //TODO put display moves log here
-            chp.displayMovesLog(row,col,tempRow,state,isCapture);
+            //chp.displayMovesLog(row,col,tempRow,state,isCapture);
 
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
-
-            setCheck(false);
 
             // remove all highlights
             state.removeHighlight();
@@ -759,259 +432,20 @@ public class ChessLocalGame extends LocalGame {
             tempCol = -1;
 
             // remove all the circles after moving
-            state.removeDot();
-
-            // check if the enemy king is in check after moving
-            if (checkForCheckMove(state, row, col, color)) {
-                setCheck(true);
-            } else {
-                setCheck(false);
+            state.removeCircle();
+            if (color == Piece.ColorType.BLACK) {
+                if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
+                    state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
+                }
+            } else if (color == Piece.ColorType.WHITE) {
+                if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
+                    state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
+                }
             }
-
             return true;
         } else {
             // if they didn't select a dot they don't move
             return false;
-        }
-    }
-
-    public Piece checkPromotion(Piece piece, int col){
-        if(piece.getPieceType() != Piece.PieceType.PAWN){return piece;}
-
-        if(piece.getPieceColor() == Piece.ColorType.WHITE && col == 0){
-            return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE, 0, piece.getY());
-        }else if(piece.getPieceColor() == Piece.ColorType.BLACK && col == 7) {
-            return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.BLACK, 7, piece.getY());
-        }
-        return piece;
-    }
-
-    /**
-     * Indicates that a king is currently in check
-     *
-     * @param b the boolean value that says if a king is in check
-     */
-    public void setCheck(boolean b) {
-        isCheck = b;
-    }
-
-    /**
-     * Helper method for finding if a king is in check
-     *
-     * @return tells if a king is in check or not
-     */
-    public boolean getCheck() {
-        return isCheck;
-    }
-
-    /**
-     * Finds out if the most recent movement caused the opponents king to
-     * be in check
-     *
-     * @param state the current state of the game
-     * @param row the row of the piece they have moved
-     * @param col the column of the piece they have moved
-     * @param color the color of the piece they have moved
-     *
-     * @return indicates if a king was put into check
-     */
-    public boolean checkForCheckMove(ChessState state, int row, int col, Piece.ColorType color) {
-        // remove all items in piecesCauseCheck so you can add new ones
-        piecesCauseCheck.clear();
-        // current piece that was moved
-        Piece p = state.getPiece(row, col);
-        // current king piece for black/white
-        Piece king = null;
-        if (color == Piece.ColorType.WHITE) {
-            king = state.getKingBlack();
-        } else if (color == Piece.ColorType.BLACK) {
-            king = state.getKingWhite();
-        }
-        if (king == null) {
-            return false;
-        }
-        // if the piece that was moved was a king then you cannot put the
-        // enemy king in check
-        if (p.getPieceType() == Piece.PieceType.KING) {
-            return false;
-        }
-        // for each PieceType generate movements and identify if they put
-        // the king in check. If they do then add it to the arraylist of pieces
-        // that cause check
-        if (p.getPieceType() == Piece.PieceType.PAWN) {
-            Pawn pawn = new Pawn(p, state, color);
-            for (int i = 0; i < pawn.getXAttack().size(); i++) {
-                if (pawn.getXAttack().get(i) == king.getX()
-                        && pawn.getYAttack().get(i) == king.getY()) {
-                    piecesCauseCheck.add(p);
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
-            Knight knight = new Knight(p, state, color);
-            state.setCircles(knight.getX(), knight.getY());
-            for (int i = 0; i < knight.getX().size(); i++) {
-                if (knight.getX().get(i) == king.getX()
-                        && knight.getY().get(i) == king.getY()) {
-                    piecesCauseCheck.add(p);
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
-            Bishop bishop = new Bishop(p, state, color);
-            state.setCircles(bishop.getX(), bishop.getY());
-            for (int i = 0; i < bishop.getX().size(); i++) {
-                if (bishop.getX().get(i) == king.getX()
-                        && bishop.getY().get(i) == king.getY()) {
-                    piecesCauseCheck.add(p);
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.ROOK) {
-            Rook rook = new Rook(p, state, color);
-            state.setCircles(rook.getX(), rook.getY());
-            for (int i = 0; i < rook.getX().size(); i++) {
-                if (rook.getX().get(i) == king.getX()
-                        && rook.getY().get(i) == king.getY()) {
-                    piecesCauseCheck.add(p);
-                }
-            }
-        } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
-            Queen queen = new Queen(p, state, color);
-            state.setCircles(queen.getX(), queen.getY());
-            for (int i = 0; i < queen.getX().size(); i++) {
-                if (queen.getX().get(i) == king.getX()
-                        && queen.getY().get(i) == king.getY()) {
-                    piecesCauseCheck.add(p);
-                }
-            }
-        }
-        // if at least one piece is causing the king to be in check then highlight
-        // the kings square indicating it is in check and return true
-        if (piecesCauseCheck.size() > 0) {
-            state.setHighlightCheck(king.getX(), king.getY());
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Finds all of the locations the king can move to
-     *
-     * @param state the current state of the game
-     * @param colorType the color of the king
-     */
-    public void checkMoveToCheckKing(ChessState state, Piece.ColorType colorType) {
-        // if it is white's turn
-        if (colorType == Piece.ColorType.WHITE) {
-            // generate all of black's piece movements
-            generateMovementEnemy(state, Piece.ColorType.BLACK);
-            // generate all of the movements the king can make while taking into
-            // account all positions that cause the king to be in check
-            kingMovement(state, state.getKingWhite().getX(), state.getKingWhite().getY());
-            state.removeDot();
-        } else if (colorType == Piece.ColorType.BLACK) {
-            // generate all of white's piece movements
-            generateMovementEnemy(state, Piece.ColorType.WHITE);
-            // find out all of the locations that cause the king to be in
-            // check
-            kingMovement(state, state.getKingBlack().getX(), state.getKingBlack().getY());
-            state.removeDot();
-        }
-    }
-
-    /**
-     * Generates all of the movements of the enemy pieces
-     *
-     * @param state the current state of the game
-     * @param colorType the color of the opponents pieces
-     */
-    public void generateMovementEnemy(ChessState state, Piece.ColorType colorType) {
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Piece piece = state.getPiece(row, col);
-                if (piece.getPieceColor() == colorType) {
-                    if (piece.getPieceType() == Piece.PieceType.PAWN) {
-                        Pawn pawn = new Pawn(piece, state, colorType);
-                        state.setCircles(pawn.getXAttack(), pawn.getYAttack());
-                    } else if (piece.getPieceType() == Piece.PieceType.KNIGHT) {
-                        Knight knight = new Knight(piece, state, colorType);
-                        state.setCircles(knight.getXAttack(), knight.getYAttack());
-                    } else if (piece.getPieceType() == Piece.PieceType.BISHOP) {
-                        Bishop bishop = new Bishop(piece, state, colorType);
-                        state.setCircles(bishop.getXAttack(), bishop.getYAttack());
-                    } else if (piece.getPieceType() == Piece.PieceType.ROOK) {
-                        Rook rook = new Rook(piece, state, colorType);
-                        state.setCircles(rook.getXAttack(), rook.getYAttack());
-                    } else if (piece.getPieceType() == Piece.PieceType.QUEEN) {
-                        Queen queen = new Queen(piece, state, colorType);
-                        state.setCircles(queen.getXAttack(), queen.getYAttack());
-                    } else if (piece.getPieceType() == Piece.PieceType.KING) {
-                        King king = new King(piece, state, colorType);
-                        state.setCircles(king.getXAttack(), king.getYAttack());
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Generates all of the locations that would cause the
-     * king to be in check and add them to the arraylists
-     *
-     * @param state the current state of the game
-     * @param x the x position of the king
-     * @param y the y position of the king
-     */
-    public void kingMovement(ChessState state, int x, int y) {
-        // remove all of the values that are currently set
-        // before setting the new values
-        xKing.clear();
-        yKing.clear();
-        if (x > 0) {
-            if (state.getDrawing(x - 1, y) == 2) {
-                xKing.add(x - 1);
-                yKing.add(y);
-            }
-        }
-        if (x < 7) {
-            if (state.getDrawing(x + 1, y) == 2) {
-                xKing.add(x + 1);
-                yKing.add(y);
-            }
-        }
-        if (y > 0) {
-            if (state.getDrawing(x, y - 1) == 2) {
-                xKing.add(x);
-                yKing.add(y - 1);
-            }
-        }
-        if (y < 7) {
-            if (state.getDrawing(x, y + 1) == 2) {
-                xKing.add(x);
-                yKing.add(y + 1);
-            }
-        }
-        if (x > 0 && y > 0) {
-            if (state.getDrawing(x - 1, y - 1) == 2) {
-                xKing.add(x - 1);
-                yKing.add(y - 1);
-            }
-        }
-        if (x > 0 && y < 7) {
-            if (state.getDrawing(x - 1, y + 1) == 2) {
-                xKing.add(x - 1);
-                yKing.add(y + 1);
-            }
-        }
-        if (x < 7 && y > 0) {
-            if (state.getDrawing(x + 1, y - 1) == 2) {
-                xKing.add(x + 1);
-                yKing.add(y - 1);
-            }
-        }
-        if (x < 7 && y < 7) {
-            if (state.getDrawing(x + 1, y + 1) == 2) {
-                xKing.add(x + 1);
-                yKing.add(y + 1);
-            }
         }
     }
 }
