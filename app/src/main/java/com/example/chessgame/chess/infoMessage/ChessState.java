@@ -32,6 +32,14 @@ public class ChessState extends GameState implements Serializable {
     //1: black
     private int playerToMove;
 
+    //keeps track of whether certain pieces have moved for castling
+    private boolean whiteKingHasMoved;
+    private boolean whiteRook1HasMoved;
+    private boolean whiteRook2HasMoved;
+    private boolean blackKingHasMoved;
+    private boolean blackRook1HasMoved;
+    private boolean blackRook2HasMoved;
+
     public ChessState() {
         pieces = new Piece[8][8];
         board = new int[8][8];
@@ -79,6 +87,13 @@ public class ChessState extends GameState implements Serializable {
         }
         playerToMove = 0;
         turnCount = 0;
+
+        whiteKingHasMoved = false;
+        whiteRook1HasMoved = false;
+        whiteRook2HasMoved = false;
+        blackKingHasMoved = false;
+        blackRook1HasMoved = false;
+        blackRook2HasMoved = false;
     }
 
     // Copy Constructor
@@ -135,6 +150,13 @@ public class ChessState extends GameState implements Serializable {
         
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
+
+        whiteKingHasMoved = other.whiteKingHasMoved;
+        whiteRook1HasMoved = other.whiteRook1HasMoved;
+        whiteRook2HasMoved = other.whiteRook2HasMoved;
+        blackKingHasMoved = other.blackKingHasMoved;
+        blackRook1HasMoved = other.blackRook1HasMoved;
+        blackRook2HasMoved = other.blackRook2HasMoved;
     }
 
     public Piece getPiece(int row, int col) {
@@ -233,6 +255,21 @@ public class ChessState extends GameState implements Serializable {
     public void addWhiteCapturedPiece(Piece p){
         whiteCapturedPieces.add(p);
     }
+
+    //getters for the hasMoved variables
+    public boolean getWhiteKingHasMoved(){return whiteKingHasMoved;}
+    public boolean getWhiteRook1HasMoved(){return whiteRook1HasMoved;}
+    public boolean getWhiteRook2HasMoved(){return whiteRook2HasMoved;}
+    public boolean getBlackKingHasMoved(){return blackKingHasMoved;}
+    public boolean getBlackRook1HasMoved(){return blackRook1HasMoved;}
+    public boolean getBlackRook2HasMoved(){return blackRook2HasMoved;}
+    //setters for the hasMoved variables
+    public void setWhiteKingHasMoved(boolean hasMoved){whiteKingHasMoved = hasMoved;}
+    public void setWhiteRook1HasMoved(boolean hasMoved){whiteRook1HasMoved = hasMoved;}
+    public void setWhiteRook2HasMoved(boolean hasMoved){whiteRook2HasMoved = hasMoved;}
+    public void setBlackKingHasMoved(boolean hasMoved){blackKingHasMoved = hasMoved;}
+    public void setBlackRook1HasMoved(boolean hasMoved){blackRook1HasMoved = hasMoved;}
+    public void setBlackRook2HasMoved(boolean hasMoved){blackRook2HasMoved = hasMoved;}
 
 }
 

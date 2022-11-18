@@ -92,6 +92,19 @@ public class King {
             xMovementAttack.add(x + 1);
             yMovementAttack.add(y + 1);
         }
+
+        if(state.getPiece(x, y).getPieceColor() == Piece.ColorType.WHITE){
+            if(!state.getWhiteKingHasMoved() && !state.getWhiteRook1HasMoved()){
+                xMovement.add();
+                yMovement.add();
+            }
+        }
+        else if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK){
+            if(state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
+                //WE NEED TO CHECK THAT THE SPACES ARE BLANK
+                state.setBlackKingHasMoved(true);
+            }
+        }
     }
 
     public ArrayList<Integer> getX() {

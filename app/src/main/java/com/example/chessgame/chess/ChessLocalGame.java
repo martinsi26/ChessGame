@@ -172,6 +172,8 @@ public class ChessLocalGame extends LocalGame {
             if (tempRow == -1 || tempCol == -1) {
                 return false;
             }
+
+            //this is where we need the specific momvemnet stuff for
             Piece tempP = state.getPiece(tempRow, tempCol);
             if(tempP.getPieceColor() == Piece.ColorType.WHITE) {
                 if (!setMovement(state, row, col, Piece.ColorType.WHITE)) {
@@ -191,6 +193,30 @@ public class ChessLocalGame extends LocalGame {
 
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
+
+            //updates potential hasMoved variables
+            if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.WHITE){
+                if(state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
+                    state.setWhiteKingHasMoved(true);
+                }
+                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 0){
+                    state.setWhiteRook1HasMoved(true);
+                }
+                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 7){
+                    state.setWhiteRook2HasMoved(true);
+                }
+            }
+            else if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK){
+                if(state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
+                    state.setBlackKingHasMoved(true);
+                }
+                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 0){
+                    state.setBlackRook1HasMoved(true);
+                }
+                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 7){
+                    state.setBlackRook2HasMoved(true);
+                }
+            }
 
             // return true, indicating the it was a legal move
             return true;
