@@ -20,18 +20,34 @@ public class ChessStateTest {
 
     @Test
     public void setKingWhite() {
+        ChessState state = new ChessState();
+        Piece p = state.getPiece(0, 7);
+        state.setKingWhite(p.getX(), p.getY());
+        assertEquals(0, state.getKingWhite().getX());
+        assertEquals(7, state.getKingWhite().getY());
     }
 
     @Test
     public void setKingBlack() {
+        ChessState state = new ChessState();
+        Piece p = state.getPiece(0, 7);
+        state.setKingBlack(p.getX(), p.getY());
+        assertEquals(0, state.getKingBlack().getX());
+        assertEquals(7, state.getKingBlack().getY());
     }
 
     @Test
     public void getKingWhite() {
+        ChessState state = new ChessState();
+        Piece king = state.getKingWhite();
+        assertEquals(king, state.getKingWhite());
     }
 
     @Test
     public void getKingBlack() {
+        ChessState state = new ChessState();
+        Piece king = state.getKingBlack();
+        assertEquals(king, state.getKingBlack());
     }
 
     @Test
@@ -51,11 +67,7 @@ public class ChessStateTest {
     }
 
     @Test
-    public void removeDot() {
-    }
-
-    @Test
-    public void testRemoveDot() {
+    public void removeCircle() {
     }
 
     @Test
