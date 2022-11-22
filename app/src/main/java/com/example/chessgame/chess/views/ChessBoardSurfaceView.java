@@ -114,6 +114,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        //draw the board
         Paint paint = new Paint();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {

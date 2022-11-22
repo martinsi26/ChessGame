@@ -183,6 +183,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                         }
 
                         surfaceViewChessBoard.invalidate();
+
                     }
                 }
             }
