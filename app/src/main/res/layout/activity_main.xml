@@ -79,7 +79,7 @@
                     android:text="Human"
                     android:textSize="20sp" />
 
-                <SurfaceView
+                <com.example.chessgame.chess.views.WhiteCaptureSurfaceView
                     android:id="@+id/whiteCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

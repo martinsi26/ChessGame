@@ -91,10 +91,18 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         // set the surfaceView instance variable
         surfaceView = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
         surfaceView.setOnTouchListener(this);
+
+        //moves log
         movesLog = myActivity.findViewById(R.id.movesLog);
         surfaceViewChessBoard = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
+
+        //resignation
         resignButton = myActivity.findViewById(R.id.surrenderButton);
-        //surfaceViewWhiteCapture = (WhiteCaptureSurfaceView) myActivity.findViewById(R.id.whiteCaptures);
+
+        //captures
+        surfaceViewWhiteCapture = (WhiteCaptureSurfaceView) myActivity.findViewById(R.id.whiteCaptures);
+
+
         //surfaceViewBlackCapture = (BlackCaptureSurfaceView) myActivity.findViewById(R.id.blackCaptures);
         surfaceViewChessBoard.setOnTouchListener(this);
         resignButton.setOnTouchListener(this);
