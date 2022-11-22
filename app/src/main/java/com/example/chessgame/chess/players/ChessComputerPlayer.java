@@ -149,7 +149,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
 
     /**
      * Checks if current piece that is selected has locations to move to
-     *
+     * nothing
      * @param selection  the current piece that is selected to move by the AI
      * @param chessState the current state of the game
      * @return indicates if the selected piece has locations to move to or not
