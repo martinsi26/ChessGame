@@ -68,16 +68,22 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         if (surfaceViewChessBoard == null) {
             return;
         }
+
         if (info instanceof IllegalMoveInfo || info instanceof NotYourTurnInfo) {
             // if the move was out of turn or otherwise illegal, flash the screen
             surfaceViewChessBoard.flash(Color.RED, 50);
         } else if (!(info instanceof ChessState)) {
-            // if we do not have a TTTState, ignore
+            // if we do not have a state, ignore
             return;
         } else {
             surfaceViewChessBoard.setState((ChessState)info);
             surfaceViewChessBoard.invalidate();
+
+            surfaceViewWhiteCapture.setState((ChessState)info);
+            surfaceViewWhiteCapture.invalidate();
         }
+
+
     }
 
     /**
@@ -183,6 +189,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                         }
 
                         surfaceViewChessBoard.invalidate();
+                        //surfaceViewWhiteCapture.invalidate();
 
                     }
                 }

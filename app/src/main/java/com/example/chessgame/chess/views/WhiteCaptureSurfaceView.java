@@ -7,9 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 import com.example.chessgame.GameFramework.utilities.FlashSurfaceView;
 import com.example.chessgame.R;
+import com.example.chessgame.chess.infoMessage.ChessState;
+import com.example.chessgame.chess.infoMessage.Piece;
 
 public class WhiteCaptureSurfaceView extends FlashSurfaceView {
 
@@ -30,6 +35,9 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
     private int height;
 
     private Paint paint;
+
+    protected ChessState chessState;
+    private ArrayList<Piece> pieces;
 
     public WhiteCaptureSurfaceView(Context context) {
         super(context);
@@ -72,11 +80,22 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawRect(10,10,30,30, paint);
+
+//        if(!pieces.isEmpty()) {
+//            for (Piece p : pieces) {
+//                Log.d("testing", p.getPieceType().toString());
+//            }
+//        }
+
     }
 
     private void init(){
         width = 120;
         paint = new Paint();
         paint.setColor(Color.BLUE);
+    }
+
+    public void setState(ChessState state) {
+        chessState = state;
     }
 }
