@@ -1,5 +1,7 @@
 package com.example.chessgame.chess.pieces;
 
+import static com.example.chessgame.chess.infoMessage.Piece.PieceType.EMPTY;
+
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
 
@@ -93,16 +95,39 @@ public class King {
             yMovementAttack.add(y + 1);
         }
 
-        if(state.getPiece(x, y).getPieceColor() == Piece.ColorType.WHITE){
-            if(!state.getWhiteKingHasMoved() && !state.getWhiteRook1HasMoved()){
-                xMovement.add();
-                yMovement.add();
+        //Castling movements
+        if(color == Piece.ColorType.WHITE){
+            if(state.getPiece(5, 7).getPieceType() == EMPTY &&
+               state.getPiece(6, 7).getPieceType() == EMPTY) {
+                if (!state.getWhiteKingHasMoved() && !state.getWhiteRook1HasMoved()) {
+                    xMovement.add(6);
+                    yMovement.add(7);
+                }
+            }
+            if(state.getPiece(1, 7).getPieceType() == EMPTY &&
+                    state.getPiece(2, 7).getPieceType() == EMPTY &&
+                    state.getPiece(3, 7).getPieceType() == EMPTY) {
+                if (!state.getWhiteKingHasMoved() && !state.getWhiteRook2HasMoved()) {
+                    xMovement.add(2);
+                    yMovement.add(7);
+                }
             }
         }
-        else if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK){
-            if(state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
-                //WE NEED TO CHECK THAT THE SPACES ARE BLANK
-                state.setBlackKingHasMoved(true);
+        if(color == Piece.ColorType.BLACK){
+            if(state.getPiece(1, 0).getPieceType() == EMPTY &&
+                    state.getPiece(2, 0).getPieceType() == EMPTY &&
+                    state.getPiece(3, 0).getPieceType() == EMPTY) {
+                if (!state.getBlackKingHasMoved() && !state.getBlackRook1HasMoved()) {
+                    xMovement.add(2);
+                    yMovement.add(0);
+                }
+            }
+            if(state.getPiece(5, 0).getPieceType() == EMPTY &&
+                    state.getPiece(6, 0).getPieceType() == EMPTY) {
+                if (!state.getBlackKingHasMoved() && !state.getBlackRook2HasMoved()) {
+                    xMovement.add(6);
+                    yMovement.add(0);
+                }
             }
         }
     }

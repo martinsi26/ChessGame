@@ -166,6 +166,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                         } else if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
                             ChessSelectAction select = new ChessSelectAction(this, i, j);
                             game.sendAction(select);
+                        // create a move action
                         } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
                             ChessMoveAction move = new ChessMoveAction(this, i, j);
                             game.sendAction(move);

@@ -172,7 +172,37 @@ public class ChessLocalGame extends LocalGame {
                 return false;
             }
 
-            //this is where we need the specific momvemnet stuff for
+            //very specific castling case- the selected piece and piece being moved to are the same color
+            if(state.getPiece(tempRow, tempCol).getPieceColor() == state.getPiece(row, col).getPieceColor()){
+                if(tempRow == 4 && tempCol == 7 && row == 7 && col == 7){
+
+                }
+            }
+
+            //updates potential hasMoved variables
+            if(state.getPiece(tempRow, tempCol).getPieceColor() == Piece.ColorType.WHITE){
+                if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING) {
+                    state.setWhiteKingHasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 7){
+                    state.setWhiteRook1HasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 0){
+                    state.setWhiteRook2HasMoved(true);
+                }
+            }
+            else if(state.getPiece(tempRow, tempCol).getPieceColor() == Piece.ColorType.BLACK){
+                if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING) {
+                    state.setBlackKingHasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 7){
+                    state.setBlackRook1HasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 0){
+                    state.setBlackRook2HasMoved(true);
+                }
+            }
+
             Piece tempP = state.getPiece(tempRow, tempCol);
 
             // determine what team is moving (white/black) and move the piece
@@ -196,29 +226,7 @@ public class ChessLocalGame extends LocalGame {
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
 
-            //updates potential hasMoved variables
-            if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.WHITE){
-                if(state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
-                    state.setWhiteKingHasMoved(true);
-                }
-                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 0){
-                    state.setWhiteRook1HasMoved(true);
-                }
-                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 7){
-                    state.setWhiteRook2HasMoved(true);
-                }
-            }
-            else if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK){
-                if(state.getPiece(row, col).getPieceType() == Piece.PieceType.KING) {
-                    state.setBlackKingHasMoved(true);
-                }
-                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 0){
-                    state.setBlackRook1HasMoved(true);
-                }
-                else if(state.getPiece(row, col).getPieceType() == Piece.PieceType.ROOK && col == 7){
-                    state.setBlackRook2HasMoved(true);
-                }
-            }
+
 
             // return true, indicating the it was a legal move
             return true;
@@ -349,7 +357,7 @@ public class ChessLocalGame extends LocalGame {
         // iterate through all of the initial movements of the selected piece
         for (int i = 0; i < initialMovementsX.size(); i++) {
 
-            // create a copied state so the current state is not effected yet
+            // create a copied state so the current state is not affected yet
             ChessState copyState = new ChessState(state);
 
             // make one of the initial movements on the copied state
@@ -426,6 +434,30 @@ public class ChessLocalGame extends LocalGame {
                 Log.d("Testing", p.getPieceType().toString());
             }
             Piece tempPiece = state.getPiece(tempRow, tempCol);
+            Piece castlingTempPiece = state.getPiece(row, col);
+
+            //very specific castling case- the selected piece is a king and moving two squares
+            if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING && (Math.abs(row-tempRow) == 2)){
+                // for each sub case- this takes care of moving the rook, the king then moves normally
+                if(tempRow == 4 && tempCol == 7 && row == 6 && col == 7){
+                    state.setPiece(5,7, state.getPiece(7,7));
+                    state.setPiece(7,7,state.emptyPiece);
+                }
+                else if(tempRow == 4 && tempCol == 7 && row == 2 && col == 7){
+                    state.setPiece(3,7, state.getPiece(0,7));
+                    state.setPiece(0,7,state.emptyPiece);
+                }
+                else if(tempRow == 4 && tempCol == 0 && row == 6 && col == 0){
+                    state.setPiece(5,0, state.getPiece(7,0));
+                    state.setPiece(7,0,state.emptyPiece);
+                }
+                else if(tempRow == 4 && tempCol == 0 && row == 2 && col == 0){
+                    state.setPiece(3,0, state.getPiece(0,0));
+                    state.setPiece(0,0,state.emptyPiece);
+                }
+
+            }
+
 
             // change the location of the king to be at the new square if it is going to be moved
             if (tempPiece.getPieceType() == Piece.PieceType.KING) {
