@@ -52,6 +52,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         if (chessState.getWhoseMove() == 0 && playerNum == 1) {
             return;
         }
+
         // all of the pieces that can move on the computers side
         availablePieces = new ArrayList<>();
         for (int i = 0; i < 8; i++) {

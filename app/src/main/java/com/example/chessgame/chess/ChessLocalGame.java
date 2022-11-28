@@ -2,6 +2,7 @@ package com.example.chessgame.chess;
 
 
 import android.util.Log;
+import android.view.View;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
 import com.example.chessgame.GameFramework.LocalGame;
@@ -414,17 +415,12 @@ public class ChessLocalGame extends LocalGame {
             }
 
             // set the new position to be the piece they originally selected
-            state.setPiece(row, col, tempPiece);
 
-            /////////////////////////////////////////////////////////////////////////
-            // No idea what's going, commenting out for now since it is hard coded //
-            /////////////////////////////////////////////////////////////////////////
-            //boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
-            //ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
-            //state.setPiece(row,col,checkPromotion(state.getPiece(tempRow,tempCol),col));
-            //TODO put display moves log here
-            //chp.displayMovesLog(row,col,tempRow,state,isCapture);
-
+            boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
+            ChessHumanPlayer chp = players[0] instanceof ChessHumanPlayer ?
+                    (ChessHumanPlayer) players[0] : (ChessHumanPlayer) players[1];
+            state.setPiece(row,col,state.getPiece(tempRow,tempCol));
+            chp.displayMovesLog(row,col,tempRow,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
 
@@ -451,5 +447,16 @@ public class ChessLocalGame extends LocalGame {
             // if they didn't select a dot they don't move
             return false;
         }
+    }
+
+    public boolean checkPromotion(Piece piece, int col,ChessHumanPlayer chp){
+        if(piece.getPieceType() != Piece.PieceType.PAWN){return false;}
+        if(piece.getPieceColor() == Piece.ColorType.WHITE && col == 0){
+            //return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE, piece.getX(), 0);
+            return true;
+        }else if(piece.getPieceColor() == Piece.ColorType.BLACK && col == 7){
+            return true;
+        }
+        return false;
     }
 }
