@@ -27,6 +27,8 @@ public class ChessState extends GameState implements Serializable {
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
 
+    private boolean canMove;
+
     public Piece emptyPiece;
 
     //0: white
@@ -38,6 +40,7 @@ public class ChessState extends GameState implements Serializable {
         board = new int[8][8];
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
+        canMove = false;
 
         // Setting the initial position of all of the pieces
         for (int row = 0; row < pieces.length; row++) {
@@ -86,6 +89,7 @@ public class ChessState extends GameState implements Serializable {
     public ChessState(ChessState other) {
         pieces = new Piece[8][8];
         board = new int[8][8];
+        canMove = other.canMove;
 
         //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
@@ -146,6 +150,14 @@ public class ChessState extends GameState implements Serializable {
         piece.setY(col);
         piece.setX(row);
         pieces[row][col] = piece;
+    }
+
+    public void setCanMove(boolean b) {
+        canMove = b;
+    }
+
+    public boolean getCanMove() {
+        return canMove;
     }
 
     public void setKingWhite(int row, int col) {

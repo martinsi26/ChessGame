@@ -157,6 +157,12 @@ public class ChessLocalGame extends LocalGame {
             // players own king be in check
             moveToNotBeInCheck(state, p.getPieceColor());
 
+            if(newMovementsX.size() > 0) {
+                state.setCanMove(true);
+            } else {
+                state.setCanMove(false);
+            }
+
             // display all positions in arraylist as dots on the board
             state.setCircles(newMovementsX, newMovementsY);
 

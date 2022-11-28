@@ -72,17 +72,25 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         }
         // randomly shuffle the pieces in the array
         Collections.shuffle(availablePieces);
+        // make the computer selected whatever the first value in the array is now
         selection = availablePieces.get(0);
-        for (int i = 1; i < availablePieces.size(); i++) {
-            if (checkMove(selection, chessState)) {
-                selection = availablePieces.get(i);
-            }
-        }
+        // create variables to hold the x and y of the position selected
         int xVal = selection.getX();
         int yVal = selection.getY();
+        // call the selection game action
         game.sendAction(new ChessSelectAction(this, xVal, yVal));
+        // check if the piece is one that can move
+        for (int i = 1; i < availablePieces.size(); i++) {
+            if (!chessState.getCanMove()) {
+                selection = availablePieces.get(i);
+                xVal = selection.getX();
+                yVal = selection.getY();
+                game.sendAction(new ChessSelectAction(this, xVal, yVal));
+            } else {
+                break;
+            }
+        }
         sleep(1);
-
 
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
