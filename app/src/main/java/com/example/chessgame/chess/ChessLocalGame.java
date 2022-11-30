@@ -1,6 +1,7 @@
 package com.example.chessgame.chess;
 
 
+import android.os.CountDownTimer;
 import android.util.Log;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
@@ -80,6 +81,21 @@ public class ChessLocalGame extends LocalGame {
 
     @Override
     protected String checkIfGameOver() {
+
+        // CHESS
+        // determine if a player is put into check, if the player is in
+        // check then go through every piece that player has on the board
+        // and generate all of its possible locations. If the arraylist
+        // for its locations comes back empty then continue. As soon as
+        // one arraylist comes back with at least one position then we
+        // can return that the game is not over. If all pieces have been
+        // searched through then we know the game is over due to a checkmate.
+        // -----
+        // more updates can be made once stalemate is implemented
+
+        char resultChar = ' ';
+        ChessState state = (ChessState) super.state;
+
         return null;
     }
 
@@ -447,5 +463,13 @@ public class ChessLocalGame extends LocalGame {
             // if they didn't select a dot they don't move
             return false;
         }
+    }
+
+    // unit testing
+    public int whoWon(){
+        String gameOver = checkIfGameOver();
+        if(gameOver == null || gameOver.equals("It's a cat's game.")) return -1;
+        if(gameOver.equals(playerNames[0]+" is the winner.")) return 0;
+        return 1;
     }
 }
