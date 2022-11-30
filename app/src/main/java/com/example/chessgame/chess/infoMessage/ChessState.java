@@ -24,6 +24,8 @@ public class ChessState extends GameState implements Serializable {
     private Piece kingBlack;
     private Piece kingWhite;
 
+    private boolean isCheck;
+
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
 
@@ -80,6 +82,7 @@ public class ChessState extends GameState implements Serializable {
         }
         playerToMove = 0;
         turnCount = 0;
+        isCheck = false;
     }
 
     // Copy Constructor
@@ -136,6 +139,7 @@ public class ChessState extends GameState implements Serializable {
 
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
+        isCheck = other.isCheck;
     }
 
     public Piece getPiece(int row, int col) {
@@ -146,6 +150,14 @@ public class ChessState extends GameState implements Serializable {
         piece.setY(col);
         piece.setX(row);
         pieces[row][col] = piece;
+    }
+
+    public void setCheck(boolean b) {
+        isCheck = b;
+    }
+
+    public boolean getCheck() {
+        return isCheck;
     }
 
     public void setKingWhite(int row, int col) {

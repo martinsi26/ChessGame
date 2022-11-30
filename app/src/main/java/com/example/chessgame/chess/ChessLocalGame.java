@@ -24,6 +24,7 @@ import com.example.chessgame.chess.players.ChessHumanPlayer;
 
 import java.util.ArrayList;
 
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.jar.Attributes;
 
 public class ChessLocalGame extends LocalGame {
@@ -93,8 +94,55 @@ public class ChessLocalGame extends LocalGame {
         // -----
         // more updates can be made once stalemate is implemented
 
-        char resultChar = ' ';
+        //char resultChar = ' ';
         ChessState state = (ChessState) super.state;
+
+        // if a player is not in check then then there is no checkmate yet
+        if(!state.getCheck()) {
+            return null;
+        }
+
+        Piece.ColorType color = null;
+        // find what color has moved to put the other player in checkmate
+        if(state.getWhoseMove() == 1) {
+            // if it is now whites turn that means black put white in checkmate
+            color = Piece.ColorType.BLACK;
+        } else if (state.getWhoseMove() == 0) {
+            // if it is now blacks turn that means white put black in checkmate
+            color = Piece.ColorType.WHITE;
+        }
+
+        // arraylist that holds all pieces of player that is in check
+        ArrayList<Piece> pieces = new ArrayList<>();
+        // add all pieces to arraylist
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(state.getPiece(i, j).getPieceColor() == color) {
+                    pieces.add(state.getPiece(i,j));
+                }
+            }
+        }
+
+        // create fake selections and check if there are any possible
+        // movement for that selection. If there is a movement then
+        // the player can get out of check and it is not a checkmate.
+        // If all pieces have no possible movements then the player
+        // is in checkmate.
+        for(int i = 0; i < pieces.size(); i++) {
+            findMovement(state, pieces.get(i));
+            moveToNotBeInCheck(state, color);
+            if(newMovementsX.size() > 0) {
+                return null; // no winner yet
+            }
+        }
+        // since a return was never made that means the player has
+        // no possible movements and is in checkmate, so the player
+        // who put the other player in check is now the winner.
+        if (color == Piece.ColorType.BLACK) {
+            return "Black won";
+        } else if (color == Piece.ColorType.WHITE) {
+            return "White won";
+        }
 
         return null;
     }
@@ -449,13 +497,17 @@ public class ChessLocalGame extends LocalGame {
 
             // remove all the circles after moving
             state.removeCircle();
+            state.setCheck(false);
+
             if (color == Piece.ColorType.BLACK) {
                 if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
+                    state.setCheck(true);
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
+                    state.setCheck(true);
                 }
             }
             return true;
