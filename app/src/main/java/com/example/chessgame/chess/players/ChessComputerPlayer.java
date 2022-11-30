@@ -44,25 +44,25 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         if (info instanceof NotYourTurnInfo) return;
 
         if (info instanceof IllegalMoveInfo) return;
-        ChessState chessState = new ChessState((ChessState) info);
+        ChessState state = new ChessState((ChessState) info);
 
-        if (chessState.getWhoseMove() == 1 && playerNum == 0) {
+        if (state.getWhoseMove() == 1 && playerNum == 0) {
             return;
         }
-        if (chessState.getWhoseMove() == 0 && playerNum == 1) {
+        if (state.getWhoseMove() == 0 && playerNum == 1) {
             return;
         }
         // all of the pieces that can move on the computers side
         availablePieces = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int k = 0; k < 8; k++) {
-                if (chessState.getDrawing(i, k) == 1) {
+                if (state.getDrawing(i, k) == 1) {
                     return;
                 }
-                if (chessState.getDrawing(i, k) == 3) {
+                if (state.getDrawing(i, k) == 3) {
                     sleep(1);
                 }
-                Piece p = chessState.getPiece(i, k);
+                Piece p = state.getPiece(i, k);
                 if (playerNum == 0 && p.getPieceColor() == Piece.ColorType.WHITE) {
                     availablePieces.add(p);
                 } else if (playerNum == 1 && p.getPieceColor() == Piece.ColorType.BLACK) {
@@ -80,6 +80,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         // call the selection game action
         game.sendAction(new ChessSelectAction(this, xVal, yVal));
         // check if the piece is one that can move
+        ChessState chessState = (ChessState) game.getGameState();
         for (int i = 1; i < availablePieces.size(); i++) {
             if (!chessState.getCanMove()) {
                 selection = availablePieces.get(i);
