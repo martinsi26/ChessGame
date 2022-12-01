@@ -237,5 +237,9 @@ public class ChessState extends GameState implements Serializable {
     public void addWhiteCapturedPiece(Piece p) {
         whiteCapturedPieces.add(p);
     }
+
+    public void addBlackCapturedPiece(Piece p) {
+        blackCapturedPieces.add(p);
+    }
 }
 

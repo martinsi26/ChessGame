@@ -18,12 +18,6 @@ import com.example.chessgame.chess.infoMessage.Piece;
 
 public class WhiteCaptureSurfaceView extends FlashSurfaceView {
 
-    protected Bitmap whitePawnImage;
-    protected Bitmap whiteKnightImage;
-    protected Bitmap whiteBishopImage;
-    protected Bitmap whiteRookImage;
-    protected Bitmap whiteKingImage;
-    protected Bitmap whiteQueenImage;
     protected Bitmap blackPawnImage;
     protected Bitmap blackKnightImage;
     protected Bitmap blackBishopImage;
@@ -49,13 +43,7 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
     public WhiteCaptureSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
-        whitePawnImage = BitmapFactory.decodeResource(getResources(), R.drawable.wp);
-        whiteKnightImage = BitmapFactory.decodeResource(getResources(), R.drawable.wn);
-        whiteBishopImage = BitmapFactory.decodeResource(getResources(), R.drawable.wb);
-        whiteRookImage = BitmapFactory.decodeResource(getResources(), R.drawable.wr);
-        whiteKingImage = BitmapFactory.decodeResource(getResources(), R.drawable.wk);
-        whiteQueenImage = BitmapFactory.decodeResource(getResources(), R.drawable.wq);
-        whiteBishopImage = BitmapFactory.decodeResource(getResources(), R.drawable.wb);
+
         blackPawnImage = BitmapFactory.decodeResource(getResources(), R.drawable.bp);
         blackBishopImage = BitmapFactory.decodeResource(getResources(), R.drawable.bb);
         blackKnightImage = BitmapFactory.decodeResource(getResources(), R.drawable.bn);
@@ -64,12 +52,6 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
         blackQueenImage = BitmapFactory.decodeResource(getResources(), R.drawable.bq);
         blackBishopImage = BitmapFactory.decodeResource(getResources(), R.drawable.bb);
 
-        whitePawnImage = Bitmap.createScaledBitmap(whitePawnImage, width, height, false);
-        whiteRookImage = Bitmap.createScaledBitmap(whiteRookImage, width, height, false);
-        whiteKnightImage = Bitmap.createScaledBitmap(whiteKnightImage, width, height, false);
-        whiteKingImage = Bitmap.createScaledBitmap(whiteKingImage, width, height, false);
-        whiteQueenImage = Bitmap.createScaledBitmap(whiteQueenImage, width, height, false);
-        whiteBishopImage = Bitmap.createScaledBitmap(whiteBishopImage, width, height, false);
         blackPawnImage = Bitmap.createScaledBitmap(blackPawnImage, width, height, false);
         blackRookImage = Bitmap.createScaledBitmap(blackRookImage, width, height, false);
         blackKnightImage = Bitmap.createScaledBitmap(blackKnightImage, width, height, false);
@@ -90,47 +72,24 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
         xLoc = yLoc = 25;
         for (Piece p : chessState.getWhiteCapturedPieces()) {
 //            Log.d("Testing", p.getPieceType().toString());
-
-            if (p.getPieceColor() == Piece.ColorType.WHITE) {
-                if (p.getPieceType() == Piece.PieceType.PAWN) {
-                    canvas.drawBitmap(whitePawnImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
-                    canvas.drawBitmap(whiteBishopImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
-                    canvas.drawBitmap(whiteKnightImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.ROOK) {
-                    canvas.drawBitmap(whiteRookImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
-                    canvas.drawBitmap(whiteQueenImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.KING) {
-                    canvas.drawBitmap(whiteKingImage, xLoc, yLoc, paint);
-                    increment();
-                }
-            } else if (p.getPieceColor() == Piece.ColorType.BLACK) {
-                if (p.getPieceType() == Piece.PieceType.PAWN) {
-                    canvas.drawBitmap(blackPawnImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
-                    canvas.drawBitmap(blackBishopImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
-                    canvas.drawBitmap(blackKnightImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.ROOK) {
-                    canvas.drawBitmap(blackRookImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
-                    canvas.drawBitmap(blackQueenImage, xLoc, yLoc, paint);
-                    increment();
-                } else if (p.getPieceType() == Piece.PieceType.KING) {
-                    canvas.drawBitmap(blackKingImage, xLoc, yLoc, paint);
-                    increment();
-                }
+            if (p.getPieceType() == Piece.PieceType.PAWN) {
+                canvas.drawBitmap(blackPawnImage, xLoc, yLoc, paint);
+                increment();
+            } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
+                canvas.drawBitmap(blackBishopImage, xLoc, yLoc, paint);
+                increment();
+            } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
+                canvas.drawBitmap(blackKnightImage, xLoc, yLoc, paint);
+                increment();
+            } else if (p.getPieceType() == Piece.PieceType.ROOK) {
+                canvas.drawBitmap(blackRookImage, xLoc, yLoc, paint);
+                increment();
+            } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
+                canvas.drawBitmap(blackQueenImage, xLoc, yLoc, paint);
+                increment();
+            } else if (p.getPieceType() == Piece.PieceType.KING) {
+                canvas.drawBitmap(blackKingImage, xLoc, yLoc, paint);
+                increment();
             }
         }
 

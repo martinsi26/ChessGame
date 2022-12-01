@@ -393,7 +393,11 @@ public class ChessLocalGame extends LocalGame {
 
             //adds captured piece to captured pieces array t
             if (state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY) {
-                state.addWhiteCapturedPiece(state.getPiece(row, col));
+                if(state.getPiece(row, col).getPieceColor() == Piece.ColorType.BLACK) {
+                    state.addWhiteCapturedPiece(state.getPiece(row, col));
+                } else {
+                    state.addBlackCapturedPiece(state.getPiece(row, col));
+                }
             }
 
 //            for (Piece p : state.getWhiteCapturedPieces()) {

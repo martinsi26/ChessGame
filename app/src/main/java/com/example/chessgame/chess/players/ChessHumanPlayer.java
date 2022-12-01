@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,7 +35,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     public TextView movesLog;
     private ChessBoardSurfaceView surfaceViewChessBoard;
     private Button resignButton;
-    //private BlackCaptureSurfaceView surfaceViewBlackCapture;
+
+    private BlackCaptureSurfaceView surfaceViewBlackCapture;
     private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
 
     // the ID for the layout to use
@@ -65,7 +67,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     @Override
     public void receiveInfo(GameInfo info) {
-        if (surfaceViewChessBoard == null || surfaceViewWhiteCapture == null) {
+        if (surfaceViewChessBoard == null || surfaceViewWhiteCapture == null || surfaceViewBlackCapture == null) {
             return;
         }
 
@@ -80,7 +82,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
             surfaceViewChessBoard.invalidate();
 
             surfaceViewWhiteCapture.setState(state);
-            //surfaceViewWhiteCapture.invalidate();
+            surfaceViewBlackCapture.setState(state);
+            surfaceViewBlackCapture.invalidate();
         }
 
 
@@ -107,9 +110,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
         //captures
         surfaceViewWhiteCapture = (WhiteCaptureSurfaceView) myActivity.findViewById(R.id.whiteCaptures);
+        surfaceViewBlackCapture = (BlackCaptureSurfaceView) myActivity.findViewById(R.id.blackCaptures);
 
-
-        //surfaceViewBlackCapture = (BlackCaptureSurfaceView) myActivity.findViewById(R.id.blackCaptures);
         surfaceViewChessBoard.setOnTouchListener(this);
         resignButton.setOnTouchListener(this);
     }
@@ -189,7 +191,9 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                         }
 
                         surfaceViewChessBoard.invalidate();
+
                         surfaceViewWhiteCapture.invalidate();
+                        surfaceViewBlackCapture.invalidate();
 
                     }
                 }

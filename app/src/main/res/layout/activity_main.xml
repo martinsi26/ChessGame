@@ -33,13 +33,13 @@
 
                 <TextView
                     android:id="@+id/nameBlack"
-                    android:layout_width="wrap_content"
+                    android:layout_width="72dp"
                     android:layout_height="match_parent"
                     android:gravity="left|center_vertical"
                     android:text="Computer"
                     android:textSize="20sp" />
 
-                <SurfaceView
+                <com.example.chessgame.chess.views.BlackCaptureSurfaceView
                     android:id="@+id/blackCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
