@@ -131,15 +131,32 @@ public class ChessStateTest {
         assertEquals(1,state.getWhoseMove());
     }
 
+    //Jonathan
     @Test
     public void getWhiteCapturedPieces() {
+        ChessState state = new ChessState();
+        assertEquals(0, state.getWhiteCapturedPieces().size());
+        Piece p = new Piece(Piece.PieceType.BISHOP, Piece.ColorType.WHITE, 0, 0);
+        state.getWhiteCapturedPieces().add(p);
+        assertEquals(p, state.getWhiteCapturedPieces().get(0));
     }
 
+    //Jonathan
     @Test
     public void getBlackCapturedPieces() {
+        ChessState state = new ChessState();
+        assertEquals(0, state.getBlackCapturedPieces().size());
+        Piece p = new Piece(Piece.PieceType.BISHOP, Piece.ColorType.BLACK, 0, 0);
+        state.getBlackCapturedPieces().add(p);
+        assertEquals(p, state.getBlackCapturedPieces().get(0));
     }
 
+    //Jonathan
     @Test
     public void addWhiteCapturedPiece() {
+        ChessState state = new ChessState();
+        Piece p = new Piece(Piece.PieceType.BISHOP, Piece.ColorType.WHITE, 0, 0);
+        state.addWhiteCapturedPiece(p);
+        assertEquals(state.getWhiteCapturedPieces().get(0), p);
     }
 }

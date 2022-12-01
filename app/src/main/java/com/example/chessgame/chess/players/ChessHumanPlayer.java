@@ -46,7 +46,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     private int savedY = 0;
 
     //private BlackCaptureSurfaceView surfaceViewBlackCapture;
-    //private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
+    private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
 
     // the ID for the layout to use
     private int layoutId;
@@ -173,6 +173,26 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         // loop through all of the locations on the board and compare
         // the location pressed to the pixels on the screen to find
         // the exact location of the click according to the board
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
+                    if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
+
+                        // create the select action
+                        if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
+                            ChessSelectAction select = new ChessSelectAction(this, i, j);
+                            game.sendAction(select);
+                        } else if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
+                            ChessSelectAction select = new ChessSelectAction(this, i, j);
+                            game.sendAction(select);
+                        // create a move action
+                        } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
+                            ChessMoveAction move = new ChessMoveAction(this, i, j);
+                            game.sendAction(move);
+                        } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
+                            ChessMoveAction move = new ChessMoveAction(this, i, j);
+                            game.sendAction(move);
+                        }
 
         if (!isPromotion) {
             for (int i = 0; i < 8; i++) {
