@@ -4,8 +4,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 public class ChessStateTest {
 
+    //Jayven
     @Test
     public void getPiece() {
         ChessState state = new ChessState();
@@ -14,6 +17,7 @@ public class ChessStateTest {
         assertEquals(7,p.getY());
     }
 
+    //Sebastian
     @Test
     public void setPiece() {
         ChessState test = new ChessState();
@@ -38,6 +42,7 @@ public class ChessStateTest {
 
     }
 
+    //Simon
     @Test
     public void setKingWhite() {
         ChessState state = new ChessState();
@@ -47,6 +52,7 @@ public class ChessStateTest {
         assertEquals(7, state.getKingWhite().getY());
     }
 
+    //Simon
     @Test
     public void setKingBlack() {
         ChessState state = new ChessState();
@@ -56,6 +62,7 @@ public class ChessStateTest {
         assertEquals(7, state.getKingBlack().getY());
     }
 
+    //Simon
     @Test
     public void getKingWhite() {
         ChessState state = new ChessState();
@@ -63,6 +70,7 @@ public class ChessStateTest {
         assertEquals(king, state.getKingWhite());
     }
 
+    //Simon
     @Test
     public void getKingBlack() {
         ChessState state = new ChessState();
@@ -70,6 +78,7 @@ public class ChessStateTest {
         assertEquals(king, state.getKingBlack());
     }
 
+    //Sebastian
     @Test
     public void setHighlightCheck() {
         ChessState test = new ChessState();
@@ -84,6 +93,7 @@ public class ChessStateTest {
         assertEquals(3, test.getDrawing(7,7));
     }
 
+    //Sebastian
     @Test
     public void setHighlight() {
         ChessState test = new ChessState();
@@ -98,32 +108,94 @@ public class ChessStateTest {
         assertEquals(1, test.getDrawing(7,7));
     }
 
+    //Jonathan and Simon
     @Test
     public void setCircles() {
+        ChessState state = new ChessState();
+        ArrayList<Integer> testX = new ArrayList<>();
+        testX.add(7);
+        testX.add(3);
+        testX.add(0);
+        ArrayList<Integer> testY = new ArrayList<>();
+        testY.add(7);
+        testY.add(3);
+        testY.add(0);
+        state.setCircles(testX,testY);
+        assertEquals(4, state.getDrawing(7,7));
+        assertEquals(2, state.getDrawing(3,3));
+        assertEquals(4, state.getDrawing(0,0));
     }
 
+    //Jonathan and Sebastian
     @Test
     public void removeHighlight() {
+        ChessState test = new ChessState();
+        test.setHighlight(6,3);
+        assertEquals(1, test.getDrawing(6,3));
+
+        //edge cases
+        test.setHighlight(0,0);
+        assertEquals(1, test.getDrawing(0,0));
+
+        test.setHighlight(7,7);
+        assertEquals(1, test.getDrawing(7,7));
+
+        test.removeHighlight();
+
+        assertEquals(0, test.getDrawing(6,3));
+        assertEquals(0, test.getDrawing(0,0));
+        assertEquals(0, test.getDrawing(7,7));
     }
 
+    //Jonathan and Simon
     @Test
     public void removeCircle() {
+        ChessState state = new ChessState();
+        ArrayList<Integer> testX = new ArrayList<>();
+        testX.add(7);
+        testX.add(3);
+        testX.add(0);
+        ArrayList<Integer> testY = new ArrayList<>();
+        testY.add(7);
+        testY.add(3);
+        testY.add(0);
+        state.setCircles(testX,testY);
+        assertEquals(4, state.getDrawing(7,7));
+        assertEquals(2, state.getDrawing(3,3));
+        assertEquals(4, state.getDrawing(0,0));
+        state.removeCircle();
+        assertEquals(0, state.getDrawing(7,7));
+        assertEquals(0, state.getDrawing(3,3));
+        assertEquals(0, state.getDrawing(0,0));
     }
 
+    //Jonathan and Simon
     @Test
     public void removeHighlightCheck() {
+        ChessState state = new ChessState();
+        state.setHighlightCheck(0,0);
+        assertEquals(3, state.getDrawing(0,0));
+        state.removeHighlightCheck();
+        assertEquals(0, state.getDrawing(0,0));
     }
 
+    //Jonathan and Simon
     @Test
     public void getDrawing() {
+        ChessState state = new ChessState();
+        state.setHighlight(1, 1);
+        assertEquals(1, state.getDrawing(1, 1));
+        assertEquals(0, state.getDrawing(1, 2));
     }
 
+    //Jayven
     @Test
     public void getWhoseMove() {
         ChessState state = new ChessState();
         assertEquals(0,state.getWhoseMove());
     }
 
+    //Jayven
     @Test
     public void setWhoseMove() {
         ChessState state = new ChessState();
