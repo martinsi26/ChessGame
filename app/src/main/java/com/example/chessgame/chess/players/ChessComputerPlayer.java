@@ -84,7 +84,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         int xVal = selection.getX();
         int yVal = selection.getY();
         game.sendAction(new ChessSelectAction(this, xVal, yVal));
-        sleep(.2);
+        sleep(.5);
 
 
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
