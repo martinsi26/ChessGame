@@ -24,8 +24,13 @@ public class ChessState extends GameState implements Serializable {
     private Piece kingBlack;
     private Piece kingWhite;
 
+    private boolean isCheck;
+    private boolean isGameOver;
+
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
+
+    private boolean canMove;
 
     public Piece emptyPiece;
 
@@ -48,6 +53,8 @@ public class ChessState extends GameState implements Serializable {
         board = new int[8][8];
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
+        canMove = false;
+        isGameOver = false;
 
         // Setting the initial position of all of the pieces
         for (int row = 0; row < pieces.length; row++) {
@@ -90,6 +97,7 @@ public class ChessState extends GameState implements Serializable {
         }
         playerToMove = 0;
         turnCount = 0;
+        isCheck = false;
 
         whiteKingHasMoved = false;
         whiteRook1HasMoved = false;
@@ -103,6 +111,8 @@ public class ChessState extends GameState implements Serializable {
     public ChessState(ChessState other) {
         pieces = new Piece[8][8];
         board = new int[8][8];
+        canMove = other.canMove;
+        isGameOver = other.isGameOver;
 
         //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
@@ -160,6 +170,7 @@ public class ChessState extends GameState implements Serializable {
         blackKingHasMoved = other.blackKingHasMoved;
         blackRook1HasMoved = other.blackRook1HasMoved;
         blackRook2HasMoved = other.blackRook2HasMoved;
+        isCheck = other.isCheck;
     }
 
     public Piece getPiece(int row, int col) {
@@ -170,6 +181,30 @@ public class ChessState extends GameState implements Serializable {
         piece.setY(col);
         piece.setX(row);
         pieces[row][col] = piece;
+    }
+
+    public void setCanMove(boolean b) {
+        canMove = b;
+    }
+
+    public boolean getCanMove() {
+        return canMove;
+    }
+
+    public void setGameOver(boolean b) {
+        isGameOver = b;
+    }
+
+    public boolean getGameOver() {
+        return isGameOver;
+    }
+
+    public void setCheck(boolean b) {
+        isCheck = b;
+    }
+
+    public boolean getCheck() {
+        return isCheck;
     }
 
     public void setKingWhite(int row, int col) {
