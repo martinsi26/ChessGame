@@ -44,7 +44,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
     protected void receiveInfo(GameInfo info) {
         // if it was a "not your turn" message, just ignore it
         if (info instanceof NotYourTurnInfo) return;
-
+        //Ignore illegal move info too
         if (info instanceof IllegalMoveInfo) return;
         ChessState chessState = new ChessState((ChessState) info);
         //if(chessState.isPromoting){return;}
@@ -84,7 +84,7 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         int xVal = selection.getX();
         int yVal = selection.getY();
         game.sendAction(new ChessSelectAction(this, xVal, yVal));
-        sleep(1);
+        sleep(.5);
 
 
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
