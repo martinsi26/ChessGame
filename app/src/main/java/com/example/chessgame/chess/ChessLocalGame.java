@@ -594,7 +594,6 @@ public class ChessLocalGame extends LocalGame {
             }
 
             // set the new position to be the piece they originally selected
-
             boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
             ChessHumanPlayer chp = players[0] instanceof ChessHumanPlayer ?
                     (ChessHumanPlayer) players[0] : (ChessHumanPlayer) players[1];
