@@ -65,7 +65,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
     @Override
     public void receiveInfo(GameInfo info) {
-        if (surfaceViewChessBoard == null) {
+        if (surfaceViewChessBoard == null || surfaceViewWhiteCapture == null) {
             return;
         }
 
@@ -79,8 +79,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
             surfaceViewChessBoard.setState((ChessState)info);
             surfaceViewChessBoard.invalidate();
 
-            surfaceViewWhiteCapture.setState((ChessState)info);
-            surfaceViewWhiteCapture.invalidate();
+            surfaceViewWhiteCapture.setState(state);
+            //surfaceViewWhiteCapture.invalidate();
         }
 
 
@@ -189,7 +189,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                         }
 
                         surfaceViewChessBoard.invalidate();
-                        //surfaceViewWhiteCapture.invalidate();
+                        surfaceViewWhiteCapture.invalidate();
 
                     }
                 }

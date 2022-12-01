@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.example.chessgame.GameFramework.utilities.FlashSurfaceView;
 import com.example.chessgame.R;
@@ -154,6 +155,11 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         canvas.drawText("f", 710, 985, paint);
         canvas.drawText("g", 825, 985, paint);
         canvas.drawText("h", 940, 985, paint);
+
+        for (Piece p : state.getWhiteCapturedPieces()) {
+            Log.d("Testing", p.getPieceType().toString());
+        }
+
     }
 
 
