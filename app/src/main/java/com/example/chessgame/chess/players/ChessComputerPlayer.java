@@ -42,10 +42,13 @@ public class ChessComputerPlayer extends GameComputerPlayer {
     protected void receiveInfo(GameInfo info) {
         // if it was a "not your turn" message, just ignore it
         if (info instanceof NotYourTurnInfo) return;
-
+        //Ignore illegal move info too
         if (info instanceof IllegalMoveInfo) return;
+
+        //casting
         ChessState chessState = new ChessState((ChessState) info);
 
+        //make sure it is the correct player's turn
         if (chessState.getWhoseMove() == 1 && playerNum == 0) {
             return;
         }
