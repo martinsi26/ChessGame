@@ -72,6 +72,7 @@ public class MessageBox {
                                    OnClickListener negListener, Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(msg);
+        //look for radio button
         builder.setPositiveButton(posButtonText, posListener);
         builder.setNegativeButton(negButtonText, negListener);
         AlertDialog alert = builder.create();

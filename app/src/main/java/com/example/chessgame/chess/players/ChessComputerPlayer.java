@@ -5,6 +5,7 @@ import com.example.chessgame.GameFramework.infoMessage.IllegalMoveInfo;
 import com.example.chessgame.GameFramework.infoMessage.NotYourTurnInfo;
 import com.example.chessgame.GameFramework.players.GameComputerPlayer;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessPromotionAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
@@ -17,6 +18,7 @@ import com.example.chessgame.chess.pieces.Rook;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class ChessComputerPlayer extends GameComputerPlayer {
 
@@ -51,11 +53,15 @@ public class ChessComputerPlayer extends GameComputerPlayer {
             return;
         }
         if (state.getWhoseMove() == 1 && playerNum == 0) {
+        ChessState chessState = new ChessState((ChessState) info);
+        //if(chessState.isPromoting){return;}
+        if (chessState.getWhoseMove() == 1 && playerNum == 0) {
             return;
         }
         if (state.getWhoseMove() == 0 && playerNum == 1) {
             return;
         }
+
         // all of the pieces that can move on the computers side
         availablePieces = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -106,6 +112,15 @@ public class ChessComputerPlayer extends GameComputerPlayer {
             Collections.shuffle(ints);
             xVal = pawn.getX().get(ints.get(0));
             yVal = pawn.getY().get(ints.get(0));
+            if(selection.getPieceColor() == Piece.ColorType.BLACK){
+                if(yVal == 7){
+                    sendPromotionAction(xVal,yVal, Piece.ColorType.BLACK);
+                }
+            }else if(selection.getPieceColor() == Piece.ColorType.WHITE){
+                if(yVal == 0){
+                    sendPromotionAction(xVal,yVal, Piece.ColorType.WHITE);
+                }
+            }
             game.sendAction(new ChessMoveAction(this, xVal, yVal));
         } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
             Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
@@ -157,6 +172,84 @@ public class ChessComputerPlayer extends GameComputerPlayer {
             xVal = king.getX().get(ints.get(0));
             yVal = king.getY().get(ints.get(0));
             game.sendAction(new ChessMoveAction(this, xVal, yVal));
+        }
+    }
+
+    /**
+     * Checks if current piece that is selected has locations to move to
+     *
+     * @param selection  the current piece that is selected to move by the AI
+     * @param chessState the current state of the game
+     * @return indicates if the selected piece has locations to move to or not
+     * for the current state of the game
+     */
+    public boolean checkMove(Piece selection, ChessState chessState) {
+        if (selection.getPieceType() == Piece.PieceType.PAWN) {
+            Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
+            if (pawn.getX().size() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
+            Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
+            if (bishop.getX().size() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (selection.getPieceType() == Piece.PieceType.KNIGHT) {
+            Knight knight = new Knight(selection, chessState, selection.getPieceColor());
+            if (knight.getX().size() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (selection.getPieceType() == Piece.PieceType.ROOK) {
+            Rook rook = new Rook(selection, chessState, selection.getPieceColor());
+            if (rook.getX().size() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (selection.getPieceType() == Piece.PieceType.QUEEN) {
+            Queen queen = new Queen(selection, chessState, selection.getPieceColor());
+            if (queen.getX().size() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (selection.getPieceType() == Piece.PieceType.KING) {
+            King king = new King(selection, chessState, selection.getPieceColor());
+            if (king.getX().size() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void sendPromotionAction(int xVal, int yVal, Piece.ColorType type){
+        Random rand = new Random();
+        int choice = rand.nextInt(4);
+        switch(choice) {
+            case(0):
+                game.sendAction(new ChessPromotionAction(this,
+                        new Piece(Piece.PieceType.QUEEN, type, xVal, yVal), xVal, yVal));
+                break;
+            case(1):
+                game.sendAction(new ChessPromotionAction(this,
+                        new Piece(Piece.PieceType.KNIGHT, type, xVal, yVal), xVal, yVal));
+                break;
+            case(2):
+                game.sendAction(new ChessPromotionAction(this,
+                        new Piece(Piece.PieceType.BISHOP, type, xVal, yVal), xVal, yVal));
+                break;
+            case(3):
+                game.sendAction(new ChessPromotionAction(this,
+                        new Piece(Piece.PieceType.ROOK, type, xVal, yVal), xVal, yVal));
+                break;
         }
     }
 }
