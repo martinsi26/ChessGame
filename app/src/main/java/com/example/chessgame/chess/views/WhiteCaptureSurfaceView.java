@@ -69,7 +69,7 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
         //canvas.drawRect(10,10,30,30, paint);
 
 
-        xLoc = yLoc = 25;
+        xLoc = yLoc = 5;
         for (Piece p : chessState.getWhiteCapturedPieces()) {
 //            Log.d("Testing", p.getPieceType().toString());
             if (p.getPieceType() == Piece.PieceType.PAWN) {
@@ -106,7 +106,11 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
     }
 
     public void increment(){
-        xLoc += width + 10;
+        xLoc += width;
+        if(xLoc > width*11){
+            xLoc = 5;
+            yLoc = 5 + height;
+        }
     }
 
 }
