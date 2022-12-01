@@ -264,8 +264,6 @@ public class ChessLocalGame extends LocalGame {
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
 
-
-
             // return true, indicating the it was a legal move
             return true;
         } else if (action instanceof ChessPromotionAction){
