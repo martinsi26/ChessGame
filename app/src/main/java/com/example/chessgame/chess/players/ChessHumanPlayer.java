@@ -157,6 +157,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         myActivity.setTitle("Chess: " + allPlayerNames[0] + " vs. " + allPlayerNames[1]);
     }
 
+
+
     /**
      * callback method when the screen it touched. We're
      * looking for a screen touch (which we'll detect on
@@ -164,110 +166,6 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
      *
      * @param motionEvent the motion event that was detected
      */
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        if(view.getId() == resignButton.getId()){
-            MessageBox.popUpMessage("Game Over!\n You have resigned",myActivity);
-            CountDownTimer cdt = new CountDownTimer(3000,10) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                @Override
-                public void onFinish() {
-                    myActivity.finishAffinity();
-                }
-            };
-            cdt.start();
-        }
-
-        // ignore if not an "down" event
-        if (motionEvent.getAction() != MotionEvent.ACTION_DOWN) {
-            return true;
-        }
-
-        // loop through all of the locations on the board and compare
-        // the location pressed to the pixels on the screen to find
-        // the exact location of the click according to the board
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
-                    if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
-
-                            // create the select action
-                            if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
-                                ChessSelectAction select = new ChessSelectAction(this, i, j);
-                                currPiece = state.getPiece(i, j);
-                                game.sendAction(select);
-                            } else if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
-                                ChessSelectAction select = new ChessSelectAction(this, i, j);
-                                currPiece = state.getPiece(i, j);
-                                game.sendAction(select);
-                            } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
-                                if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
-                                    if (currPiece.getX() == i) {
-                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
-                                            ChessMoveAction move = new ChessMoveAction(this, i, j);
-                                            game.sendAction(move);
-                                            break;
-                                        }
-                                    }
-                                    if(currPiece.getX() == i + 1 || currPiece.getX() == i - 1){
-                                        if(state.getPiece(i,j).getPieceType() == Piece.PieceType.EMPTY){
-                                            ChessMoveAction move = new ChessMoveAction(this,i,j);
-                                            game.sendAction(move);
-                                            break;
-                                        }
-                                    }
-                                    promptForPromotion(i, j);
-                                    break;
-                                }
-                                ChessMoveAction move = new ChessMoveAction(this, i, j);
-                                game.sendAction(move);
-                            } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
-                                if (j == 7 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
-                                    if (currPiece.getX() == i) {
-                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
-                                            ChessMoveAction move = new ChessMoveAction(this, i, j);
-                                            game.sendAction(move);
-                                            break;
-                                        }
-                                    }
-                                    promptForPromotion(i, j);
-                                    break;
-                                }
-                                ChessMoveAction move = new ChessMoveAction(this, i, j);
-                                game.sendAction(move);
-                            }
-                            surfaceViewChessBoard.invalidate();
-                            surfaceViewWhiteCapture.invalidate();
-                            surfaceViewBlackCapture.invalidate();
-
-                        }
-                    }
-                }
-                if (isPromotion) {
-                    break;
-                }
-            }
-        } else {
-            if (view.getId() == queenPromo.getId()) {
-                makePromotion(Piece.PieceType.QUEEN);
-            } else if (view.getId() == bishopPromo.getId()) {
-                makePromotion(Piece.PieceType.BISHOP);
-            } else if (view.getId() == knightPromo.getId()) {
-                makePromotion(Piece.PieceType.KNIGHT);
-            } else if (view.getId() == rookPromo.getId()) {
-                makePromotion(Piece.PieceType.ROOK);
-            }
-            return true;
-        }
-
-        // register that we have handled the event
-        return true;
-    }
 
     public void displayMovesLog(int currRow, int currCol, int tempRow, ChessState state, boolean isCapture) {
         if (state == null) return;
@@ -330,6 +228,111 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         return 'q';
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (view.getId() == resignButton.getId()) {
+            MessageBox.popUpMessage("Game Over!\n You have resigned", myActivity);
+            CountDownTimer cdt = new CountDownTimer(3000, 10) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    myActivity.finishAffinity();
+                }
+            };
+            cdt.start();
+        }
+
+        // ignore if not an "down" event
+        if (motionEvent.getAction() != MotionEvent.ACTION_DOWN) {
+            return true;
+        }
+
+        // loop through all of the locations on the board and compare
+        // the location pressed to the pixels on the screen to find
+        // the exact location of the click according to the board
+
+        if (!isPromotion) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (motionEvent.getX() > 20 + (i * 115) && motionEvent.getX() < 175 + (i * 115)) {
+                        if (motionEvent.getY() > 20 + (j * 115) && motionEvent.getY() < 175 + (j * 115)) {
+
+                            // create the select action
+                            if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
+                                ChessSelectAction select = new ChessSelectAction(this, i, j);
+                                currPiece = state.getPiece(i, j);
+                                game.sendAction(select);
+                            } else if (state.getPiece(i, j).getPieceColor() == Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
+                                ChessSelectAction select = new ChessSelectAction(this, i, j);
+                                currPiece = state.getPiece(i, j);
+                                game.sendAction(select);
+                            } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
+                                if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
+                                    if (currPiece.getX() == i) {
+                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
+                                            ChessMoveAction move = new ChessMoveAction(this, i, j);
+                                            game.sendAction(move);
+                                            break;
+                                        }
+                                    }
+                                    if(currPiece.getX() == i + 1 || currPiece.getX() == i - 1){
+                                        if(state.getPiece(i,j).getPieceType() == Piece.PieceType.EMPTY){
+                                            ChessMoveAction move = new ChessMoveAction(this,i,j);
+                                            game.sendAction(move);
+                                            break;
+                                        }
+                                    }
+                                    promptForPromotion(i, j);
+                                    break;
+                                }
+                                ChessMoveAction move = new ChessMoveAction(this, i, j);
+                                game.sendAction(move);
+                            } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
+                                if (j == 7 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
+                                    if (currPiece.getX() == i) {
+                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
+                                            ChessMoveAction move = new ChessMoveAction(this, i, j);
+                                            game.sendAction(move);
+                                            break;
+                                        }
+                                    }
+                                    promptForPromotion(i, j);
+                                    break;
+                                }
+                                ChessMoveAction move = new ChessMoveAction(this, i, j);
+                                game.sendAction(move);
+                            }
+                            surfaceViewChessBoard.invalidate();
+                            surfaceViewWhiteCapture.invalidate();
+                            surfaceViewBlackCapture.invalidate();
+                        }
+                    }
+                }
+                if (isPromotion) {
+                    break;
+                }
+            }
+        } else {
+            if (view.getId() == queenPromo.getId()) {
+                makePromotion(Piece.PieceType.QUEEN);
+            } else if (view.getId() == bishopPromo.getId()) {
+                makePromotion(Piece.PieceType.BISHOP);
+            } else if (view.getId() == knightPromo.getId()) {
+                makePromotion(Piece.PieceType.KNIGHT);
+            } else if (view.getId() == rookPromo.getId()) {
+                makePromotion(Piece.PieceType.ROOK);
+            }
+            return true;
+        }
+
+        // register that we have handled the event
+        return true;
+    }
+
     public void undisplay() {
         queenPromo.setVisibility(View.INVISIBLE);
         bishopPromo.setVisibility(View.INVISIBLE);
@@ -364,4 +367,5 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         display();
         state.isPromoting = true;
     }
+
 }
