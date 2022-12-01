@@ -10,6 +10,7 @@ import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
 import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessPromotionAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
@@ -43,6 +44,8 @@ public class ChessLocalGame extends LocalGame {
     private ArrayList<Integer> newMovementsX = new ArrayList<>();
     private ArrayList<Integer> newMovementsY = new ArrayList<>();
 
+    private boolean isPromotion;
+    private ChessPromotionAction promo;
 
     /**
      * Constructor for the ChessLocalGame.
@@ -54,6 +57,7 @@ public class ChessLocalGame extends LocalGame {
 
         // create a new, standard ChessState object
         super.state = new ChessState();
+        isPromotion = false;
     }
 
 
@@ -65,6 +69,7 @@ public class ChessLocalGame extends LocalGame {
     public ChessLocalGame(ChessState chessState) {
         super();
         super.state = new ChessState(chessState);
+        isPromotion = false;
     }
 
     /**
@@ -195,11 +200,18 @@ public class ChessLocalGame extends LocalGame {
             // make sure all highlights and dots are already removed
             state.removeCircle();
 
+            if(isPromotion){
+                state.setPiece(promo.getRow(),promo.getCol(),promo.getPromotionPiece());
+                isPromotion = false;
+            }
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
 
             // return true, indicating the it was a legal move
             return true;
+        } else if (action instanceof ChessPromotionAction){
+            promo = (ChessPromotionAction) action;
+            isPromotion = true;
         }
         // return true, indicating the it was a legal move
         return false;

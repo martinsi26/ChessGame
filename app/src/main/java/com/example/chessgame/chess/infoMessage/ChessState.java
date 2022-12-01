@@ -31,6 +31,7 @@ public class ChessState extends GameState implements Serializable {
     private  ArrayList<Integer> movementY;
 
     public Piece emptyPiece;
+    public boolean isPromoting;
 
     //0: white
     //1: black
@@ -83,6 +84,7 @@ public class ChessState extends GameState implements Serializable {
         }
         playerToMove = 0;
         turnCount = 0;
+        isPromoting = false;
     }
 
     // Copy Constructor
@@ -139,6 +141,7 @@ public class ChessState extends GameState implements Serializable {
 
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
+        isPromoting = other.isPromoting;
     }
 
     public Piece getPiece(int row, int col) {
