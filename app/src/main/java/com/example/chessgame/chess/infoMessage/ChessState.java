@@ -299,6 +299,10 @@ public class ChessState extends GameState implements Serializable {
         whiteCapturedPieces.add(p);
     }
 
+    public void addBlackCapturedPiece(Piece p) {
+        blackCapturedPieces.add(p);
+    }
+
     //getters for the hasMoved variables
     public boolean getWhiteKingHasMoved(){return whiteKingHasMoved;}
     public boolean getWhiteRook1HasMoved(){return whiteRook1HasMoved;}
