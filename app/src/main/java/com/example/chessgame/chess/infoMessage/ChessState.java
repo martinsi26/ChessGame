@@ -25,6 +25,7 @@ public class ChessState extends GameState implements Serializable {
     private Piece kingWhite;
 
     private boolean isCheck;
+    private boolean isGameOver;
 
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
@@ -43,6 +44,7 @@ public class ChessState extends GameState implements Serializable {
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
         canMove = false;
+        isGameOver = false;
 
         // Setting the initial position of all of the pieces
         for (int row = 0; row < pieces.length; row++) {
@@ -93,6 +95,7 @@ public class ChessState extends GameState implements Serializable {
         pieces = new Piece[8][8];
         board = new int[8][8];
         canMove = other.canMove;
+        isGameOver = other.isGameOver;
 
         //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
@@ -162,6 +165,14 @@ public class ChessState extends GameState implements Serializable {
 
     public boolean getCanMove() {
         return canMove;
+    }
+
+    public void setGameOver(boolean b) {
+        isGameOver = b;
+    }
+
+    public boolean getGameOver() {
+        return isGameOver;
     }
 
     public void setCheck(boolean b) {

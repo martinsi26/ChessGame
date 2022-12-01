@@ -46,6 +46,9 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         if (info instanceof IllegalMoveInfo) return;
         ChessState state = new ChessState((ChessState) info);
 
+        if (state.getGameOver()) {
+            return;
+        }
         if (state.getWhoseMove() == 1 && playerNum == 0) {
             return;
         }
