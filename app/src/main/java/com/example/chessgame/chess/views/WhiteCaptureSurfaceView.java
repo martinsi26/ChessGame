@@ -84,40 +84,52 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
 
         if(chessState == null) return;
 
-        canvas.drawRect(10,10,30,30, paint);
-        //canvas.drawBitmap(whitePawnImage, xLoc, yLoc, paint);
+        //canvas.drawRect(10,10,30,30, paint);
+
 
         xLoc = yLoc = 25;
         for (Piece p : chessState.getWhiteCapturedPieces()) {
-            Log.d("Testing", p.getPieceType().toString());
+//            Log.d("Testing", p.getPieceType().toString());
 
             if (p.getPieceColor() == Piece.ColorType.WHITE) {
                 if (p.getPieceType() == Piece.PieceType.PAWN) {
                     canvas.drawBitmap(whitePawnImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
                     canvas.drawBitmap(whiteBishopImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
                     canvas.drawBitmap(whiteKnightImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.ROOK) {
                     canvas.drawBitmap(whiteRookImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
                     canvas.drawBitmap(whiteQueenImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.KING) {
                     canvas.drawBitmap(whiteKingImage, xLoc, yLoc, paint);
+                    increment();
                 }
             } else if (p.getPieceColor() == Piece.ColorType.BLACK) {
                 if (p.getPieceType() == Piece.PieceType.PAWN) {
                     canvas.drawBitmap(blackPawnImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.BISHOP) {
                     canvas.drawBitmap(blackBishopImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.KNIGHT) {
                     canvas.drawBitmap(blackKnightImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.ROOK) {
                     canvas.drawBitmap(blackRookImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.QUEEN) {
                     canvas.drawBitmap(blackQueenImage, xLoc, yLoc, paint);
+                    increment();
                 } else if (p.getPieceType() == Piece.PieceType.KING) {
                     canvas.drawBitmap(blackKingImage, xLoc, yLoc, paint);
+                    increment();
                 }
             }
         }
@@ -132,6 +144,10 @@ public class WhiteCaptureSurfaceView extends FlashSurfaceView {
 
     public void setState(ChessState state) {
         chessState = state;
+    }
+
+    public void increment(){
+        xLoc += width + 10;
     }
 
 }
