@@ -27,9 +27,17 @@ public class Piece {
         this.y = y;
     }
 
+    public Piece(Piece other){
+        this.pieceType = other.pieceType;
+        this.pieceColor = other.pieceColor;
+        this.x = other.x;
+        this.y = other.y;
+    }
+
     public PieceType getPieceType() {
         return pieceType;
     }
+    public void setPieceType(PieceType type){this.pieceType = type;}
 
     public ColorType getPieceColor() {
         return pieceColor;
@@ -50,5 +58,9 @@ public class Piece {
     public void setY(int newY) {
         y = newY;
     }
+
+    public void setColorType(ColorType type){this.pieceColor = type;}
+
+    public ColorType getColorType(){return this.pieceColor;}
 }
 

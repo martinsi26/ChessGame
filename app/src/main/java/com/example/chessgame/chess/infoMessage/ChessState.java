@@ -20,9 +20,9 @@ public class ChessState extends GameState implements Serializable {
 
     private Piece[][] pieces; // An array that holds all of the pieces and their position
     private int[][] board; // An array that determines what kind of drawing should be made
-    private int turnCount;
-    private Piece kingBlack;
-    private Piece kingWhite;
+    private int turnCount; //holds num of turns
+    private Piece kingBlack; //special piece for black king
+    private Piece kingWhite; //special piece for white king
 
     private boolean isCheck;
     private boolean isGameOver;
@@ -33,10 +33,21 @@ public class ChessState extends GameState implements Serializable {
     private boolean canMove;
 
     public Piece emptyPiece;
+    public boolean isPromoting;
 
     //0: white
     //1: black
     private int playerToMove;
+
+    //keeps track of whether certain pieces have moved for castling
+    private boolean whiteKingHasMoved;
+    private boolean whiteRook1HasMoved;
+    private boolean whiteRook2HasMoved;
+    private boolean blackKingHasMoved;
+    private boolean blackRook1HasMoved;
+    private boolean blackRook2HasMoved;
+
+    private boolean kingInCheck;
 
     public ChessState() {
         pieces = new Piece[8][8];
@@ -88,6 +99,14 @@ public class ChessState extends GameState implements Serializable {
         playerToMove = 0;
         turnCount = 0;
         isCheck = false;
+
+        whiteKingHasMoved = false;
+        whiteRook1HasMoved = false;
+        whiteRook2HasMoved = false;
+        blackKingHasMoved = false;
+        blackRook1HasMoved = false;
+        blackRook2HasMoved = false;
+        isPromoting = false;
     }
 
     // Copy Constructor
@@ -146,7 +165,14 @@ public class ChessState extends GameState implements Serializable {
 
         playerToMove = other.playerToMove;
         turnCount = other.turnCount;
+        whiteKingHasMoved = other.whiteKingHasMoved;
+        whiteRook1HasMoved = other.whiteRook1HasMoved;
+        whiteRook2HasMoved = other.whiteRook2HasMoved;
+        blackKingHasMoved = other.blackKingHasMoved;
+        blackRook1HasMoved = other.blackRook1HasMoved;
+        blackRook2HasMoved = other.blackRook2HasMoved;
         isCheck = other.isCheck;
+        isPromoting = other.isPromoting;
     }
 
     public Piece getPiece(int row, int col) {
@@ -209,6 +235,7 @@ public class ChessState extends GameState implements Serializable {
         board[row][col] = 1;
     }
 
+    //iterate through x and y value arrays to find where to put circles on the board
     public void setCircles(ArrayList<Integer> row, ArrayList<Integer> col) {
         for (int i = 0; i < row.size(); i++) {
             if (getPiece(row.get(i), col.get(i)).getPieceColor() != Piece.ColorType.EMPTY) {
@@ -219,6 +246,7 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
+    //removes all highlights from the board
     public void removeHighlight() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -229,6 +257,7 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
+    //removes all circles from the board
     public void removeCircle() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -239,6 +268,7 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
+    //removes the check highlight from the board
     public void removeHighlightCheck() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -249,6 +279,7 @@ public class ChessState extends GameState implements Serializable {
         }
     }
 
+    //returns what is on a square on the board
     public int getDrawing(int row, int col) {
         return board[row][col];
     }
@@ -272,5 +303,29 @@ public class ChessState extends GameState implements Serializable {
     public void addWhiteCapturedPiece(Piece p) {
         whiteCapturedPieces.add(p);
     }
+
+    public void addBlackCapturedPiece(Piece p) {
+        blackCapturedPieces.add(p);
+    }
+
+
+    //getters for the hasMoved variables
+    public boolean getWhiteKingHasMoved(){return whiteKingHasMoved;}
+    public boolean getWhiteRook1HasMoved(){return whiteRook1HasMoved;}
+    public boolean getWhiteRook2HasMoved(){return whiteRook2HasMoved;}
+    public boolean getBlackKingHasMoved(){return blackKingHasMoved;}
+    public boolean getBlackRook1HasMoved(){return blackRook1HasMoved;}
+    public boolean getBlackRook2HasMoved(){return blackRook2HasMoved;}
+    //setters for the hasMoved variables
+    public void setWhiteKingHasMoved(boolean hasMoved){whiteKingHasMoved = hasMoved;}
+    public void setWhiteRook1HasMoved(boolean hasMoved){whiteRook1HasMoved = hasMoved;}
+    public void setWhiteRook2HasMoved(boolean hasMoved){whiteRook2HasMoved = hasMoved;}
+    public void setBlackKingHasMoved(boolean hasMoved){blackKingHasMoved = hasMoved;}
+    public void setBlackRook1HasMoved(boolean hasMoved){blackRook1HasMoved = hasMoved;}
+    public void setBlackRook2HasMoved(boolean hasMoved){blackRook2HasMoved = hasMoved;}
+
+    //makes sure the king is not in check for castling
+    public boolean getKingInCheck(){return kingInCheck;}
+    public void setKingInCheck(boolean b){kingInCheck = b;}
 }
 

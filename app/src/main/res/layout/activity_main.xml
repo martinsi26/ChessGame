@@ -33,13 +33,13 @@
 
                 <TextView
                     android:id="@+id/nameBlack"
-                    android:layout_width="wrap_content"
+                    android:layout_width="72dp"
                     android:layout_height="match_parent"
                     android:gravity="left|center_vertical"
                     android:text="Computer"
                     android:textSize="20sp" />
 
-                <SurfaceView
+                <com.example.chessgame.chess.views.BlackCaptureSurfaceView
                     android:id="@+id/blackCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -53,6 +53,41 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:text="Resign" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3.5"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/rookPromo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Rook" />
+
+                <Button
+                    android:id="@+id/knightPromo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Knight" />
+
+                <Button
+                    android:id="@+id/bishopPromo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Bishop" />
+
+                <Button
+                    android:id="@+id/queenPromo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Queen" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/movesLog"
@@ -79,7 +114,7 @@
                     android:text="Human"
                     android:textSize="20sp" />
 
-                <SurfaceView
+                <com.example.chessgame.chess.views.WhiteCaptureSurfaceView
                     android:id="@+id/whiteCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
