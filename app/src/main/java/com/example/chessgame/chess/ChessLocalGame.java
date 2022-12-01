@@ -382,6 +382,86 @@ public class ChessLocalGame extends LocalGame {
                 }
             }
         }
+
+        //loops for getting rid of crossing-check moves for castling
+        boolean castle57Exists =false;
+        boolean castle67Exists =false;
+        boolean castle27Exists =false;
+        boolean castle37Exists =false;
+        boolean castle20Exists =false;
+        boolean castle30Exists =false;
+        boolean castle50Exists =false;
+        boolean castle60Exists =false;
+        int index1 = -1;
+        int index2 = -1;
+        //for white
+        if(state.getPiece(4, 7).getPieceType() == Piece.PieceType.KING &&
+                state.getPiece(4, 7).getPieceColor() == Piece.ColorType.WHITE) {
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 5 && y == 7) {
+                    castle57Exists = true;
+                }
+                if(x == 6 && y == 7){
+                    castle67Exists = true;
+                    index1 = i;
+                }
+            }
+            if(!castle57Exists && castle67Exists){
+                newMovementsX.remove(index1);
+                newMovementsY.remove(index1);
+            }
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 2 && y == 7) {
+                    castle27Exists = true;
+                    index2 = i;
+                }
+                if(x == 3 && y == 7){
+                    castle37Exists = true;
+                }
+            }
+            if(!castle37Exists && castle27Exists){
+                newMovementsX.remove(index2);
+                newMovementsY.remove(index2);
+            }
+        }
+        //for black
+        else if(state.getPiece(4, 0).getPieceType() == Piece.PieceType.KING &&
+                state.getPiece(4, 0).getPieceColor() == Piece.ColorType.BLACK) {
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 5 && y == 0) {
+                    castle50Exists = true;
+                }
+                if(x == 6 && y == 0){
+                    castle60Exists = true;
+                    index1 = i;
+                }
+            }
+            if(!castle50Exists && castle60Exists){
+                newMovementsX.remove(index1);
+                newMovementsY.remove(index1);
+            }
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 2 && y == 0) {
+                    castle20Exists = true;
+                    index2 = i;
+                }
+                if(x == 3 && y == 0){
+                    castle30Exists = true;
+                }
+            }
+            if(!castle30Exists && castle20Exists){
+                newMovementsX.remove(index2);
+                newMovementsY.remove(index2);
+            }
+        }
     }
 
     /**
@@ -492,13 +572,16 @@ public class ChessLocalGame extends LocalGame {
 
             // remove all the circles after moving
             state.removeCircle();
+            state.setKingInCheck(false);
             if (color == Piece.ColorType.BLACK) {
                 if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
+                    state.setKingInCheck(true);
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
+                    state.setKingInCheck(true);
                 }
             }
             return true;

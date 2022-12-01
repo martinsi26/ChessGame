@@ -41,6 +41,8 @@ public class ChessState extends GameState implements Serializable {
     private boolean blackRook1HasMoved;
     private boolean blackRook2HasMoved;
 
+    private boolean kingInCheck;
+
     public ChessState() {
         pieces = new Piece[8][8];
         board = new int[8][8];
@@ -275,5 +277,7 @@ public class ChessState extends GameState implements Serializable {
     public void setBlackRook1HasMoved(boolean hasMoved){blackRook1HasMoved = hasMoved;}
     public void setBlackRook2HasMoved(boolean hasMoved){blackRook2HasMoved = hasMoved;}
 
+    public boolean getKingInCheck(){return kingInCheck;}
+    public void setKingInCheck(boolean b){kingInCheck = b;}
 }
 
