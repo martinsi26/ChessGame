@@ -166,68 +166,6 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
      *
      * @param motionEvent the motion event that was detected
      */
-
-    public void displayMovesLog(int currRow, int currCol, int tempRow, ChessState state, boolean isCapture) {
-        if (state == null) return;
-        Piece.PieceType currPiece = state.getPiece(currRow, currCol).getPieceType();
-        String toReturn = "";
-        if (justStarted) {
-            movesLog.append("\n");
-            justStarted = false;
-        }
-        boolean whitesTurn = state.getWhoseMove() == 0;
-        if (whitesTurn) {
-            toReturn += numTurns + ")";
-        }
-        if (currPiece == Piece.PieceType.KING) {
-            toReturn += "K";
-        } else if (currPiece == Piece.PieceType.QUEEN) {
-            toReturn += "Q";
-        } else if (currPiece == Piece.PieceType.BISHOP) {
-            toReturn += "B";
-        } else if (currPiece == Piece.PieceType.KNIGHT) {
-            toReturn += "N";
-        } else if (currPiece == Piece.PieceType.ROOK) {
-            toReturn += "R";
-        }
-        if (isCapture && currPiece == Piece.PieceType.PAWN) {
-            toReturn += determineRow(tempRow);
-            toReturn += "x";
-        } else if (isCapture) {
-            toReturn += "x";
-        }
-        toReturn += determineRow(currRow);
-        toReturn += currCol + 1 + " ";
-        if (!whitesTurn) {
-            numTurns++;
-            toReturn += "\n";
-        }
-        movesLog.append(toReturn);
-
-    }
-
-    private char determineRow(int row) {
-        switch (row) {
-            case (0):
-                return 'a';
-            case (1):
-                return 'b';
-            case (2):
-                return 'c';
-            case (3):
-                return 'd';
-            case (4):
-                return 'e';
-            case (5):
-                return 'f';
-            case (6):
-                return 'g';
-            case (7):
-                return 'h';
-        }
-        return 'q';
-    }
-
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (view.getId() == resignButton.getId()) {
@@ -272,19 +210,10 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                                 game.sendAction(select);
                             } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
                                 if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
-                                    if (currPiece.getX() == i) {
-                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
-                                            ChessMoveAction move = new ChessMoveAction(this, i, j);
-                                            game.sendAction(move);
-                                            break;
-                                        }
-                                    }
-                                    if(currPiece.getX() == i + 1 || currPiece.getX() == i - 1){
-                                        if(state.getPiece(i,j).getPieceType() == Piece.PieceType.EMPTY){
-                                            ChessMoveAction move = new ChessMoveAction(this,i,j);
-                                            game.sendAction(move);
-                                            break;
-                                        }
+                                    if (!validPawnMove(i, j, currPiece)) {
+                                        ChessMoveAction move = new ChessMoveAction(this, i, j);
+                                        game.sendAction(move);
+                                        break;
                                     }
                                     promptForPromotion(i, j);
                                     break;
@@ -333,6 +262,68 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         return true;
     }
 
+    public void displayMovesLog(int currRow, int currCol, int tempRow, ChessState state, boolean isCapture) {
+        if (state == null) return;
+        Piece.PieceType currPiece = state.getPiece(currRow, currCol).getPieceType();
+        String toReturn = "";
+        if (justStarted) {
+            movesLog.append("\n");
+            justStarted = false;
+        }
+        boolean whitesTurn = state.getWhoseMove() == 0;
+        if (whitesTurn) {
+            toReturn += numTurns + ")";
+        }
+        if (currPiece == Piece.PieceType.KING) {
+            toReturn += "K";
+        } else if (currPiece == Piece.PieceType.QUEEN) {
+            toReturn += "Q";
+        } else if (currPiece == Piece.PieceType.BISHOP) {
+            toReturn += "B";
+        } else if (currPiece == Piece.PieceType.KNIGHT) {
+            toReturn += "N";
+        } else if (currPiece == Piece.PieceType.ROOK) {
+            toReturn += "R";
+        }
+        if (isCapture && currPiece == Piece.PieceType.PAWN) {
+            toReturn += determineRow(tempRow);
+            toReturn += "x";
+        } else if (isCapture) {
+            toReturn += "x";
+        }
+        toReturn += determineRow(currRow);
+        currCol = 8 - currCol;
+        toReturn += currCol + " ";
+        if (!whitesTurn) {
+            numTurns++;
+            toReturn += "\n";
+        }
+        movesLog.append(toReturn);
+
+    }
+
+    private char determineRow(int row) {
+        switch (row) {
+            case (0):
+                return 'a';
+            case (1):
+                return 'b';
+            case (2):
+                return 'c';
+            case (3):
+                return 'd';
+            case (4):
+                return 'e';
+            case (5):
+                return 'f';
+            case (6):
+                return 'g';
+            case (7):
+                return 'h';
+        }
+        return 'q';
+    }
+
     public void undisplay() {
         queenPromo.setVisibility(View.INVISIBLE);
         bishopPromo.setVisibility(View.INVISIBLE);
@@ -368,4 +359,22 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         state.isPromoting = true;
     }
 
+
+    public boolean validPawnMove(int row, int col, Piece currPiece) {
+        if (currPiece.getX() != row && currPiece.getX() != row - 1 && currPiece.getX() != row + 1) {
+            return false;
+        }
+        if (currPiece.getX() == row) {
+            if (state.getPiece(row, col).getPieceType() != Piece.PieceType.EMPTY) {
+                return false;
+            }
+        }
+
+        if (currPiece.getX() == row + 1 || currPiece.getX() == row - 1) {
+            if (state.getPiece(row, col).getPieceType() == Piece.PieceType.EMPTY) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
