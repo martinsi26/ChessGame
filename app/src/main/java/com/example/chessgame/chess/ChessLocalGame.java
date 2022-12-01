@@ -1,7 +1,9 @@
 package com.example.chessgame.chess;
 
 
+import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.View;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
 import com.example.chessgame.GameFramework.LocalGame;
@@ -9,6 +11,7 @@ import com.example.chessgame.GameFramework.actionMessage.GameAction;
 import com.example.chessgame.GameFramework.players.GamePlayer;
 import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessPromotionAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
@@ -23,6 +26,7 @@ import com.example.chessgame.chess.players.ChessHumanPlayer;
 
 import java.util.ArrayList;
 
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.jar.Attributes;
 
 public class ChessLocalGame extends LocalGame {
@@ -41,6 +45,9 @@ public class ChessLocalGame extends LocalGame {
     private ArrayList<Integer> newMovementsX = new ArrayList<>();
     private ArrayList<Integer> newMovementsY = new ArrayList<>();
 
+    private String winCondition = null;
+    private boolean isPromotion;
+    private ChessPromotionAction promo;
 
     /**
      * Constructor for the ChessLocalGame.
@@ -52,6 +59,7 @@ public class ChessLocalGame extends LocalGame {
 
         // create a new, standard ChessState object
         super.state = new ChessState();
+        isPromotion = false;
     }
 
 
@@ -63,6 +71,7 @@ public class ChessLocalGame extends LocalGame {
     public ChessLocalGame(ChessState chessState) {
         super();
         super.state = new ChessState(chessState);
+        isPromotion = false;
     }
 
     /**
@@ -80,6 +89,26 @@ public class ChessLocalGame extends LocalGame {
 
     @Override
     protected String checkIfGameOver() {
+
+        // CHESS
+        // determine if a player is put into check, if the player is in
+        // check then go through every piece that player has on the board
+        // and generate all of its possible locations. If the arraylist
+        // for its locations comes back empty then continue. As soon as
+        // one arraylist comes back with at least one position then we
+        // can return that the game is not over. If all pieces have been
+        // searched through then we know the game is over due to a checkmate.
+        // -----
+        // more updates can be made once stalemate is implemented
+
+        //char resultChar = ' ';
+        if (winCondition == null) {
+            return null;
+        } else if (winCondition.equals("B")) {
+            return "Black wins! ";
+        } else if (winCondition.equals("W")) {
+            return "White Wins! ";
+        }
         return null;
     }
 
@@ -156,6 +185,12 @@ public class ChessLocalGame extends LocalGame {
             // players own king be in check
             moveToNotBeInCheck(state, p.getPieceColor());
 
+            if(newMovementsX.size() > 0) {
+                state.setCanMove(true);
+            } else {
+                state.setCanMove(false);
+            }
+
             // display all positions in arraylist as dots on the board
             state.setCircles(newMovementsX, newMovementsY);
 
@@ -170,6 +205,38 @@ public class ChessLocalGame extends LocalGame {
             if (tempRow == -1 || tempCol == -1) {
                 return false;
             }
+
+            //very specific castling case- the selected piece and piece being moved to are the same color
+            if(state.getPiece(tempRow, tempCol).getPieceColor() == state.getPiece(row, col).getPieceColor()){
+                if(tempRow == 4 && tempCol == 7 && row == 7 && col == 7){
+
+                }
+            }
+
+            //updates potential hasMoved variables
+            if(state.getPiece(tempRow, tempCol).getPieceColor() == Piece.ColorType.WHITE){
+                if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING) {
+                    state.setWhiteKingHasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 7){
+                    state.setWhiteRook1HasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 0){
+                    state.setWhiteRook2HasMoved(true);
+                }
+            }
+            else if(state.getPiece(tempRow, tempCol).getPieceColor() == Piece.ColorType.BLACK){
+                if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING) {
+                    state.setBlackKingHasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 7){
+                    state.setBlackRook1HasMoved(true);
+                }
+                else if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.ROOK && tempCol == 0){
+                    state.setBlackRook2HasMoved(true);
+                }
+            }
+
             Piece tempP = state.getPiece(tempRow, tempCol);
 
             // determine what team is moving (white/black) and move the piece
@@ -190,11 +257,18 @@ public class ChessLocalGame extends LocalGame {
             // make sure all highlights and dots are already removed
             state.removeCircle();
 
+            if(isPromotion){
+                state.setPiece(promo.getRow(),promo.getCol(),promo.getPromotionPiece());
+                isPromotion = false;
+            }
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
 
             // return true, indicating the it was a legal move
             return true;
+        } else if (action instanceof ChessPromotionAction){
+            promo = (ChessPromotionAction) action;
+            isPromotion = true;
         }
         // return true, indicating the it was a legal move
         return false;
@@ -322,7 +396,7 @@ public class ChessLocalGame extends LocalGame {
         // iterate through all of the initial movements of the selected piece
         for (int i = 0; i < initialMovementsX.size(); i++) {
 
-            // create a copied state so the current state is not effected yet
+            // create a copied state so the current state is not affected yet
             ChessState copyState = new ChessState(state);
 
             // make one of the initial movements on the copied state
@@ -345,6 +419,86 @@ public class ChessLocalGame extends LocalGame {
                     newMovementsX.add(initialMovementsX.get(i));
                     newMovementsY.add(initialMovementsY.get(i));
                 }
+            }
+        }
+
+        //loops for getting rid of crossing-check moves for castling
+        boolean castle57Exists =false;
+        boolean castle67Exists =false;
+        boolean castle27Exists =false;
+        boolean castle37Exists =false;
+        boolean castle20Exists =false;
+        boolean castle30Exists =false;
+        boolean castle50Exists =false;
+        boolean castle60Exists =false;
+        int index1 = -1;
+        int index2 = -1;
+        //for white
+        if(state.getPiece(4, 7).getPieceType() == Piece.PieceType.KING &&
+                state.getPiece(4, 7).getPieceColor() == Piece.ColorType.WHITE) {
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 5 && y == 7) {
+                    castle57Exists = true;
+                }
+                if(x == 6 && y == 7){
+                    castle67Exists = true;
+                    index1 = i;
+                }
+            }
+            if(!castle57Exists && castle67Exists){
+                newMovementsX.remove(index1);
+                newMovementsY.remove(index1);
+            }
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 2 && y == 7) {
+                    castle27Exists = true;
+                    index2 = i;
+                }
+                if(x == 3 && y == 7){
+                    castle37Exists = true;
+                }
+            }
+            if(!castle37Exists && castle27Exists){
+                newMovementsX.remove(index2);
+                newMovementsY.remove(index2);
+            }
+        }
+        //for black
+        else if(state.getPiece(4, 0).getPieceType() == Piece.PieceType.KING &&
+                state.getPiece(4, 0).getPieceColor() == Piece.ColorType.BLACK) {
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 5 && y == 0) {
+                    castle50Exists = true;
+                }
+                if(x == 6 && y == 0){
+                    castle60Exists = true;
+                    index1 = i;
+                }
+            }
+            if(!castle50Exists && castle60Exists){
+                newMovementsX.remove(index1);
+                newMovementsY.remove(index1);
+            }
+            for (int i = 0; i < newMovementsX.size(); i++) {
+                int x = newMovementsX.get(i);
+                int y = newMovementsY.get(i);
+                if (x == 2 && y == 0) {
+                    castle20Exists = true;
+                    index2 = i;
+                }
+                if(x == 3 && y == 0){
+                    castle30Exists = true;
+                }
+            }
+            if(!castle30Exists && castle20Exists){
+                newMovementsX.remove(index2);
+                newMovementsY.remove(index2);
             }
         }
     }
@@ -405,6 +559,30 @@ public class ChessLocalGame extends LocalGame {
 //            }
 
             Piece tempPiece = state.getPiece(tempRow, tempCol);
+            Piece castlingTempPiece = state.getPiece(row, col);
+
+            //very specific castling case- the selected piece is a king and moving two squares
+            if(state.getPiece(tempRow, tempCol).getPieceType() == Piece.PieceType.KING && (Math.abs(row-tempRow) == 2)){
+                // for each sub case- this takes care of moving the rook, the king then moves normally
+                if(tempRow == 4 && tempCol == 7 && row == 6 && col == 7){
+                    state.setPiece(5,7, state.getPiece(7,7));
+                    state.setPiece(7,7,state.emptyPiece);
+                }
+                else if(tempRow == 4 && tempCol == 7 && row == 2 && col == 7){
+                    state.setPiece(3,7, state.getPiece(0,7));
+                    state.setPiece(0,7,state.emptyPiece);
+                }
+                else if(tempRow == 4 && tempCol == 0 && row == 6 && col == 0){
+                    state.setPiece(5,0, state.getPiece(7,0));
+                    state.setPiece(7,0,state.emptyPiece);
+                }
+                else if(tempRow == 4 && tempCol == 0 && row == 2 && col == 0){
+                    state.setPiece(3,0, state.getPiece(0,0));
+                    state.setPiece(0,0,state.emptyPiece);
+                }
+
+            }
+
 
             // change the location of the king to be at the new square if it is going to be moved
             if (tempPiece.getPieceType() == Piece.PieceType.KING) {
@@ -416,17 +594,12 @@ public class ChessLocalGame extends LocalGame {
             }
 
             // set the new position to be the piece they originally selected
-            state.setPiece(row, col, tempPiece);
 
-            /////////////////////////////////////////////////////////////////////////
-            // No idea what's going, commenting out for now since it is hard coded //
-            /////////////////////////////////////////////////////////////////////////
-            //boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
-            //ChessHumanPlayer chp = (ChessHumanPlayer) players[0];
-            //state.setPiece(row,col,checkPromotion(state.getPiece(tempRow,tempCol),col));
-            //TODO put display moves log here
-            //chp.displayMovesLog(row,col,tempRow,state,isCapture);
-
+            boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
+            ChessHumanPlayer chp = players[0] instanceof ChessHumanPlayer ?
+                    (ChessHumanPlayer) players[0] : (ChessHumanPlayer) players[1];
+            state.setPiece(row,col,state.getPiece(tempRow,tempCol));
+            chp.displayMovesLog(row,col,tempRow,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
 
@@ -439,13 +612,19 @@ public class ChessLocalGame extends LocalGame {
 
             // remove all the circles after moving
             state.removeCircle();
+            state.setKingInCheck(false);
+
             if (color == Piece.ColorType.BLACK) {
                 if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
+                    state.setKingInCheck(true);
+                    winCondition = checkForCheckmate(state);
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
+                    state.setKingInCheck(true);
+                    winCondition = checkForCheckmate(state);
                 }
             }
             return true;
@@ -453,5 +632,75 @@ public class ChessLocalGame extends LocalGame {
             // if they didn't select a dot they don't move
             return false;
         }
+    }
+
+    public String checkForCheckmate(ChessState state) {
+        // if a player is not in check then then there is no checkmate yet
+
+        Piece.ColorType color = null;
+        // find what color has moved to put the other player in checkmate
+        if(state.getWhoseMove() == 0) {
+            // if it is now whites turn that means black put white in checkmate
+            color = Piece.ColorType.BLACK;
+        } else if (state.getWhoseMove() == 1) {
+            // if it is now blacks turn that means white put black in checkmate
+            color = Piece.ColorType.WHITE;
+        }
+
+        // arraylist that holds all pieces of player that is in check
+        ArrayList<Piece> pieces = new ArrayList<>();
+        // add all pieces to arraylist
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(state.getPiece(i, j).getPieceColor() == color) {
+                    pieces.add(state.getPiece(i,j));
+                }
+            }
+        }
+
+        // create fake selections and check if there are any possible
+        // movement for that selection. If there is a movement then
+        // the player can get out of check and it is not a checkmate.
+        // If all pieces have no possible movements then the player
+        // is in checkmate.
+        for(int i = 0; i < pieces.size(); i++) {
+            tempRow = pieces.get(i).getX();
+            tempCol = pieces.get(i).getY();
+            findMovement(state, pieces.get(i));
+            moveToNotBeInCheck(state, color);
+            if(newMovementsX.size() > 0) {
+                return null; // no winner yet
+            }
+        }
+        // since a return was never made that means the player has
+        // no possible movements and is in checkmate, so the player
+        // who put the other player in check is now the winner.
+        if (color == Piece.ColorType.WHITE) {
+            state.setGameOver(true);
+            return "B";
+        } else if (color == Piece.ColorType.BLACK) {
+            state.setGameOver(true);
+            return "W";
+        }
+
+        return null;
+    }
+
+    // unit testing
+    public int whoWon(){
+        String gameOver = checkIfGameOver();
+        if(gameOver == null || gameOver.equals("It's a cat's game.")) return -1;
+        if(gameOver.equals(playerNames[0]+" is the winner.")) return 0;
+        return 1;
+    }
+    public boolean checkPromotion(Piece piece, int col,ChessHumanPlayer chp){
+        if(piece.getPieceType() != Piece.PieceType.PAWN){return false;}
+        if(piece.getPieceColor() == Piece.ColorType.WHITE && col == 0){
+            //return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE, piece.getX(), 0);
+            return true;
+        }else if(piece.getPieceColor() == Piece.ColorType.BLACK && col == 7){
+            return true;
+        }
+        return false;
     }
 }
