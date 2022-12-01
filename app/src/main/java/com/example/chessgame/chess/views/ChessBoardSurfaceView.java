@@ -143,7 +143,7 @@ public class ChessBoardSurfaceView extends FlashSurfaceView {
         paint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
         paint.setTextSize(30);
         for (int i = 1; i <= 8; i++) {
-            canvas.drawText(String.valueOf(i), 15, 40 + (i * 115), paint);
+            canvas.drawText(String.valueOf(i), 15, (Math.abs(i-9) * 115) - 45, paint);
         }
         canvas.drawText("a", 135, 985, paint);
         canvas.drawText("b", 250, 985, paint);

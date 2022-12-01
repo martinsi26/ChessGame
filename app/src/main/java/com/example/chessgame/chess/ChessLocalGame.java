@@ -1,6 +1,7 @@
 package com.example.chessgame.chess;
 
 
+import android.os.CountDownTimer;
 import android.util.Log;
 
 import com.example.chessgame.GameFramework.GameMainActivity;
@@ -23,6 +24,7 @@ import com.example.chessgame.chess.players.ChessHumanPlayer;
 
 import java.util.ArrayList;
 
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.jar.Attributes;
 
 public class ChessLocalGame extends LocalGame {
@@ -40,6 +42,8 @@ public class ChessLocalGame extends LocalGame {
     // all of the valid movements so the king isn't in check
     private ArrayList<Integer> newMovementsX = new ArrayList<>();
     private ArrayList<Integer> newMovementsY = new ArrayList<>();
+
+    private String winCondition = null;
 
 
     /**
@@ -80,6 +84,26 @@ public class ChessLocalGame extends LocalGame {
 
     @Override
     protected String checkIfGameOver() {
+
+        // CHESS
+        // determine if a player is put into check, if the player is in
+        // check then go through every piece that player has on the board
+        // and generate all of its possible locations. If the arraylist
+        // for its locations comes back empty then continue. As soon as
+        // one arraylist comes back with at least one position then we
+        // can return that the game is not over. If all pieces have been
+        // searched through then we know the game is over due to a checkmate.
+        // -----
+        // more updates can be made once stalemate is implemented
+
+        //char resultChar = ' ';
+        if (winCondition == null) {
+            return null;
+        } else if (winCondition.equals("B")) {
+            return "Black wins! ";
+        } else if (winCondition.equals("W")) {
+            return "White Wins! ";
+        }
         return null;
     }
 
@@ -155,6 +179,12 @@ public class ChessLocalGame extends LocalGame {
             // make fake movements and determine if that movement allows the
             // players own king be in check
             moveToNotBeInCheck(state, p.getPieceColor());
+
+            if(newMovementsX.size() > 0) {
+                state.setCanMove(true);
+            } else {
+                state.setCanMove(false);
+            }
 
             // display all positions in arraylist as dots on the board
             state.setCircles(newMovementsX, newMovementsY);
@@ -572,15 +602,18 @@ public class ChessLocalGame extends LocalGame {
             // remove all the circles after moving
             state.removeCircle();
             state.setKingInCheck(false);
+
             if (color == Piece.ColorType.BLACK) {
                 if (checkForCheck(state, Piece.ColorType.WHITE, color)) {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
                     state.setKingInCheck(true);
+                    winCondition = checkForCheckmate(state);
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
                     state.setKingInCheck(true);
+                    winCondition = checkForCheckmate(state);
                 }
             }
             return true;
@@ -588,5 +621,65 @@ public class ChessLocalGame extends LocalGame {
             // if they didn't select a dot they don't move
             return false;
         }
+    }
+
+    public String checkForCheckmate(ChessState state) {
+        // if a player is not in check then then there is no checkmate yet
+
+        Piece.ColorType color = null;
+        // find what color has moved to put the other player in checkmate
+        if(state.getWhoseMove() == 0) {
+            // if it is now whites turn that means black put white in checkmate
+            color = Piece.ColorType.BLACK;
+        } else if (state.getWhoseMove() == 1) {
+            // if it is now blacks turn that means white put black in checkmate
+            color = Piece.ColorType.WHITE;
+        }
+
+        // arraylist that holds all pieces of player that is in check
+        ArrayList<Piece> pieces = new ArrayList<>();
+        // add all pieces to arraylist
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(state.getPiece(i, j).getPieceColor() == color) {
+                    pieces.add(state.getPiece(i,j));
+                }
+            }
+        }
+
+        // create fake selections and check if there are any possible
+        // movement for that selection. If there is a movement then
+        // the player can get out of check and it is not a checkmate.
+        // If all pieces have no possible movements then the player
+        // is in checkmate.
+        for(int i = 0; i < pieces.size(); i++) {
+            tempRow = pieces.get(i).getX();
+            tempCol = pieces.get(i).getY();
+            findMovement(state, pieces.get(i));
+            moveToNotBeInCheck(state, color);
+            if(newMovementsX.size() > 0) {
+                return null; // no winner yet
+            }
+        }
+        // since a return was never made that means the player has
+        // no possible movements and is in checkmate, so the player
+        // who put the other player in check is now the winner.
+        if (color == Piece.ColorType.WHITE) {
+            state.setGameOver(true);
+            return "B";
+        } else if (color == Piece.ColorType.BLACK) {
+            state.setGameOver(true);
+            return "W";
+        }
+
+        return null;
+    }
+
+    // unit testing
+    public int whoWon(){
+        String gameOver = checkIfGameOver();
+        if(gameOver == null || gameOver.equals("It's a cat's game.")) return -1;
+        if(gameOver.equals(playerNames[0]+" is the winner.")) return 0;
+        return 1;
     }
 }
