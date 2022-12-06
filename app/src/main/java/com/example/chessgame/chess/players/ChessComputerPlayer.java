@@ -76,16 +76,24 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         // randomly shuffle the pieces in the array
         Collections.shuffle(availablePieces);
         selection = availablePieces.get(0);
-        for (int i = 1; i < availablePieces.size(); i++) {
-            if (checkMove(selection, chessState)) {
-                selection = availablePieces.get(i);
-            }
-        }
+        // create variables to hold the x and y of the position selected
         int xVal = selection.getX();
         int yVal = selection.getY();
+        // call the selection game action
         game.sendAction(new ChessSelectAction(this, xVal, yVal));
-        sleep(.5);
-
+        // check if the piece is one that can move
+        ChessState chessState2 = (ChessState) game.getGameState();
+        for (int i = 1; i < availablePieces.size(); i++) {
+            if (!chessState2.getCanMove()) {
+                selection = availablePieces.get(i);
+                xVal = selection.getX();
+                yVal = selection.getY();
+                game.sendAction(new ChessSelectAction(this, xVal, yVal));
+            } else {
+                break;
+            }
+        }
+        sleep(1);
 
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
             Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
@@ -159,61 +167,6 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         }
     }
 
-    /**
-     * Checks if current piece that is selected has locations to move to
-     * nothing
-     * @param selection  the current piece that is selected to move by the AI
-     * @param chessState the current state of the game
-     * @return indicates if the selected piece has locations to move to or not
-     * for the current state of the game
-     */
-    public boolean checkMove(Piece selection, ChessState chessState) {
-        if (selection.getPieceType() == Piece.PieceType.PAWN) {
-            Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
-            if (pawn.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
-            Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
-            if (bishop.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.KNIGHT) {
-            Knight knight = new Knight(selection, chessState, selection.getPieceColor());
-            if (knight.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.ROOK) {
-            Rook rook = new Rook(selection, chessState, selection.getPieceColor());
-            if (rook.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.QUEEN) {
-            Queen queen = new Queen(selection, chessState, selection.getPieceColor());
-            if (queen.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (selection.getPieceType() == Piece.PieceType.KING) {
-            King king = new King(selection, chessState, selection.getPieceColor());
-            if (king.getX().size() == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-
     public void sendPromotionAction(int xVal, int yVal, Piece.ColorType type) {
         Random rand = new Random();
         int choice = rand.nextInt(4);
@@ -237,6 +190,5 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         }
     }
 }
-
 
 
