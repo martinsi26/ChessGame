@@ -43,6 +43,7 @@
                     android:id="@+id/blackCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="5"
                     android:background="#D3D3D3" />
 
             </LinearLayout>
@@ -118,6 +119,7 @@
                     android:id="@+id/whiteCaptures"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="5"
                     android:background="#D3D3D3" />
             </LinearLayout>
 
