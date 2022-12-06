@@ -209,7 +209,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                                 currPiece = state.getPiece(i, j);
                                 game.sendAction(select);
                             } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
-                                if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
+                                if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN && state.getWhoseMove() == this.playerNum) {
                                     if (!validPawnMove(i, j, currPiece)) {
                                         ChessMoveAction move = new ChessMoveAction(this, i, j);
                                         game.sendAction(move);
@@ -221,13 +221,11 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                                 ChessMoveAction move = new ChessMoveAction(this, i, j);
                                 game.sendAction(move);
                             } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
-                                if (j == 7 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
-                                    if (currPiece.getX() == i) {
-                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
+                                if (j == 7 && currPiece.getPieceType() == Piece.PieceType.PAWN && state.getWhoseMove() == this.playerNum) {
+                                    if (!validPawnMove(i,j,currPiece)) {
                                             ChessMoveAction move = new ChessMoveAction(this, i, j);
                                             game.sendAction(move);
                                             break;
-                                        }
                                     }
                                     promptForPromotion(i, j);
                                     break;
