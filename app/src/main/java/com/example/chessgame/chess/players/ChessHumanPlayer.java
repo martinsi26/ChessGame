@@ -17,6 +17,7 @@ import com.example.chessgame.GameFramework.players.GameHumanPlayer;
 import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.R;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessPromotionAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
@@ -348,12 +349,11 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     public void makePromotion(Piece.PieceType type) {
         Piece.ColorType currColor = state.getWhoseMove() == 0 ? Piece.ColorType.WHITE : Piece.ColorType.BLACK;
         Piece set = new Piece(type, currColor, savedX, savedY);
-
+        ChessPromotionAction promo = new ChessPromotionAction(this,set,savedX,savedY);
+        game.sendAction(promo);
         ChessMoveAction move = new ChessMoveAction(this, savedX, savedY);
         game.sendAction(move);
-        state.setPiece(savedX, savedY, set);
         isPromotion = false;
-        state.isPromoting = false;
         undisplay();
     }
 
@@ -363,7 +363,6 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         savedY = j;
         MessageBox.popUpMessage("Pick a promotion piece", myActivity);
         display();
-        state.isPromoting = true;
     }
 
 
