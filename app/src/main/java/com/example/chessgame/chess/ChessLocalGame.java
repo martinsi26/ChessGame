@@ -439,7 +439,7 @@ public class ChessLocalGame extends LocalGame {
         int index2 = -1;
         //for white
         if(state.getPiece(4, 7).getPieceType() == Piece.PieceType.KING &&
-                state.getPiece(4, 7).getPieceColor() == Piece.ColorType.WHITE) {
+                state.getPiece(4, 7).getPieceColor() == Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
             for (int i = 0; i < newMovementsX.size(); i++) {
                 int x = newMovementsX.get(i);
                 int y = newMovementsY.get(i);
@@ -473,7 +473,7 @@ public class ChessLocalGame extends LocalGame {
         }
         //for black
         else if(state.getPiece(4, 0).getPieceType() == Piece.PieceType.KING &&
-                state.getPiece(4, 0).getPieceColor() == Piece.ColorType.BLACK) {
+                state.getPiece(4, 0).getPieceColor() == Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
             for (int i = 0; i < newMovementsX.size(); i++) {
                 int x = newMovementsX.get(i);
                 int y = newMovementsY.get(i);

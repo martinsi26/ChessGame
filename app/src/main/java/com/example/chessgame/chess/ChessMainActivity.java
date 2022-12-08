@@ -2,6 +2,7 @@ package com.example.chessgame.chess;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -31,6 +32,8 @@ public class ChessMainActivity extends GameMainActivity {
      */
     @Override
     public GameConfig createDefaultConfig() {
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         // Define the allowed player types
         ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
 
