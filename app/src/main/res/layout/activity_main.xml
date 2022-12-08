@@ -99,7 +99,8 @@
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
                 android:text="Starting Position"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:longClickable="false"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

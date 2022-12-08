@@ -73,7 +73,6 @@ public class ChessLocalGame extends LocalGame {
     public ChessLocalGame(ChessState chessState) {
         super();
         super.state = new ChessState(chessState);
-        isPromotion = false;
     }
 
     /**
@@ -187,7 +186,7 @@ public class ChessLocalGame extends LocalGame {
 
             // make fake movements and determine if that movement allows the
             // players own king be in check
-            moveToNotBeInCheck(state, p.getPieceColor());
+            moveToNotBeInCheck(state, p.getPieceColor(), p.getPieceType());
 
             if(newMovementsX.size() > 0) {
                 state.setCanMove(true);
@@ -257,14 +256,10 @@ public class ChessLocalGame extends LocalGame {
                     return false;
                 }
             }
-
             // make sure all highlights and dots are already removed
             state.removeCircle();
 
-            if(isPromotion){
-                state.setPiece(promo.getRow(),promo.getCol(),promo.getPromotionPiece());
-                isPromotion = false;
-            }
+
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
 
@@ -272,7 +267,8 @@ public class ChessLocalGame extends LocalGame {
             return true;
         } else if (action instanceof ChessPromotionAction){
             promo = (ChessPromotionAction) action;
-            isPromotion = true;
+            ChessPromotionAction.isPromotion = true;
+            return true;
         }
         // return true, indicating the it was a legal move
         return false;
@@ -391,8 +387,9 @@ public class ChessLocalGame extends LocalGame {
      *
      * @param state the current state of the game
      * @param color the color of the player that is making a move
+     * @param pieceType the PieceType of the selected piece
      */
-    public void moveToNotBeInCheck(ChessState state, Piece.ColorType color) {
+    public void moveToNotBeInCheck(ChessState state, Piece.ColorType color, Piece.PieceType pieceType) {
         // make sure the arraylists are empty
         newMovementsX.clear();
         newMovementsY.clear();
@@ -427,12 +424,17 @@ public class ChessLocalGame extends LocalGame {
             state.setNewMovementsX(newMovementsX);
             state.setNewMovementsY(newMovementsY);
         }
-
-        suitableCastle(state);
+        if(pieceType == Piece.PieceType.KING) {
+            suitableCastle(state);
+        }
     }
 
-    public void suitableCastle(ChessState state) {
-
+    /**
+     * Makes sure a castle is legal by checking the other movement options of the king
+     *
+     * @param state the current state of the game
+     */
+    public void suitableCastle(ChessState state){
         //loops for getting rid of crossing-check moves for castling
         boolean castle57Exists =false;
         boolean castle67Exists =false;
@@ -608,7 +610,12 @@ public class ChessLocalGame extends LocalGame {
             boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
             ChessHumanPlayer chp = players[0] instanceof ChessHumanPlayer ?
                     (ChessHumanPlayer) players[0] : (ChessHumanPlayer) players[1];
-            state.setPiece(row,col,state.getPiece(tempRow,tempCol));
+            if(ChessPromotionAction.isPromotion){
+                state.setPiece(promo.getRow(),promo.getCol(),promo.getPromotionPiece());
+                ChessPromotionAction.isPromotion = false;
+            }else {
+                state.setPiece(row, col, state.getPiece(tempRow, tempCol));
+            }
             chp.displayMovesLog(row,col,tempRow,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
@@ -720,7 +727,7 @@ public class ChessLocalGame extends LocalGame {
             tempRow = pieces.get(i).getX();
             tempCol = pieces.get(i).getY();
             findMovement(state, pieces.get(i));
-            moveToNotBeInCheck(state, color);
+            moveToNotBeInCheck(state, color, state.getPiece(tempRow, tempCol).getPieceType());
             if(newMovementsX.size() > 0) {
                 return null; // no winner yet
             }

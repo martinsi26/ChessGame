@@ -47,6 +47,11 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         if (info instanceof NotYourTurnInfo) return;
         //Ignore illegal move info too
         if (info instanceof IllegalMoveInfo) return;
+        //just in case there is any other types of info, ignore it
+        if(!(info instanceof ChessState)){
+            return;
+        }
+
         ChessState chessState = new ChessState((ChessState) info);
         //if(chessState.isPromoting){return;}
         if (chessState.getWhoseMove() == 1 && playerNum == 0) {

@@ -17,6 +17,7 @@ import com.example.chessgame.GameFramework.players.GameHumanPlayer;
 import com.example.chessgame.GameFramework.utilities.MessageBox;
 import com.example.chessgame.R;
 import com.example.chessgame.chess.chessActionMessage.ChessMoveAction;
+import com.example.chessgame.chess.chessActionMessage.ChessPromotionAction;
 import com.example.chessgame.chess.chessActionMessage.ChessSelectAction;
 import com.example.chessgame.chess.infoMessage.ChessState;
 import com.example.chessgame.chess.infoMessage.Piece;
@@ -200,7 +201,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
         // loop through all of the locations on the board and compare
         // the location pressed to the pixels on the screen to find
-        // the exact location of the click according to the board
+        // the exact location of the click according to the b oard
 
         if (!isPromotion) {
             for (int i = 0; i < 8; i++) {
@@ -218,7 +219,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                                 currPiece = state.getPiece(i, j);
                                 game.sendAction(select);
                             } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.WHITE && state.getWhoseMove() == 0) {
-                                if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
+                                if (j == 0 && currPiece.getPieceType() == Piece.PieceType.PAWN && state.getWhoseMove() == this.playerNum) {
                                     if (!validPawnMove(i, j, currPiece)) {
                                         ChessMoveAction move = new ChessMoveAction(this, i, j);
                                         game.sendAction(move);
@@ -230,13 +231,11 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
                                 ChessMoveAction move = new ChessMoveAction(this, i, j);
                                 game.sendAction(move);
                             } else if (state.getPiece(i, j).getPieceColor() != Piece.ColorType.BLACK && state.getWhoseMove() == 1) {
-                                if (j == 7 && currPiece.getPieceType() == Piece.PieceType.PAWN) {
-                                    if (currPiece.getX() == i) {
-                                        if (state.getPiece(i, j).getPieceType() != Piece.PieceType.EMPTY) {
+                                if (j == 7 && currPiece.getPieceType() == Piece.PieceType.PAWN && state.getWhoseMove() == this.playerNum) {
+                                    if (!validPawnMove(i,j,currPiece)) {
                                             ChessMoveAction move = new ChessMoveAction(this, i, j);
                                             game.sendAction(move);
                                             break;
-                                        }
                                     }
                                     promptForPromotion(i, j);
                                     break;
@@ -350,12 +349,11 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     public void makePromotion(Piece.PieceType type) {
         Piece.ColorType currColor = state.getWhoseMove() == 0 ? Piece.ColorType.WHITE : Piece.ColorType.BLACK;
         Piece set = new Piece(type, currColor, savedX, savedY);
-
+        ChessPromotionAction promo = new ChessPromotionAction(this,set,savedX,savedY);
+        game.sendAction(promo);
         ChessMoveAction move = new ChessMoveAction(this, savedX, savedY);
         game.sendAction(move);
-        state.setPiece(savedX, savedY, set);
         isPromotion = false;
-        state.isPromoting = false;
         undisplay();
     }
 
@@ -365,7 +363,6 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         savedY = j;
         MessageBox.popUpMessage("Pick a promotion piece", myActivity);
         display();
-        state.isPromoting = true;
     }
 
 
