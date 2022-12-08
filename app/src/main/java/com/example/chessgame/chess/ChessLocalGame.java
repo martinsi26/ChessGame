@@ -183,7 +183,7 @@ public class ChessLocalGame extends LocalGame {
 
             // make fake movements and determine if that movement allows the
             // players own king be in check
-            moveToNotBeInCheck(state, p.getPieceColor());
+            moveToNotBeInCheck(state, p.getPieceColor(), p.getPieceType());
 
             if(newMovementsX.size() > 0) {
                 state.setCanMove(true);
@@ -387,8 +387,9 @@ public class ChessLocalGame extends LocalGame {
      *
      * @param state the current state of the game
      * @param color the color of the player that is making a move
+     * @param pieceType the PieceType of the selected piece
      */
-    public void moveToNotBeInCheck(ChessState state, Piece.ColorType color) {
+    public void moveToNotBeInCheck(ChessState state, Piece.ColorType color, Piece.PieceType pieceType) {
         // make sure the arraylists are empty
         newMovementsX.clear();
         newMovementsY.clear();
@@ -421,7 +422,17 @@ public class ChessLocalGame extends LocalGame {
                 }
             }
         }
+        if(pieceType == Piece.PieceType.KING) {
+            suitableCastle(state);
+        }
+    }
 
+    /**
+     * Makes sure a castle is legal by checking the other movement options of the king
+     *
+     * @param state the current state of the game
+     */
+    public void suitableCastle(ChessState state){
         //loops for getting rid of crossing-check moves for castling
         boolean castle57Exists =false;
         boolean castle67Exists =false;
@@ -666,7 +677,7 @@ public class ChessLocalGame extends LocalGame {
             tempRow = pieces.get(i).getX();
             tempCol = pieces.get(i).getY();
             findMovement(state, pieces.get(i));
-            moveToNotBeInCheck(state, color);
+            moveToNotBeInCheck(state, color, state.getPiece(tempRow, tempCol).getPieceType());
             if(newMovementsX.size() > 0) {
                 return null; // no winner yet
             }
