@@ -96,6 +96,9 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         }
         sleep(1);
 
+        if(chessState2.getGameOver()) {
+            return;
+        }
         // an arraylist that holds the index values of the two movement arraylists (x and y)
         ArrayList<Integer> index = new ArrayList<>();
         // add all of the indexes into the ints value

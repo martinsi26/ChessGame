@@ -110,6 +110,8 @@ public class ChessLocalGame extends LocalGame {
             return "Black wins! ";
         } else if (winCondition.equals("W")) {
             return "White Wins! ";
+        } else if (winCondition.equals("S")) {
+            return "Stalemate no one wins!";
         }
         return null;
     }
@@ -426,6 +428,11 @@ public class ChessLocalGame extends LocalGame {
             state.setNewMovementsY(newMovementsY);
         }
 
+        suitableCastle(state);
+    }
+
+    public void suitableCastle(ChessState state) {
+
         //loops for getting rid of crossing-check moves for castling
         boolean castle57Exists =false;
         boolean castle67Exists =false;
@@ -622,12 +629,16 @@ public class ChessLocalGame extends LocalGame {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
+                } else {
+                    checkForStalemate(state, color);
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
+                } else {
+                    checkForStalemate(state, color);
                 }
             }
             return true;
@@ -635,6 +646,45 @@ public class ChessLocalGame extends LocalGame {
             // if they didn't select a dot they don't move
             return false;
         }
+    }
+
+    public void checkForStalemate(ChessState state, Piece.ColorType enemyColor) {
+        // search through every piece of the enemy and generate its general movement
+        // with its position on the board
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Piece piece = state.getPiece(row, col);
+                if (piece.getPieceColor() == enemyColor) {
+                    if (piece.getPieceType() == Piece.PieceType.PAWN) {
+                        Pawn pawn = new Pawn(piece, state, enemyColor);
+                        state.setCircles(pawn.getX(), pawn.getY());
+                    } else if (piece.getPieceType() == Piece.PieceType.KNIGHT) {
+                        Knight knight = new Knight(piece, state, enemyColor);
+                        state.setCircles(knight.getX(), knight.getY());
+                    } else if (piece.getPieceType() == Piece.PieceType.BISHOP) {
+                        Bishop bishop = new Bishop(piece, state, enemyColor);
+                        state.setCircles(bishop.getX(), bishop.getY());
+                    } else if (piece.getPieceType() == Piece.PieceType.ROOK) {
+                        Rook rook = new Rook(piece, state, enemyColor);
+                        state.setCircles(rook.getX(), rook.getY());
+                    } else if (piece.getPieceType() == Piece.PieceType.QUEEN) {
+                        Queen queen = new Queen(piece, state, enemyColor);
+                        state.setCircles(queen.getX(), queen.getY());
+                    } else if (piece.getPieceType() == Piece.PieceType.KING) {
+                        King king = new King(piece, state, enemyColor);
+                        state.setCircles(king.getX(), king.getY());
+                    }
+                }
+            }
+        }
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (state.getDrawing(row, col) == 2) {
+                    return;
+                }
+            }
+        }
+        winCondition = "S";
     }
 
     public String checkForCheckmate(ChessState state) {
@@ -696,6 +746,7 @@ public class ChessLocalGame extends LocalGame {
         if(gameOver.equals(playerNames[0]+" is the winner.")) return 0;
         return 1;
     }
+
     public boolean checkPromotion(Piece piece, int col,ChessHumanPlayer chp){
         if(piece.getPieceType() != Piece.PieceType.PAWN){return false;}
         if(piece.getPieceColor() == Piece.ColorType.WHITE && col == 0){
