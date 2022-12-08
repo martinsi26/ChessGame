@@ -33,7 +33,6 @@ public class ChessState extends GameState implements Serializable {
     private boolean canMove;
 
     public Piece emptyPiece;
-    public boolean isPromoting;
 
     //0: white
     //1: black
@@ -106,7 +105,6 @@ public class ChessState extends GameState implements Serializable {
         blackKingHasMoved = false;
         blackRook1HasMoved = false;
         blackRook2HasMoved = false;
-        isPromoting = false;
     }
 
     // Copy Constructor
@@ -172,7 +170,6 @@ public class ChessState extends GameState implements Serializable {
         blackRook1HasMoved = other.blackRook1HasMoved;
         blackRook2HasMoved = other.blackRook2HasMoved;
         isCheck = other.isCheck;
-        isPromoting = other.isPromoting;
     }
 
     public Piece getPiece(int row, int col) {

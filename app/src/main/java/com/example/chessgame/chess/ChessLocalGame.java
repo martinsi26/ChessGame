@@ -71,7 +71,6 @@ public class ChessLocalGame extends LocalGame {
     public ChessLocalGame(ChessState chessState) {
         super();
         super.state = new ChessState(chessState);
-        isPromotion = false;
     }
 
     /**
@@ -241,26 +240,24 @@ public class ChessLocalGame extends LocalGame {
 
             // determine what team is moving (white/black) and move the piece
             if (tempP.getPieceColor() == Piece.ColorType.WHITE) {
+
                 if (!setMovement(state, row, col, Piece.ColorType.WHITE)) {
                     state.removeHighlight();
                     state.removeCircle();
                     return false;
                 }
             } else if (tempP.getPieceColor() == Piece.ColorType.BLACK) {
+
                 if (!setMovement(state, row, col, Piece.ColorType.BLACK)) {
                     state.removeHighlight();
                     state.removeCircle();
                     return false;
                 }
             }
-
             // make sure all highlights and dots are already removed
             state.removeCircle();
 
-            if(isPromotion){
-                state.setPiece(promo.getRow(),promo.getCol(),promo.getPromotionPiece());
-                isPromotion = false;
-            }
+
             // make it the other player's turn
             state.setWhoseMove(1 - whoseMove);
 
@@ -268,7 +265,8 @@ public class ChessLocalGame extends LocalGame {
             return true;
         } else if (action instanceof ChessPromotionAction){
             promo = (ChessPromotionAction) action;
-            isPromotion = true;
+            ChessPromotionAction.isPromotion = true;
+            return true;
         }
         // return true, indicating the it was a legal move
         return false;
@@ -554,6 +552,7 @@ public class ChessLocalGame extends LocalGame {
      */
     public boolean setMovement(ChessState state, int row, int col, Piece.ColorType color) {
         // if they selected a dot/ring then move
+
         if (state.getDrawing(row, col) == 2 || state.getDrawing(row, col) == 4) {
 
             //adds captured piece to captured pieces array t
@@ -608,7 +607,12 @@ public class ChessLocalGame extends LocalGame {
             boolean isCapture = state.getPiece(row,col).getPieceType() != Piece.PieceType.EMPTY;
             ChessHumanPlayer chp = players[0] instanceof ChessHumanPlayer ?
                     (ChessHumanPlayer) players[0] : (ChessHumanPlayer) players[1];
-            state.setPiece(row,col,state.getPiece(tempRow,tempCol));
+            if(ChessPromotionAction.isPromotion){
+                state.setPiece(promo.getRow(),promo.getCol(),promo.getPromotionPiece());
+                ChessPromotionAction.isPromotion = false;
+            }else {
+                state.setPiece(row, col, state.getPiece(tempRow, tempCol));
+            }
             chp.displayMovesLog(row,col,tempRow,state,isCapture);
             // change the piece at the selection to be an empty piece
             state.setPiece(tempRow, tempCol, state.emptyPiece);
@@ -702,15 +706,5 @@ public class ChessLocalGame extends LocalGame {
         if(gameOver == null || gameOver.equals("It's a cat's game.")) return -1;
         if(gameOver.equals(playerNames[0]+" is the winner.")) return 0;
         return 1;
-    }
-    public boolean checkPromotion(Piece piece, int col,ChessHumanPlayer chp){
-        if(piece.getPieceType() != Piece.PieceType.PAWN){return false;}
-        if(piece.getPieceColor() == Piece.ColorType.WHITE && col == 0){
-            //return new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE, piece.getX(), 0);
-            return true;
-        }else if(piece.getPieceColor() == Piece.ColorType.BLACK && col == 7){
-            return true;
-        }
-        return false;
     }
 }

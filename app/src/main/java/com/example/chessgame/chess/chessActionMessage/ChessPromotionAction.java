@@ -15,12 +15,14 @@ public class ChessPromotionAction extends GameAction {
     private Piece promotionPiece;
     private int row;
     private int col;
+    public static boolean isPromotion;
 
     public ChessPromotionAction(GamePlayer player,Piece promotionPiece,int row, int col) {
         super(player);
         this.promotionPiece = promotionPiece;
         this.row = row;
         this.col = col;
+        isPromotion = false;
     }
 
     public int getRow(){return this.row;}
