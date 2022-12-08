@@ -367,6 +367,9 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
 
     public boolean validPawnMove(int row, int col, Piece currPiece) {
+        if(currPiece.getY() > col + 1){
+            return false;
+        }
         if (currPiece.getX() != row && currPiece.getX() != row - 1 && currPiece.getX() != row + 1) {
             return false;
         }
