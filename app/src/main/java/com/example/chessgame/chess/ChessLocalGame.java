@@ -1,6 +1,7 @@
 package com.example.chessgame.chess;
 
 
+import android.graphics.Point;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.example.chessgame.chess.players.ChessHumanPlayer;
 
 import java.util.ArrayList;
 
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.jar.Attributes;
 
@@ -420,6 +422,8 @@ public class ChessLocalGame extends LocalGame {
                     newMovementsY.add(initialMovementsY.get(i));
                 }
             }
+            state.setNewMovementsX(newMovementsX);
+            state.setNewMovementsY(newMovementsY);
         }
 
         //loops for getting rid of crossing-check moves for castling
