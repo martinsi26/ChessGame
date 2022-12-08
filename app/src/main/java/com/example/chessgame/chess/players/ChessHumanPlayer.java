@@ -37,8 +37,13 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     private ChessBoardSurfaceView surfaceViewChessBoard;
     private Button resignButton;
 
+    //captures surfaceview
     private BlackCaptureSurfaceView surfaceViewBlackCapture;
     private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
+
+    //names
+    private TextView player1name;
+    private TextView player2name;
 
     public Button queenPromo;
     public Button bishopPromo;
@@ -46,12 +51,8 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
     public Button knightPromo;
     public boolean isPromotion;
     public Piece currPiece = new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE, 0, 0);
-    //public Piece savedPiece = new Piece(Piece.PieceType.QUEEN, Piece.ColorType.WHITE,0,0);
     private int savedX = 0;
     private int savedY = 0;
-
-    //private BlackCaptureSurfaceView surfaceViewBlackCapture;
-    //private WhiteCaptureSurfaceView surfaceViewWhiteCapture;
 
     // the ID for the layout to use
     private int layoutId;
@@ -118,6 +119,10 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
         movesLog = myActivity.findViewById(R.id.movesLog);
         surfaceViewChessBoard = (ChessBoardSurfaceView) myActivity.findViewById(R.id.chessBoard);
 
+        //player names
+        player1name = myActivity.findViewById(R.id.nameBlack);
+        player2name = myActivity.findViewById(R.id.nameWhite);
+
         //resignation
         resignButton = myActivity.findViewById(R.id.surrenderButton);
 
@@ -155,6 +160,10 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
      */
     protected void initAfterReady() {
         myActivity.setTitle("Chess: " + allPlayerNames[0] + " vs. " + allPlayerNames[1]);
+        if(allPlayerNames.length == 2) {
+            player1name.setText(allPlayerNames[0]);
+            player2name.setText(allPlayerNames[1]);
+        }
     }
 
 
