@@ -200,7 +200,7 @@ public class ChessHumanPlayer extends GameHumanPlayer implements View.OnTouchLis
 
         // loop through all of the locations on the board and compare
         // the location pressed to the pixels on the screen to find
-        // the exact location of the click according to the board
+        // the exact location of the click according to the b oard
 
         if (!isPromotion) {
             for (int i = 0; i < 8; i++) {
