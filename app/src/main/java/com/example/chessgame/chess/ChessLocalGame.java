@@ -637,15 +637,18 @@ public class ChessLocalGame extends LocalGame {
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
                 } else {
-                    checkForStalemate(state);
+                    winCondition = checkForStalemate(state);
+                    checkIfGameOver();
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
                     state.setHighlightCheck(state.getKingBlack().getX(), state.getKingBlack().getY());
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
+                    checkIfGameOver();
                 } else {
                     winCondition = checkForStalemate(state);
+                    checkIfGameOver();
                 }
             }
             return true;
@@ -661,7 +664,7 @@ public class ChessLocalGame extends LocalGame {
         if(state.getWhoseMove() == 0) {
             // if it is now whites turn that means to look for if black is in stalemate
             color = Piece.ColorType.BLACK;
-        } else if (state.getWhoseMove() == 1) {
+        } else {
             // if it is now blacks turn that means to look for if white is in stalemate
             color = Piece.ColorType.WHITE;
         }
