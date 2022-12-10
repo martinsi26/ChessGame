@@ -16,6 +16,7 @@ import com.example.chessgame.chess.pieces.Pawn;
 import com.example.chessgame.chess.pieces.Queen;
 import com.example.chessgame.chess.pieces.Rook;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -100,15 +101,22 @@ public class ChessComputerPlayer extends GameComputerPlayer {
         }
         sleep(1);
 
+        if(chessState2.getGameOver()) {
+            return;
+        }
+        // an arraylist that holds the index values of the two movement arraylists (x and y)
+        ArrayList<Integer> index = new ArrayList<>();
+        // add all of the indexes into the ints value
+        for (int i = 0; i < chessState2.getNewMovementsX().size(); i++) {
+            index.add(i);
+        }
+        // shuffle the indexes so a random x and y value can be taken
+        Collections.shuffle(index);
+        // set the x and y values to the new movements array at the index
+        xVal = chessState2.getNewMovementsX().get(index.get(0));
+        yVal = chessState2.getNewMovementsY().get(index.get(0));
+        // if the piece is a pawn look for promotion
         if (selection.getPieceType() == Piece.PieceType.PAWN) {
-            Pawn pawn = new Pawn(selection, chessState, selection.getPieceColor());
-            ints = new ArrayList<>();
-            for (int i = 0; i < pawn.getX().size(); i++) {
-                ints.add(i);
-            }
-            Collections.shuffle(ints);
-            xVal = pawn.getX().get(ints.get(0));
-            yVal = pawn.getY().get(ints.get(0));
             if (selection.getPieceColor() == Piece.ColorType.BLACK) {
                 if (yVal == 7) {
                     sendPromotionAction(xVal, yVal, Piece.ColorType.BLACK);
@@ -118,58 +126,9 @@ public class ChessComputerPlayer extends GameComputerPlayer {
                     sendPromotionAction(xVal, yVal, Piece.ColorType.WHITE);
                 }
             }
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
-        } else if (selection.getPieceType() == Piece.PieceType.BISHOP) {
-            Bishop bishop = new Bishop(selection, chessState, selection.getPieceColor());
-            ints = new ArrayList<>();
-            for (int i = 0; i < bishop.getX().size(); i++) {
-                ints.add(i);
-            }
-            Collections.shuffle(ints);
-            xVal = bishop.getX().get(ints.get(0));
-            yVal = bishop.getY().get(ints.get(0));
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
-        } else if (selection.getPieceType() == Piece.PieceType.KNIGHT) {
-            Knight knight = new Knight(selection, chessState, selection.getPieceColor());
-            ints = new ArrayList<>();
-            for (int i = 0; i < knight.getX().size(); i++) {
-                ints.add(i);
-            }
-            Collections.shuffle(ints);
-            xVal = knight.getX().get(ints.get(0));
-            yVal = knight.getY().get(ints.get(0));
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
-        } else if (selection.getPieceType() == Piece.PieceType.ROOK) {
-            Rook rook = new Rook(selection, chessState, selection.getPieceColor());
-            ints = new ArrayList<>();
-            for (int i = 0; i < rook.getX().size(); i++) {
-                ints.add(i);
-            }
-            Collections.shuffle(ints);
-            xVal = rook.getX().get(ints.get(0));
-            yVal = rook.getY().get(ints.get(0));
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
-        } else if (selection.getPieceType() == Piece.PieceType.QUEEN) {
-            Queen queen = new Queen(selection, chessState, selection.getPieceColor());
-            ints = new ArrayList<>();
-            for (int i = 0; i < queen.getX().size(); i++) {
-                ints.add(i);
-            }
-            Collections.shuffle(ints);
-            xVal = queen.getX().get(ints.get(0));
-            yVal = queen.getY().get(ints.get(0));
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
-        } else if (selection.getPieceType() == Piece.PieceType.KING) {
-            King king = new King(selection, chessState, selection.getPieceColor());
-            ints = new ArrayList<>();
-            for (int i = 0; i < king.getX().size(); i++) {
-                ints.add(i);
-            }
-            Collections.shuffle(ints);
-            xVal = king.getX().get(ints.get(0));
-            yVal = king.getY().get(ints.get(0));
-            game.sendAction(new ChessMoveAction(this, xVal, yVal));
         }
+        // send the new move action
+        game.sendAction(new ChessMoveAction(this, xVal, yVal));
     }
 
     public void sendPromotionAction(int xVal, int yVal, Piece.ColorType type) {

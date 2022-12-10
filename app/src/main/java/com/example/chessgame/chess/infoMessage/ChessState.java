@@ -1,6 +1,8 @@
 package com.example.chessgame.chess.infoMessage;
 
 
+import android.graphics.Point;
+
 import com.example.chessgame.GameFramework.infoMessage.GameState;
 
 import java.io.Serializable;
@@ -24,8 +26,8 @@ public class ChessState extends GameState implements Serializable {
     private Piece kingBlack; //special piece for black king
     private Piece kingWhite; //special piece for white king
 
-    private boolean isCheck;
-    private boolean isGameOver;
+    private boolean isCheck; //boolean that holds if a king is in check
+    private boolean isGameOver; //boolean that holds if the game is over (checkmate)
 
     private ArrayList<Piece> whiteCapturedPieces;
     private ArrayList<Piece> blackCapturedPieces;
@@ -48,6 +50,9 @@ public class ChessState extends GameState implements Serializable {
 
     private boolean kingInCheck;
 
+    private ArrayList<Integer> newMovementsX;
+    private ArrayList<Integer> newMovementsY;
+
     public ChessState() {
         pieces = new Piece[8][8];
         board = new int[8][8];
@@ -55,6 +60,9 @@ public class ChessState extends GameState implements Serializable {
         blackCapturedPieces = new ArrayList<>();
         canMove = false;
         isGameOver = false;
+
+        newMovementsX = new ArrayList<>();
+        newMovementsY = new ArrayList<>();
 
         // Setting the initial position of all of the pieces
         for (int row = 0; row < pieces.length; row++) {
@@ -117,7 +125,6 @@ public class ChessState extends GameState implements Serializable {
         //copy captured pieces
         whiteCapturedPieces = new ArrayList<>();
         blackCapturedPieces = new ArrayList<>();
-
         for (int i = 0; i < whiteCapturedPieces.size(); i++) {
             whiteCapturedPieces.add(other.whiteCapturedPieces.get(i));
         }
@@ -170,6 +177,16 @@ public class ChessState extends GameState implements Serializable {
         blackRook1HasMoved = other.blackRook1HasMoved;
         blackRook2HasMoved = other.blackRook2HasMoved;
         isCheck = other.isCheck;
+
+        //copy movements
+        newMovementsX = new ArrayList<>();
+        newMovementsY = new ArrayList<>();
+        for (int i = 0; i < newMovementsX.size(); i++) {
+            newMovementsX.add(other.newMovementsX.get(i));
+        }
+        for (int i = 0; i < newMovementsY.size(); i++) {
+            newMovementsY.add(other.newMovementsY.get(i));
+        }
     }
 
     public Piece getPiece(int row, int col) {
@@ -196,6 +213,22 @@ public class ChessState extends GameState implements Serializable {
 
     public boolean getGameOver() {
         return isGameOver;
+    }
+
+    public void setNewMovementsX(ArrayList<Integer> newMovementsX) {
+        this.newMovementsX = newMovementsX;
+    }
+
+    public ArrayList<Integer> getNewMovementsX() {
+        return newMovementsX;
+    }
+
+    public void setNewMovementsY(ArrayList<Integer> newMovementsY) {
+        this.newMovementsY = newMovementsY;
+    }
+
+    public ArrayList<Integer> getNewMovementsY() {
+        return newMovementsY;
     }
 
     public void setCheck(boolean b) {
