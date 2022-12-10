@@ -637,7 +637,7 @@ public class ChessLocalGame extends LocalGame {
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
                 } else {
-                    checkForStalemate(state, color);
+                    checkForStalemate(state);
                 }
             } else if (color == Piece.ColorType.WHITE) {
                 if (checkForCheck(state, Piece.ColorType.BLACK, color)) {
@@ -645,7 +645,7 @@ public class ChessLocalGame extends LocalGame {
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
                 } else {
-                    checkForStalemate(state, color);
+                    winCondition = checkForStalemate(state);
                 }
             }
             return true;
@@ -655,32 +655,45 @@ public class ChessLocalGame extends LocalGame {
         }
     }
 
-    public void checkForStalemate(ChessState state, Piece.ColorType enemyColor) {
-        // loop through board
-        // find positions of pieces that are enemy color
-        // select one piece, call moveToNotBeInCheck for that piece
-        // check if newMovementX or newMovementY arraylists are empty
-        // if that is not empty return because they can move
-        // otherwise find the next piece
-        // if none of the pieces return then there is a stalemate
+    public String checkForStalemate(ChessState state) {
+        Piece.ColorType color = null;
+        // find what color has moved to put the other player in checkmate
+        if(state.getWhoseMove() == 0) {
+            // if it is now whites turn that means to look for if black is in stalemate
+            color = Piece.ColorType.BLACK;
+        } else if (state.getWhoseMove() == 1) {
+            // if it is now blacks turn that means to look for if white is in stalemate
+            color = Piece.ColorType.WHITE;
+        }
 
-        // search through every piece of the enemy and generate its general movement
-        // with its position on the board
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Piece piece = state.getPiece(row, col);
-                if(piece.getPieceColor() == enemyColor) {
-                    tempRow = row;
-                    tempCol = col;
-                    findMovement(state, piece);
-                    moveToNotBeInCheck(state, enemyColor, piece.getPieceType());
-                    if (newMovementsX.size() > 0) {
-                        return;
-                    }
+        // arraylist that adds all enemy pieces
+        ArrayList<Piece> pieces = new ArrayList<>();
+        // add all pieces to arraylist
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(state.getPiece(i, j).getPieceColor() == color) {
+                    pieces.add(state.getPiece(i,j));
                 }
             }
         }
-        winCondition = "S";
+
+        // create fake selections and check if there are any possible
+        // movement for that selection. If there is a movement then
+        // the player is not in stalemate
+        for(int i = 0; i < pieces.size(); i++) {
+            tempRow = pieces.get(i).getX();
+            tempCol = pieces.get(i).getY();
+            findMovement(state, pieces.get(i));
+            moveToNotBeInCheck(state, color, state.getPiece(tempRow, tempCol).getPieceType());
+            if(newMovementsX.size() > 0) {
+                //if we are in here then they have at least one move
+                //so it's not stalemate
+                return null;
+            }
+        }
+        //there are no possible moves
+        state.setGameOver(true);
+        return "S";
     }
 
     public String checkForCheckmate(ChessState state) {
