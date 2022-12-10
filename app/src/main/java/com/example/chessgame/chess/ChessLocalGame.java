@@ -636,6 +636,7 @@ public class ChessLocalGame extends LocalGame {
                     state.setHighlightCheck(state.getKingWhite().getX(), state.getKingWhite().getY());
                     state.setKingInCheck(true);
                     winCondition = checkForCheckmate(state);
+                    checkIfGameOver();
                 } else {
                     winCondition = checkForStalemate(state);
                     checkIfGameOver();
