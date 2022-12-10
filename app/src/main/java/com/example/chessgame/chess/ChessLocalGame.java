@@ -110,7 +110,7 @@ public class ChessLocalGame extends LocalGame {
         } else if (winCondition.equals("W")) {
             return "White Wins! ";
         } else if (winCondition.equals("S")) {
-            return "Stalemate no one wins!";
+            return "Stalemate no one wins! ";
         }
         return null;
     }
@@ -656,38 +656,27 @@ public class ChessLocalGame extends LocalGame {
     }
 
     public void checkForStalemate(ChessState state, Piece.ColorType enemyColor) {
+        // loop through board
+        // find positions of pieces that are enemy color
+        // select one piece, call moveToNotBeInCheck for that piece
+        // check if newMovementX or newMovementY arraylists are empty
+        // if that is not empty return because they can move
+        // otherwise find the next piece
+        // if none of the pieces return then there is a stalemate
+
         // search through every piece of the enemy and generate its general movement
         // with its position on the board
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 Piece piece = state.getPiece(row, col);
-                if (piece.getPieceColor() == enemyColor) {
-                    if (piece.getPieceType() == Piece.PieceType.PAWN) {
-                        Pawn pawn = new Pawn(piece, state, enemyColor);
-                        state.setCircles(pawn.getX(), pawn.getY());
-                    } else if (piece.getPieceType() == Piece.PieceType.KNIGHT) {
-                        Knight knight = new Knight(piece, state, enemyColor);
-                        state.setCircles(knight.getX(), knight.getY());
-                    } else if (piece.getPieceType() == Piece.PieceType.BISHOP) {
-                        Bishop bishop = new Bishop(piece, state, enemyColor);
-                        state.setCircles(bishop.getX(), bishop.getY());
-                    } else if (piece.getPieceType() == Piece.PieceType.ROOK) {
-                        Rook rook = new Rook(piece, state, enemyColor);
-                        state.setCircles(rook.getX(), rook.getY());
-                    } else if (piece.getPieceType() == Piece.PieceType.QUEEN) {
-                        Queen queen = new Queen(piece, state, enemyColor);
-                        state.setCircles(queen.getX(), queen.getY());
-                    } else if (piece.getPieceType() == Piece.PieceType.KING) {
-                        King king = new King(piece, state, enemyColor);
-                        state.setCircles(king.getX(), king.getY());
+                if(piece.getPieceColor() == enemyColor) {
+                    tempRow = row;
+                    tempCol = col;
+                    findMovement(state, piece);
+                    moveToNotBeInCheck(state, enemyColor, piece.getPieceType());
+                    if (newMovementsX.size() > 0) {
+                        return;
                     }
-                }
-            }
-        }
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (state.getDrawing(row, col) == 2) {
-                    return;
                 }
             }
         }
